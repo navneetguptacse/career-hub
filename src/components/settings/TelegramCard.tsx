@@ -149,9 +149,9 @@ export const TelegramCard: React.FC = () => {
                 className="gap-1.5 shrink-0"
               >
                 {isCopied ? (
-                  <Check className="w-3.5 h-3.5 text-[#10B981]" />
+                  <Check className="w-3 h-3 text-[#10B981]" strokeWidth={2.5} />
                 ) : (
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="w-3 h-3" strokeWidth={2.5} />
                 )}
                 <span>{isCopied ? "Copied" : "Copy"}</span>
               </Button>

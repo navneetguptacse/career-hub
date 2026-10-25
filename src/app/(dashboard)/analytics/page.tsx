@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  Activity,
   BarChart,
   DollarSign,
   PieChart,
   Send,
   TrendingUp,
-  Workflow,
 } from "lucide-react";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { formatCurrency } from "@/lib/utils";
@@ -96,7 +96,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <span className="text-xs text-[#94A3B8] flex items-center gap-1.5">
-            <Workflow className="w-3.5 h-3.5 text-[#3178C6]" />
+            <Activity className="w-3.5 h-3.5 text-[#3178C6]" />
             Interview Conversion Rate
           </span>
           <div className="text-2xl font-bold font-mono text-[#5499EB]">

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSession } from "next-auth/react";
-import { Database, Lock, ShieldCheck, User } from "lucide-react";
+import { ShieldCheck, User } from "lucide-react";
 import { UserProfileCard } from "@/components/settings/UserProfileCard";
 import { AppearanceCard } from "@/components/settings/AppearanceCard";
 import { TelegramCard } from "@/components/settings/TelegramCard";

@@ -29,7 +29,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
 }) => {
   if (applications.length === 0) {
     return (
-      <div className="p-12 text-center border border-[#202937] bg-[#12171F] rounded-xs text-[#94A3B8] text-sm">
+      <div className="p-12 text-center border border-[#202937] bg-[#12171F] rounded-xs text-[#94A3B8] text-xs">
         No job applications found matching your criteria.
       </div>
     );

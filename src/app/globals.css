@@ -171,6 +171,16 @@ html.light .text-\[\#facc15\] {
   color: #d97706 !important;
 }
 
+html.light .text-\[\#818CF8\],
+html.light .text-\[\#818cf8\] {
+  color: #4f46e5 !important;
+}
+
+html.light .text-\[\#F87171\],
+html.light .text-\[\#f87171\] {
+  color: #dc2626 !important;
+}
+
 html.light .bg-\[\#3178C6\]\/15,
 html.light .bg-\[\#3178C6\]\/20 {
   background-color: rgba(49, 120, 198, 0.12) !important;

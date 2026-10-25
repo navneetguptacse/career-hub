@@ -22,9 +22,9 @@ const statusConfig: Record<
 > = {
   WISHLIST: {
     label: "Wishlist",
-    bg: "bg-[#1E293B]/60",
-    text: "text-[#94A3B8]",
-    border: "border-[#334155]",
+    bg: "bg-[#64748B]/15",
+    text: "text-[#475569] dark:text-[#94A3B8]",
+    border: "border-[#64748B]/30",
   },
   APPLIED: {
     label: "Applied",
@@ -58,9 +58,9 @@ const statusConfig: Record<
   },
   WITHDRAWN: {
     label: "Withdrawn",
-    bg: "bg-[#334155]/30",
-    text: "text-[#64748B]",
-    border: "border-[#334155]",
+    bg: "bg-[#64748B]/15",
+    text: "text-[#475569] dark:text-[#94A3B8]",
+    border: "border-[#64748B]/30",
   },
 };
 
