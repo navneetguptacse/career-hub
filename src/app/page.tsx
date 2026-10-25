@@ -8,6 +8,7 @@ import {
   Send,
   Sparkles,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function HomePage() {
   return (
@@ -24,15 +25,16 @@ export default function HomePage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle size="sm" />
           <Link
             href="/login"
-            className="px-3.5 py-1.5 text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
+            className="h-8 px-3 inline-flex items-center justify-center text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] rounded-xs transition-colors"
           >
             Sign In
           </Link>
           <Link
             href="/register"
-            className="px-3.5 py-1.5 text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs transition-colors shadow-xs flex items-center gap-1.5"
+            className="h-8 px-3.5 inline-flex items-center justify-center text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs transition-colors shadow-xs gap-1.5"
           >
             <span>Get Started</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -61,7 +63,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
           <Link
             href="/register"
-            className="w-full sm:w-auto px-6 py-2.5 bg-[#3178C6] hover:bg-[#235A97] text-white font-medium text-sm rounded-xs transition-colors shadow-md flex items-center justify-center gap-2"
+            className="w-full sm:w-auto h-10 px-6 bg-[#3178C6] hover:bg-[#235A97] text-white font-medium text-sm rounded-xs transition-colors shadow-md inline-flex items-center justify-center gap-2"
           >
             <span>Launch Pipeline</span>
             <ArrowRight className="w-4 h-4" />
@@ -69,7 +71,7 @@ export default function HomePage() {
 
           <Link
             href="/login"
-            className="w-full sm:w-auto px-6 py-2.5 bg-[#12171F] hover:bg-[#18202C] text-[#F1F5F9] border border-[#202937] font-medium text-sm rounded-xs transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto h-10 px-6 bg-[#12171F] hover:bg-[#18202C] text-[#F1F5F9] border border-[#202937] font-medium text-sm rounded-xs transition-colors inline-flex items-center justify-center gap-2"
           >
             <span>Already Account ?</span>
           </Link>
