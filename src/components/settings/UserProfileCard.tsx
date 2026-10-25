@@ -253,12 +253,12 @@ export const UserProfileCard: React.FC = () => {
             {isSuccess ? (
               <>
                 <Check className="w-4 h-4 text-[#10B981]" />
-                <span>Profile Saved</span>
+                <span>Changes Saved</span>
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>Save Profile Changes</span>
+                <span>Save Changes</span>
               </>
             )}
           </Button>
