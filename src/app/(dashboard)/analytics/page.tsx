@@ -73,7 +73,7 @@ export default function AnalyticsPage() {
             statusCounts.INTERVIEW +
             statusCounts.OFFER) /
             total) *
-            100,
+            100
         )
       : 0;
 

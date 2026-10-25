@@ -27,7 +27,11 @@ function extractCompanyAndTitle(
       const parts = rawTitle.split(sep);
       if (parts.length >= 2) {
         title = cleanText(parts[0]);
-        if (!company || company.toLowerCase().includes("careers") || company.toLowerCase().includes("job")) {
+        if (
+          !company ||
+          company.toLowerCase().includes("careers") ||
+          company.toLowerCase().includes("job")
+        ) {
           company = cleanText(parts[1]);
         }
         break;

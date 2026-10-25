@@ -18,7 +18,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
     const baseStyles =
       "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] disabled:opacity-50 disabled:pointer-events-none rounded-xs text-sm";
@@ -48,7 +48,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           baseStyles,
           variantStyles[variant],
           sizeStyles[size],
-          className,
+          className
         )}
         {...props}
       >
@@ -76,7 +76,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  },
+  }
 );
 
 Button.displayName = "Button";

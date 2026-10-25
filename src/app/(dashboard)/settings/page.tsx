@@ -24,7 +24,7 @@ interface TelegramStatus {
 export default function SettingsPage() {
   const { data: session, update } = useSession();
   const [telegramStatus, setTelegramStatus] = useState<TelegramStatus | null>(
-    null,
+    null
   );
   const [isLoading, setIsLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);

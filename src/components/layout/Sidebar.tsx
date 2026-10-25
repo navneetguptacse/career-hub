@@ -72,7 +72,7 @@ export const Sidebar: React.FC = () => {
                 "flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-xs transition-colors",
                 item.active
                   ? "bg-[#3178C6]/15 text-[#5499EB] border border-[#3178C6]/30"
-                  : "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#12171F]",
+                  : "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#12171F]"
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />

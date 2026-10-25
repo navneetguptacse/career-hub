@@ -87,7 +87,7 @@ export const Badge: React.FC<BadgeProps> = ({
         config.text,
         config.border,
         sizeClasses,
-        className,
+        className
       )}
     >
       {config.label}

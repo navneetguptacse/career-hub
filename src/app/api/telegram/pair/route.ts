@@ -44,7 +44,7 @@ export async function GET() {
     console.error("GET /api/telegram/pair error:", error);
     return NextResponse.json(
       { error: "Failed to retrieve Telegram status" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -70,7 +70,7 @@ export async function DELETE() {
     console.error("DELETE /api/telegram/pair error:", error);
     return NextResponse.json(
       { error: "Failed to disconnect Telegram" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

@@ -6,7 +6,10 @@ export async function GET() {
   try {
     const session = await auth();
     if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
     }
 
     const [userCount, appCount, recentUsers] = await Promise.all([
@@ -38,6 +41,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error("GET /api/admin/overview error:", error);
-    return NextResponse.json({ error: "Failed to load admin stats" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load admin stats" },
+      { status: 500 }
+    );
   }
 }

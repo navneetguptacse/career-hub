@@ -5,7 +5,9 @@ export async function sendTelegramMessage(
 ): Promise<boolean> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) {
-    console.warn("TELEGRAM_BOT_TOKEN is not set. Cannot send telegram message.");
+    console.warn(
+      "TELEGRAM_BOT_TOKEN is not set. Cannot send telegram message."
+    );
     return false;
   }
 

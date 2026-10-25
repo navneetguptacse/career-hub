@@ -56,7 +56,7 @@ export default function DashboardPage() {
     wishlist: applications.filter((a) => a.status === "WISHLIST").length,
     applied: applications.filter((a) => a.status === "APPLIED").length,
     interview: applications.filter((a) =>
-      ["SCREENING", "INTERVIEW"].includes(a.status),
+      ["SCREENING", "INTERVIEW"].includes(a.status)
     ).length,
     offers: applications.filter((a) => a.status === "OFFER").length,
   };

@@ -46,7 +46,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         className={cn(
           "relative z-10 w-full max-w-lg bg-[#12171F] border border-[#202937] rounded-xs shadow-2xl p-6 text-[#F1F5F9] max-h-[90vh] overflow-y-auto",
-          className,
+          className
         )}
       >
         <div className="flex items-start justify-between pb-4 border-b border-[#202937] mb-5">

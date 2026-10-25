@@ -12,7 +12,10 @@ export async function POST(req: Request) {
     if (webhookSecret) {
       const headerSecret = req.headers.get("x-telegram-bot-api-secret-token");
       if (headerSecret !== webhookSecret) {
-        return NextResponse.json({ error: "Invalid secret token" }, { status: 403 });
+        return NextResponse.json(
+          { error: "Invalid secret token" },
+          { status: 403 }
+        );
       }
     }
 

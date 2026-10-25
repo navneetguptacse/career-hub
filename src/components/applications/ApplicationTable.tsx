@@ -80,7 +80,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                   onChange={(e) =>
                     onStatusChange(
                       app.id,
-                      e.target.value as ApplicationStatusType,
+                      e.target.value as ApplicationStatusType
                     )
                   }
                   className="bg-[#0A0D12] border border-[#202937] rounded-xs px-2 py-1 text-xs text-[#F1F5F9] focus:outline-none focus:border-[#3178C6]"

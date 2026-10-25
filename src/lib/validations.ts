@@ -26,7 +26,11 @@ export const jobApplicationSchema = z.object({
   salaryMin: z.coerce.number().positive().optional().nullable(),
   salaryMax: z.coerce.number().positive().optional().nullable(),
   currency: z.string().default("USD"),
-  jobUrl: z.string().url("Please provide a valid URL").optional().or(z.literal("")),
+  jobUrl: z
+    .string()
+    .url("Please provide a valid URL")
+    .optional()
+    .or(z.literal("")),
   jobDescription: z.string().max(10000).optional().nullable(),
   source: z
     .enum(["MANUAL", "TELEGRAM", "LINK_SCRAPER", "LINKEDIN", "INDEED", "OTHER"])

@@ -73,11 +73,11 @@ export default function ApplicationsPage() {
 
   const handleStatusChange = async (
     id: string,
-    newStatus: ApplicationStatusType,
+    newStatus: ApplicationStatusType
   ) => {
     // Optimistic UI update
     setApplications((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app)),
+      prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
     );
 
     try {
