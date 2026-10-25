@@ -1,0 +1,131 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { scrapeJobUrl } from "@/lib/scraper";
+import {
+  sendTelegramMessage,
+  extractUrlFromTelegramMessage,
+} from "@/lib/telegram";
+
+export async function POST(req: Request) {
+  try {
+    const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const headerSecret = req.headers.get("x-telegram-bot-api-secret-token");
+      if (headerSecret !== webhookSecret) {
+        return NextResponse.json({ error: "Invalid secret token" }, { status: 403 });
+      }
+    }
+
+    const payload = await req.json();
+    const message = payload.message || payload.channel_post;
+
+    if (!message || !message.text) {
+      return NextResponse.json({ ok: true });
+    }
+
+    const chatId = String(message.chat.id);
+    const text = message.text.trim();
+
+    // 1. Handle pairing commands: /start <token> or /link <token>
+    if (text.startsWith("/start") || text.startsWith("/link")) {
+      const parts = text.split(" ");
+      const pairToken = parts[1]?.trim().toUpperCase();
+
+      if (!pairToken) {
+        await sendTelegramMessage(
+          chatId,
+          "Please provide your pairing token from CareerHub settings:\n\n`/link PAIR-XXXXXX`"
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      const user = await prisma.user.findFirst({
+        where: { telegramPairToken: pairToken },
+      });
+
+      if (!user) {
+        await sendTelegramMessage(
+          chatId,
+          "Invalid or expired pairing token. Please check your token in CareerHub Settings."
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { telegramChatId: chatId },
+      });
+
+      await sendTelegramMessage(
+        chatId,
+        `CareerHub account connected!\n\nUser: *${user.name || user.email}*\n\nYou can now post job URLs into this chat/group, and they will automatically appear on your Kanban board.`
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // 2. Handle URL parsing and automatic job ingestion
+    const jobUrl = extractUrlFromTelegramMessage(text);
+    if (!jobUrl) {
+      return NextResponse.json({ ok: true });
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { telegramChatId: chatId },
+    });
+
+    if (!user) {
+      await sendTelegramMessage(
+        chatId,
+        "Job link detected, but this chat is not linked to any CareerHub account.\n\nLink your account with:\n`/link <PAIRING_TOKEN>`"
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    let jobTitle = "Job Position";
+    let companyName = "Unknown Company";
+    let jobDescription = "";
+
+    try {
+      const scraped = await scrapeJobUrl(jobUrl);
+      jobTitle = scraped.jobTitle;
+      companyName = scraped.companyName;
+      jobDescription = scraped.jobDescription || "";
+    } catch {
+      // Fallback if target site blocks scraping
+      const domain = new URL(jobUrl).hostname.replace(/^www\./, "");
+      companyName = domain.split(".")[0];
+      companyName = companyName.charAt(0).toUpperCase() + companyName.slice(1);
+      jobTitle = "Posted Role";
+    }
+
+    const app = await prisma.jobApplication.create({
+      data: {
+        userId: user.id,
+        companyName,
+        jobTitle,
+        jobUrl,
+        jobDescription: jobDescription || null,
+        source: "TELEGRAM",
+        status: "WISHLIST",
+        activities: {
+          create: {
+            userId: user.id,
+            type: "INGESTION",
+            title: "Saved via Telegram",
+            description: `Auto-captured from link: ${jobUrl}`,
+          },
+        },
+      },
+    });
+
+    await sendTelegramMessage(
+      chatId,
+      `*Job Application Saved!*\n\n*Company:* ${app.companyName}\n*Role:* ${app.jobTitle}\n*Status:* Wishlist\n\nView on your dashboard: [Open CareerHub](${process.env.NEXTAUTH_URL || "http://localhost:3000"}/applications)`
+    );
+
+    return NextResponse.json({ ok: true, savedId: app.id });
+  } catch (error) {
+    console.error("Telegram webhook error:", error);
+    return NextResponse.json({ ok: true });
+  }
+}
