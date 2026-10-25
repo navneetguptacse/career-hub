@@ -50,6 +50,9 @@ model User {
   emailVerified     DateTime?
   image             String?
   passwordHash      String?
+  targetRole        String?
+  bio               String?               @db.Text
+  preferredCurrency String?               @default("USD")
   role              Role                  @default(USER)
   telegramChatId    String?               @unique
   telegramPairToken String?               @unique
