@@ -237,9 +237,21 @@ export const UserProfileCard: React.FC = () => {
         )}
 
         <div className="flex items-center justify-between pt-2 border-t border-[#202937]">
-          <span className="text-[12px] font-mono font-semibold text-[#64748B]">
+          <span className="inline-flex items-center border border-[#202937] rounded-xs px-2.5 py-2 text-[12px] text-[#64748B]">
             {profile.createdAt
-              ? `Member since ${new Date(profile.createdAt).toLocaleDateString()}`
+              ? `Member since ${new Date(profile.createdAt).getDate()}${
+                  ["th", "st", "nd", "rd"][
+                    new Date(profile.createdAt).getDate() % 10 > 3 ||
+                    Math.floor(
+                      (new Date(profile.createdAt).getDate() % 100) / 10
+                    ) === 1
+                      ? 0
+                      : new Date(profile.createdAt).getDate() % 10
+                  ]
+                } ${new Date(profile.createdAt).toLocaleDateString("en-GB", {
+                  month: "long",
+                  year: "numeric",
+                })}`
               : "Account Active"}
           </span>
 
@@ -252,13 +264,11 @@ export const UserProfileCard: React.FC = () => {
           >
             {isSuccess ? (
               <>
-                <Check className="w-4 h-4 text-[#10B981]" />
-                <span>Changes Saved</span>
+                <span>Saved</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4" />
-                <span>Save Changes</span>
+                <span>Save</span>
               </>
             )}
           </Button>
