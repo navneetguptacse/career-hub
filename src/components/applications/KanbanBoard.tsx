@@ -28,31 +28,33 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     applications.filter((app) => app.status === status);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 pb-6 overflow-x-auto">
+    <div className="flex gap-3.5 pb-6 overflow-x-auto min-h-[calc(100vh-13rem)] w-full items-start">
       {COLUMNS.map((col) => {
         const columnJobs = getJobsByStatus(col.id);
 
         return (
           <div
             key={col.id}
-            className="flex flex-col bg-[#0A0D12] border border-[#202937] rounded-xs p-2.5 min-w-65 h-full"
+            className="flex flex-col bg-[#12171F] border border-[#202937] rounded-xs w-72 min-w-[270px] max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs"
           >
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#202937]">
-              <div className="flex items-center gap-2">
+            {/* Column Header - strictly aligned horizontal row */}
+            <div className="flex items-center justify-between p-3 border-b border-[#202937] bg-[#12171F]">
+              <div className="flex items-center gap-2 min-w-0">
                 <Badge status={col.id} size="sm" />
-                <span className="text-xs font-semibold text-[#F1F5F9]">
+                <span className="text-xs font-semibold text-[#F1F5F9] truncate tracking-tight">
                   {col.title}
                 </span>
               </div>
-              <span className="text-[11px] font-mono text-[#94A3B8] px-1.5 py-0.2 bg-[#12171F] border border-[#202937] rounded-xs">
+              <span className="text-[11px] font-mono font-medium text-[#94A3B8] px-1.5 py-0.5 bg-[#0A0D12] border border-[#202937] rounded-xs shrink-0">
                 {columnJobs.length}
               </span>
             </div>
 
-            <div className="flex-1 space-y-2.5 min-h-40 overflow-y-auto">
+            {/* Column Cards Dropzone */}
+            <div className="flex-1 p-2.5 space-y-2.5 overflow-y-auto bg-[#0A0D12]/30 min-h-60">
               {columnJobs.length === 0 ? (
-                <div className="h-28 flex items-center justify-center border border-dashed border-[#202937] rounded-xs text-[#64748B] text-xs">
-                  No applications
+                <div className="h-32 flex flex-col items-center justify-center border border-dashed border-[#202937] rounded-xs text-[#64748B] text-xs bg-[#0A0D12]/20 select-none">
+                  <span>No applications</span>
                 </div>
               ) : (
                 columnJobs.map((job) => (
