@@ -211,8 +211,9 @@ CareerHub is a full-stack Next.js application designed to track, organize, and a
 ```
 career-hub/
 ├── AGENTS.md                      # Single source of truth reference
+├── prisma.config.ts               # Prisma 7 configuration (schema, migrations, datasource URL)
 ├── prisma/
-│   └── schema.prisma              # Database schema with Prisma 6+
+│   └── schema.prisma              # Database schema with Prisma 7 (datasource without url)
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/
