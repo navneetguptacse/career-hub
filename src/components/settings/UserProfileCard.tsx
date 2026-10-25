@@ -118,7 +118,7 @@ export const UserProfileCard: React.FC = () => {
           </div>
           <div>
             <h2 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2">
-              User Profile & Career Identity
+              User Profile
             </h2>
             <p className="text-xs text-[#94A3B8] mt-0.5">
               Customize your target role, preferred currency, and application
