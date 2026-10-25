@@ -83,7 +83,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       e.target.value as ApplicationStatusType
                     )
                   }
-                  className="bg-[#0A0D12] border border-[#202937] rounded-xs px-2 py-1 text-xs text-[#F1F5F9] focus:outline-none focus:border-[#3178C6]"
+                  className="h-8 bg-[#0A0D12] border border-[#202937] rounded-xs px-2 text-xs text-[#F1F5F9] font-mono focus:outline-none focus:border-[#3178C6]"
                 >
                   {ALL_STATUSES.map((st) => (
                     <option key={st} value={st}>
@@ -134,7 +134,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <button
                   onClick={() => onDelete(app.id)}
                   title="Delete application"
-                  className="p-1.5 text-[#64748B] hover:text-[#EF4444] rounded-xs transition-colors"
+                  className="h-8 w-8 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

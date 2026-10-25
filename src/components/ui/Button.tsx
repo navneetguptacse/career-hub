@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "danger" | "ghost";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "icon-sm" | "icon-md";
   isLoading?: boolean;
 }
 
@@ -21,11 +21,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] disabled:opacity-50 disabled:pointer-events-none rounded-xs text-sm";
+      "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] disabled:opacity-50 disabled:pointer-events-none rounded-xs select-none shrink-0";
 
     const variantStyles = {
       primary:
-        "bg-[#3178C6] text-white hover:bg-[#235A97] active:bg-[#1d4a7d] shadow-sm",
+        "bg-[#3178C6] text-white hover:bg-[#235A97] active:bg-[#1d4a7d] shadow-xs",
       secondary:
         "bg-[#18202C] text-[#F1F5F9] hover:bg-[#202937] border border-[#202937]",
       outline:
@@ -34,10 +34,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ghost: "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C]",
     };
 
+    // Standardized strict uniform button heights across the entire application
     const sizeStyles = {
-      sm: "h-8 px-2.5 text-xs gap-1.5",
-      md: "h-9 px-3.5 text-sm gap-2",
-      lg: "h-11 px-5 text-base gap-2.5",
+      sm: "h-8 px-3 text-xs gap-1.5",
+      md: "h-9 px-4 text-sm gap-2",
+      lg: "h-10 px-5 text-sm gap-2",
+      "icon-sm": "h-8 w-8 p-0 text-xs",
+      "icon-md": "h-9 w-9 p-0 text-sm",
     };
 
     return (
@@ -54,7 +57,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && (
           <svg
-            className="animate-spin -ml-0.5 h-4 w-4 text-current"
+            className="animate-spin -ml-0.5 h-3.5 w-3.5 text-current shrink-0"
             fill="none"
             viewBox="0 0 24 24"
           >

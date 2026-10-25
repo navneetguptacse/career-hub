@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
-  Briefcase,
   CheckCircle2,
   Clock,
   ExternalLink,
   Flame,
   Send,
+  SquareKanban,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -82,8 +82,8 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2">
           <Link href="/applications">
             <Button variant="secondary" size="sm" className="gap-1.5">
-              <Briefcase className="w-3.5 h-3.5" />
-              <span>View Kanban Board</span>
+              <SquareKanban className="w-3.5 h-3.5" />
+              <span>Kanban Board</span>
             </Button>
           </Link>
         </div>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#94A3B8]">
             <span>Total Tracked</span>
-            <Briefcase className="w-4 h-4 text-[#3178C6]" />
+            <SquareKanban className="w-4 h-4 text-[#3178C6]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[#F1F5F9]">
             {isLoading ? "..." : metrics.total}
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 
         {applications.length === 0 ? (
           <div className="p-8 text-center border border-[#202937] bg-[#12171F] rounded-xs text-xs text-[#94A3B8]">
-            No job applications tracked yet. Click &quot;Add Job&quot; in the
+            No job applications tracked yet. Click &quot;Add&quot; in the
             navigation bar to get started!
           </div>
         ) : (

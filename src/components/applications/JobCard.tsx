@@ -131,12 +131,12 @@ export const JobCard: React.FC<JobCardProps> = ({
           {formatDate(job.appliedDate || job.createdAt)}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {nextStatus && (
             <button
               onClick={() => onStatusChange(job.id, nextStatus)}
               title={`Advance to ${nextStatus}`}
-              className="flex items-center gap-0.5 text-[10px] text-[#5499EB] hover:text-white bg-[#3178C6]/15 hover:bg-[#3178C6] border border-[#3178C6]/30 px-1.5 py-0.5 rounded-xs transition-colors"
+              className="h-6 px-2 inline-flex items-center gap-0.5 text-[10px] font-mono text-[#5499EB] hover:text-white bg-[#3178C6]/15 hover:bg-[#3178C6] border border-[#3178C6]/30 rounded-xs transition-colors"
             >
               <span>{nextStatus}</span>
               <ChevronRight className="w-3 h-3" />
@@ -147,9 +147,9 @@ export const JobCard: React.FC<JobCardProps> = ({
             onClick={handleDelete}
             disabled={isDeleting}
             title="Delete application"
-            className="p-1 text-[#64748B] hover:text-[#EF4444] rounded-xs transition-colors"
+            className="h-6 w-6 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

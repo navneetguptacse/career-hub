@@ -143,11 +143,11 @@ export default function ApplicationsPage() {
           <div className="h-4 w-px bg-[#202937]" />
 
           {/* Toggle View */}
-          <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs">
+          <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs h-8">
             <button
               onClick={() => setViewMode("kanban")}
-              title="Kanban Board view"
-              className={`p-1.5 rounded-xs transition-colors ${
+              title="Kanban Board"
+              className={`h-7 px-2 inline-flex items-center justify-center rounded-xs transition-colors ${
                 viewMode === "kanban"
                   ? "bg-[#3178C6] text-white"
                   : "text-[#94A3B8] hover:text-[#F1F5F9]"
@@ -158,7 +158,7 @@ export default function ApplicationsPage() {
             <button
               onClick={() => setViewMode("table")}
               title="Table view"
-              className={`p-1.5 rounded-xs transition-colors ${
+              className={`h-7 px-2 inline-flex items-center justify-center rounded-xs transition-colors ${
                 viewMode === "table"
                   ? "bg-[#3178C6] text-white"
                   : "text-[#94A3B8] hover:text-[#F1F5F9]"
@@ -171,7 +171,7 @@ export default function ApplicationsPage() {
           <button
             onClick={() => fetchApplications()}
             title="Refresh pipeline"
-            className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] rounded-xs transition-colors"
+            className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] rounded-xs transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>

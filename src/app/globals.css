@@ -1,7 +1,14 @@
 @import "tailwindcss";
 
+@theme {
+  --font-mono:
+    var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 @layer base {
-  :root {
+  :root,
+  html.dark {
     --background: #0a0d12;
     --surface: #12171f;
     --surface-hover: #18202c;
@@ -26,6 +33,31 @@
     --status-withdrawn: #475569;
   }
 
+  html.light {
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-hover: #f1f5f9;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+
+    --primary: #3178c6;
+    --primary-hover: #235a97;
+    --primary-subtle: rgba(49, 120, 198, 0.1);
+    --primary-border: rgba(49, 120, 198, 0.4);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+
+    --status-wishlist: #64748b;
+    --status-applied: #3178c6;
+    --status-screening: #6366f1;
+    --status-interview: #d97706;
+    --status-offer: #059669;
+    --status-rejected: #dc2626;
+    --status-withdrawn: #475569;
+  }
+
   * {
     border-color: var(--border);
   }
@@ -39,6 +71,60 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Roboto Mono for all console-like and monospaced typography */
+  .font-mono,
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family:
+      var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, "Liberation Mono", "Courier New", monospace !important;
+  }
+}
+
+/* Precision Light Mode Overrides for High Contrast */
+html.light .bg-\[\#0A0D12\],
+html.light .bg-\[\#0a0d12\] {
+  background-color: #f8fafc !important;
+}
+
+html.light .bg-\[\#12171F\],
+html.light .bg-\[\#12171f\] {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-\[\#18202C\],
+html.light .bg-\[\#18202c\] {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .border-\[\#202937\],
+html.light .border-\[\#202937\]\/30,
+html.light .border-\[\#202937\]\/50,
+html.light .border-\[\#202937\]\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .border-\[\#2D3B4E\],
+html.light .border-\[\#2d3b4e\] {
+  border-color: #cbd5e1 !important;
+}
+
+html.light .text-\[\#F1F5F9\],
+html.light .text-\[\#f1f5f9\] {
+  color: #0f172a !important;
+}
+
+html.light .text-\[\#94A3B8\],
+html.light .text-\[\#94a3b8\] {
+  color: #475569 !important;
+}
+
+html.light .text-\[\#64748B\],
+html.light .text-\[\#64748b\] {
+  color: #64748b !important;
 }
 
 /* Custom sharp scrollbars */
@@ -48,14 +134,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0d12;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #202937;
+  background: var(--border);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3178c6;
+  background: var(--primary);
 }

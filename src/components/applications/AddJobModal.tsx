@@ -117,7 +117,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Job Application"
+      title="Add Application"
       description="Track a new role manually or auto-fill details from any job posting URL."
     >
       <div className="space-y-4">
@@ -125,7 +125,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
           <label className="text-xs font-medium text-[#94A3B8] flex items-center gap-1.5">
             <Link2 className="w-3.5 h-3.5 text-[#3178C6]" />
-            Fast Import: Paste Job URL
+            Import Link
           </label>
           <div className="flex gap-2">
             <input
@@ -138,9 +138,10 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
             <Button
               type="button"
               variant="secondary"
-              size="sm"
+              size="md"
               onClick={handleScrape}
               isLoading={isScraping}
+              className="gap-1.5 shrink-0"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Autofill</span>
@@ -268,13 +269,13 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t border-[#202937]">
-            <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+            <Button type="button" variant="ghost" size="md" onClick={onClose}>
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
-              size="sm"
+              size="md"
               isLoading={isSubmitting}
             >
               Save Application
