@@ -76,21 +76,24 @@ export default function HomePage() {
         </div>
 
         {/* Feature Pills */}
-        <div className="pt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-[#94A3B8]">
-          <div className="flex items-center gap-1.5 bg-[#12171F] px-3 py-1.5 border border-[#202937] rounded-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
+        <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-xs text-[#94A3B8]">
+          <div className="flex items-center gap-2 bg-[#12171F] px-3 py-2 border border-[#202937] rounded-sm min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
             <span>OAuth (Google & GitHub)</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#12171F] px-3 py-1.5 border border-[#202937] rounded-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#3178C6]" />
+
+          <div className="flex items-center gap-2 bg-[#12171F] px-3 py-2 border border-[#202937] rounded-sm min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />
             <span>Email & Password with RBAC</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#12171F] px-3 py-1.5 border border-[#202937] rounded-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#EAB308]" />
+
+          <div className="flex items-center gap-2 bg-[#12171F] px-3 py-2 border border-[#202937] rounded-sm min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#EAB308] shrink-0" />
             <span>Neon PostgreSQL 18+ & Prisma</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#12171F] px-3 py-1.5 border border-[#202937] rounded-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#5499EB]" />
+
+          <div className="flex items-center gap-2 bg-[#12171F] px-3 py-2 border border-[#202937] rounded-sm min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#5499EB] shrink-0" />
             <span>Telegram Webhook Ingestion</span>
           </div>
         </div>
