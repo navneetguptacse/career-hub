@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ApplicationStatus {
+  WISHLIST
+  APPLIED
+  SCREENING
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum ApplicationSource {
+  MANUAL
+  TELEGRAM
+  LINK_SCRAPER
+  LINKEDIN
+  INDEED
+  OTHER
+}
+
+enum LocationType {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+model User {
+  id                String                @id @default(uuid())
+  name              String?
+  email             String                @unique
+  emailVerified     DateTime?
+  image             String?
+  passwordHash      String?
+  role              Role                  @default(USER)
+  telegramChatId    String?               @unique
+  telegramPairToken String?               @unique
+  accounts          Account[]
+  sessions          Session[]
+  applications      JobApplication[]
+  activities        ApplicationActivity[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model JobApplication {
+  id             String                @id @default(uuid())
+  userId         String
+  companyName    String
+  jobTitle       String
+  location       String?
+  locationType   LocationType          @default(REMOTE)
+  employmentType EmploymentType        @default(FULL_TIME)
+  salaryMin      Decimal?              @db.Decimal(12, 2)
+  salaryMax      Decimal?              @db.Decimal(12, 2)
+  currency       String                @default("USD")
+  jobUrl         String?
+  jobDescription String?               @db.Text
+  source         ApplicationSource     @default(MANUAL)
+  status         ApplicationStatus     @default(WISHLIST)
+  appliedDate    DateTime?
+  deadline       DateTime?
+  notes          String?               @db.Text
+  user           User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities     ApplicationActivity[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}
+
+model ApplicationActivity {
+  id            String         @id @default(uuid())
+  applicationId String
+  userId        String
+  type          String
+  title         String
+  description   String?        @db.Text
+  createdAt     DateTime       @default(now())
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
