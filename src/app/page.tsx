@@ -73,7 +73,7 @@ export default function HomePage() {
             href="/login"
             className="w-full sm:w-auto h-10 px-6 bg-[#12171F] hover:bg-[#18202C] text-[#F1F5F9] border border-[#202937] font-medium text-sm rounded-xs transition-colors inline-flex items-center justify-center gap-2"
           >
-            <span>Already Account ?</span>
+            <span>Sign In</span>
           </Link>
         </div>
 

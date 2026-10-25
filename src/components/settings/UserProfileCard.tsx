@@ -178,7 +178,7 @@ export const UserProfileCard: React.FC = () => {
               onChange={(e) =>
                 setProfile({ ...profile, preferredCurrency: e.target.value })
               }
-              className="w-full h-9 px-3 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] transition-colors"
+              className="w-full h-9 pl-3 pr-8 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] transition-colors cursor-pointer"
             >
               <option value="USD">USD ($) — United States Dollar</option>
               <option value="EUR">EUR (€) — Euro</option>

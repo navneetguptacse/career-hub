@@ -82,6 +82,23 @@
       var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
       Consolas, "Liberation Mono", "Courier New", monospace !important;
   }
+
+  /* Universal select appearance & dropdown icon styling */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 14px 14px;
+    padding-right: 2rem !important;
+    cursor: pointer;
+  }
+
+  html.light select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  }
 }
 
 /* Precision Light Mode Overrides for High Contrast */
@@ -125,6 +142,40 @@ html.light .text-\[\#94a3b8\] {
 html.light .text-\[\#64748B\],
 html.light .text-\[\#64748b\] {
   color: #64748b !important;
+}
+
+/* Light mode hover state overrides - replaces dark hover with crisp subtle light hover */
+html.light .hover\:bg-\[\#18202C\]:hover,
+html.light .hover\:bg-\[\#18202c\]:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light .hover\:bg-\[\#202937\]:hover,
+html.light .hover\:bg-\[\#202937\]:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html.light .hover\:bg-\[\#12171F\]:hover,
+html.light .hover\:bg-\[\#12171f\]:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html.light .hover\:text-\[\#F1F5F9\]:hover,
+html.light .hover\:text-\[\#f1f5f9\]:hover {
+  color: #0f172a !important;
+}
+
+html.light .hover\:border-\[\#3178C6\]:hover,
+html.light .hover\:border-\[\#3178C6\]\/50:hover,
+html.light .hover\:border-\[\#3178C6\]\/60:hover {
+  border-color: #3178c6 !important;
+}
+
+html.light .hover\:text-\[\#5499EB\]:hover {
+  color: #235a97 !important;
 }
 
 /* Custom sharp scrollbars */

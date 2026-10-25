@@ -17,7 +17,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CareerHub — Precision Job Application Tracker",
+  title: "CareerHub — Job Application Tracker",
   description:
     "Track, organize, and automate job applications with Kanban boards, Telegram bot ingestion, and real-time career analytics.",
 };

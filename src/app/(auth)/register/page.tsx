@@ -102,8 +102,8 @@ export default function RegisterPage() {
 
         <div className="relative flex items-center justify-center">
           <div className="w-full border-t border-[#202937]" />
-          <span className="absolute px-2 text-[10px] font-mono text-[#64748B] bg-[#12171F] uppercase">
-            Or credentials
+          <span className="absolute px-2 text-[10px] text-[#64748B] bg-[#12171F] uppercase">
+            Or Credentials
           </span>
         </div>
 
@@ -130,7 +130,7 @@ export default function RegisterPage() {
           <Input
             id="password"
             type="password"
-            label="Password (min 8 chars, 1 uppercase, 1 number)"
+            label="Password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}

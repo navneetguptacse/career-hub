@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs">
         <h1 className="text-xl font-bold tracking-tight text-[#F1F5F9]">
-          Career & Application Analytics
+          Application Analytics
         </h1>
         <p className="text-xs text-[#94A3B8] mt-1">
           Detailed metrics and pipeline conversion analysis across all tracked

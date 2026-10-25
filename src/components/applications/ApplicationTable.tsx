@@ -83,7 +83,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       e.target.value as ApplicationStatusType
                     )
                   }
-                  className="h-8 bg-[#0A0D12] border border-[#202937] rounded-xs px-2 text-xs text-[#F1F5F9] font-mono focus:outline-none focus:border-[#3178C6]"
+                  className="h-8 bg-[#0A0D12] border border-[#202937] rounded-xs pl-2.5 pr-7 text-xs text-[#F1F5F9] font-mono focus:outline-none focus:border-[#3178C6] cursor-pointer"
                 >
                   {ALL_STATUSES.map((st) => (
                     <option key={st} value={st}>

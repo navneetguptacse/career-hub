@@ -128,7 +128,7 @@ export default function ApplicationsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-8 px-2 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6]"
+              className="h-8 pl-2.5 pr-7 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
             >
               <option value="ALL">All Statuses</option>
               <option value="WISHLIST">Wishlist</option>

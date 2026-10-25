@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Globe, Link2 } from "lucide-react";
+import { Link2, Sparkles } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -143,8 +143,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
               isLoading={isScraping}
               className="gap-1.5 shrink-0"
             >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Autofill</span>
+              <Sparkles className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -195,7 +194,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, locationType: e.target.value })
                 }
-                className="w-full h-9 px-3 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6]"
+                className="w-full h-9 pl-3 pr-8 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
               >
                 <option value="REMOTE">Remote</option>
                 <option value="HYBRID">Hybrid</option>
@@ -211,7 +210,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
-                className="w-full h-9 px-3 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6]"
+                className="w-full h-9 pl-3 pr-8 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
               >
                 <option value="WISHLIST">Wishlist</option>
                 <option value="APPLIED">Applied</option>
@@ -278,7 +277,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
               size="md"
               isLoading={isSubmitting}
             >
-              Save Application
+              Save
             </Button>
           </div>
         </form>

@@ -6,7 +6,6 @@ import { signOut, useSession } from "next-auth/react";
 import {
   LogOut,
   PanelLeft,
-  PanelLeftClose,
   Plus,
   Send,
   ShieldCheck,
@@ -22,7 +21,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
   const { data: session } = useSession();
-  const { isCollapsed, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const { toggleMobileSidebar } = useSidebar();
   const user = session?.user;
 
   return (
@@ -37,21 +36,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           className="md:hidden h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] border border-[#202937] rounded-xs transition-colors"
         >
           <PanelLeft className="w-4 h-4" />
-        </button>
-
-        {/* Desktop sidebar show/hide trigger */}
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          title={isCollapsed ? "Show (Expand)" : "Hide (Collapse)"}
-          aria-label={isCollapsed ? "Show sidebar" : "Hide sidebar"}
-          className="hidden md:inline-flex h-8 w-8 items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] border border-[#202937] rounded-xs transition-colors"
-        >
-          {isCollapsed ? (
-            <PanelLeft className="w-4 h-4 text-[#3178C6]" />
-          ) : (
-            <PanelLeftClose className="w-4 h-4" />
-          )}
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2 group">
@@ -75,42 +59,40 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
             title="Telegram Bot Paired"
             className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs font-mono"
           >
-            <Send className="w-3 h-3" />
-            <span>Bot Paired</span>
+            <Send className="w-3 h-3 text-[#3178C6]" />
           </Link>
         ) : (
           <Link
             href="/settings"
             title="Connect Telegram Bot"
-            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#94A3B8] hover:text-[#5499EB] bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors font-mono"
+            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#94A3B8] hover:text-[#5499EB] bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors"
           >
-            <Send className="w-3 h-3 text-[#3178C6]" />
-            <span>Connect Bot</span>
+            <Send className="w-3 h-3" />
           </Link>
         )}
 
-        {/* Dark / Light Mode Toggle with standardized h-8 button height */}
+        {/* Theme Toggle */}
         <ThemeToggle size="sm" />
 
-        {/* Add Job Quick Action */}
+        {/* Add Quick Action */}
         <Button
           onClick={onOpenAddModal}
           size="sm"
           className="gap-1.5 shadow-xs"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Add Job</span>
+          <span className="hidden sm:inline">Add</span>
         </Button>
 
         <div className="h-4 w-px bg-[#202937] hidden sm:block" />
 
-        {/* Profile Link and Info */}
+        {/* Profile Button with explicit crisp border */}
         <Link
           href="/settings"
           title="Account & Profile Settings"
-          className="inline-flex items-center gap-1.5 h-8 px-2 text-xs text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] border border-transparent hover:border-[#202937] rounded-xs transition-colors"
+          className="inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs"
         >
-          <UserIcon className="w-3.5 h-3.5 text-[#64748B]" />
+          <UserIcon className="w-3.5 h-3.5 text-[#3178C6]" />
           <span className="max-w-28 truncate hidden lg:inline font-mono">
             {user?.name || user?.email?.split("@")[0]}
           </span>

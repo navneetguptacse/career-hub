@@ -8,6 +8,7 @@ import {
   BarChart3,
   Briefcase,
   ChevronLeft,
+  ChevronRight,
   LayoutDashboard,
   Send,
   Settings,
@@ -67,8 +68,10 @@ export const Sidebar: React.FC = () => {
         <div className="flex items-center justify-between px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
           <span>Pipeline Navigation</span>
           <button
+            type="button"
             onClick={toggleSidebar}
-            title="Hide"
+            title="Hide Sidebar"
+            aria-label="Hide sidebar"
             className="hidden md:flex items-center justify-center h-6 w-6 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] rounded-xs transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
@@ -108,7 +111,10 @@ export const Sidebar: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={toggleSidebar}
+          title="Hide Sidebar"
+          aria-label="Hide sidebar"
           className="hidden md:flex w-full items-center justify-center gap-1.5 h-8 text-xs font-medium text-[#64748B] hover:text-[#94A3B8] hover:bg-[#12171F] rounded-xs border border-[#202937] transition-colors"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
@@ -120,6 +126,19 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
+      {/* Show button docked at the exact position when sidebar is hidden */}
+      {isCollapsed && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          title="Show Sidebar"
+          aria-label="Show sidebar"
+          className="hidden md:flex absolute top-3 left-0 z-20 h-7 w-6 bg-[#12171F] border border-l-0 border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-r-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+        >
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+      )}
+
       {/* Desktop Sidebar (toggleable) */}
       <aside
         className={cn(
