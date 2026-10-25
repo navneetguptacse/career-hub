@@ -39,7 +39,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             className={cn(
               "w-full pl-3 pr-8 text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] rounded-xs appearance-none cursor-pointer transition-colors focus:outline-none focus:border-[#3178C6] focus:ring-1 focus:ring-[#3178C6] disabled:opacity-50",
-              sizeVariant === "sm" ? "h-8 text-xs" : "h-9 text-sm",
+              sizeVariant === "sm" ? "h-8 text-xs" : "h-9 text-xs",
               error &&
                 "border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]",
               className

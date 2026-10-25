@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Link2, Sparkles } from "lucide-react";
+import { Link2, PencilSparkles } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -90,7 +90,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
 
       onSuccess();
       onClose();
-      // Reset form
       setFormData({
         companyName: "",
         jobTitle: "",
@@ -130,20 +129,21 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
           <div className="flex gap-2">
             <input
               type="url"
-              placeholder="https://linkedin.com/jobs/view/... or any job URL"
+              placeholder="https://linkedin.com/jobs/view/..."
               value={scrapeUrl}
               onChange={(e) => setScrapeUrl(e.target.value)}
-              className="flex-1 h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] focus:outline-none focus:border-[#3178C6]"
+              className="flex-1 h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
             />
             <Button
               type="button"
               variant="secondary"
-              size="md"
+              size="icon-md"
               onClick={handleScrape}
               isLoading={isScraping}
-              className="gap-1.5 shrink-0"
+              title="Auto-fill details from URL"
+              className="shrink-0"
             >
-              <Sparkles className="w-4 h-4" />
+              <PencilSparkles className="w-4 h-4 text-[#3178C6]" />
             </Button>
           </div>
         </div>
@@ -194,7 +194,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, locationType: e.target.value })
                 }
-                className="w-full h-9 pl-3 pr-8 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
+                className="w-full h-9 pl-3 pr-8 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
               >
                 <option value="REMOTE">Remote</option>
                 <option value="HYBRID">Hybrid</option>
@@ -210,7 +210,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
-                className="w-full h-9 pl-3 pr-8 text-sm bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
+                className="w-full h-9 pl-3 pr-8 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
               >
                 <option value="WISHLIST">Wishlist</option>
                 <option value="APPLIED">Applied</option>
@@ -249,7 +249,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
             onChange={(e) =>
               setFormData({ ...formData, jobUrl: e.target.value })
             }
-            placeholder="https://..."
+            placeholder="https://www.google.com/about/careers/..."
           />
 
           <div className="space-y-1.5">
@@ -263,7 +263,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 setFormData({ ...formData, notes: e.target.value })
               }
               placeholder="Referral contacts, interview prep notes, questions..."
-              className="w-full p-2.5 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6]"
+              className="w-full p-2.5 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
             />
           </div>
 

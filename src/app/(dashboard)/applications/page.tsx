@@ -75,7 +75,6 @@ export default function ApplicationsPage() {
     id: string,
     newStatus: ApplicationStatusType
   ) => {
-    // Optimistic UI update
     setApplications((prev) =>
       prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
     );
@@ -116,7 +115,7 @@ export default function ApplicationsPage() {
               placeholder="Search by company, role, or location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-8 pl-8 pr-3 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6]"
+              className="w-full h-8 pl-8 pr-3 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
             />
           </div>
         </div>
@@ -124,7 +123,12 @@ export default function ApplicationsPage() {
         {/* Filters and View Mode */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
-            <Filter className="w-3.5 h-3.5 text-[#64748B]" />
+            <div
+              title="Filter by status"
+              className="h-8 w-8 inline-flex items-center justify-center border border-[#202937] bg-[#0A0D12] text-[#94A3B8] rounded-xs shrink-0 select-none shadow-xs"
+            >
+              <Filter className="w-3.5 h-3.5 text-[#94A3B8]" />
+            </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}

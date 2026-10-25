@@ -36,7 +36,7 @@ export default function SettingsPage() {
       <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
         <h2 className="text-sm font-semibold text-[#F1F5F9] border-b border-[#202937] pb-3 flex items-center gap-2">
           <User className="w-4 h-4 text-[#3178C6]" />
-          Account & Architecture Diagnostics
+          Account Details
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -52,22 +52,6 @@ export default function SettingsPage() {
             <div className="font-mono text-[#FACC15] flex items-center gap-1 font-semibold">
               <ShieldCheck className="w-3.5 h-3.5" />
               {session?.user?.role || "USER"}
-            </div>
-          </div>
-
-          <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1">
-            <div className="text-[#64748B]">Database Provider</div>
-            <div className="font-mono text-[#10B981] flex items-center gap-1">
-              <Database className="w-3.5 h-3.5" />
-              Neon PostgreSQL (Pooled)
-            </div>
-          </div>
-
-          <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1">
-            <div className="text-[#64748B]">Session Architecture</div>
-            <div className="font-mono text-[#94A3B8] flex items-center gap-1">
-              <Lock className="w-3.5 h-3.5 text-[#3178C6]" />
-              JWT Strategy with NextAuth v5
             </div>
           </div>
         </div>

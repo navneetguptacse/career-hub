@@ -29,7 +29,6 @@ export async function POST(req: Request) {
     const chatId = String(message.chat.id);
     const text = message.text.trim();
 
-    // 1. Handle pairing commands: /start <token> or /link <token>
     if (text.startsWith("/start") || text.startsWith("/link")) {
       const parts = text.split(" ");
       const pairToken = parts[1]?.trim().toUpperCase();
@@ -66,7 +65,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // 2. Handle URL parsing and automatic job ingestion
     const jobUrl = extractUrlFromTelegramMessage(text);
     if (!jobUrl) {
       return NextResponse.json({ ok: true });
@@ -94,7 +92,6 @@ export async function POST(req: Request) {
       companyName = scraped.companyName;
       jobDescription = scraped.jobDescription || "";
     } catch {
-      // Fallback if target site blocks scraping
       const domain = new URL(jobUrl).hostname.replace(/^www\./, "");
       companyName = domain.split(".")[0];
       companyName = companyName.charAt(0).toUpperCase() + companyName.slice(1);

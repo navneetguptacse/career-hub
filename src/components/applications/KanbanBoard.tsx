@@ -35,7 +35,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
         return (
           <div
             key={col.id}
-            className="flex flex-col bg-[#12171F] border border-[#202937] rounded-xs w-72 min-w-[270px] max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs"
+            className="flex flex-col bg-[#12171F] border border-[#202937] rounded-xs w-72 min-w-67.5 max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs"
           >
             {/* Column Header - strictly aligned horizontal row */}
             <div className="flex items-center justify-between p-3 border-b border-[#202937] bg-[#12171F]">
@@ -51,9 +51,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             </div>
 
             {/* Column Cards Dropzone */}
-            <div className="flex-1 p-2.5 space-y-2.5 overflow-y-auto bg-[#0A0D12]/30 min-h-60">
+            <div className="flex-1 p-2.5 space-y-2.5 overflow-y-auto bg-[#3178C6]/3 min-h-60">
               {columnJobs.length === 0 ? (
-                <div className="h-32 flex flex-col items-center justify-center border border-dashed border-[#202937] rounded-xs text-[#64748B] text-xs bg-[#0A0D12]/20 select-none">
+                <div className="h-32 flex flex-col items-center justify-center border border-dashed border-[#3178C6]/25 rounded-xs text-[#3178C6] text-xs font-medium bg-[#3178C6]/5 select-none">
                   <span>No applications</span>
                 </div>
               ) : (

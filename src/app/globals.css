@@ -107,9 +107,21 @@ html.light .bg-\[\#0a0d12\] {
   background-color: #f8fafc !important;
 }
 
+html.light .bg-\[\#0E131A\],
+html.light .bg-\[\#0e131a\] {
+  background-color: #f1f5f9 !important;
+}
+
 html.light .bg-\[\#12171F\],
 html.light .bg-\[\#12171f\] {
   background-color: #ffffff !important;
+}
+
+html.light .bg-\[\#12171F\]\/80,
+html.light .bg-\[\#12171f\]\/80,
+html.light .bg-\[\#12171F\]\/90,
+html.light .bg-\[\#12171f\]\/90 {
+  background-color: rgba(255, 255, 255, 0.88) !important;
 }
 
 html.light .bg-\[\#18202C\],
@@ -142,6 +154,47 @@ html.light .text-\[\#94a3b8\] {
 html.light .text-\[\#64748B\],
 html.light .text-\[\#64748b\] {
   color: #64748b !important;
+}
+
+html.light .text-\[\#5499EB\],
+html.light .text-\[\#5499eb\] {
+  color: #235a97 !important;
+}
+
+html.light .text-\[\#34D399\],
+html.light .text-\[\#34d399\] {
+  color: #059669 !important;
+}
+
+html.light .text-\[\#FACC15\],
+html.light .text-\[\#facc15\] {
+  color: #d97706 !important;
+}
+
+html.light .bg-\[\#3178C6\]\/15,
+html.light .bg-\[\#3178C6\]\/20 {
+  background-color: rgba(49, 120, 198, 0.12) !important;
+}
+
+html.light .border-\[\#3178C6\]\/30,
+html.light .border-\[\#3178C6\]\/40 {
+  border-color: rgba(49, 120, 198, 0.35) !important;
+}
+
+html.light .bg-\[\#10B981\]\/20 {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+html.light .border-\[\#10B981\]\/40 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html.light .bg-\[\#EAB308\]\/20 {
+  background-color: rgba(234, 179, 8, 0.12) !important;
+}
+
+html.light .border-\[\#EAB308\]\/40 {
+  border-color: rgba(234, 179, 8, 0.35) !important;
 }
 
 /* Light mode hover state overrides - replaces dark hover with crisp subtle light hover */

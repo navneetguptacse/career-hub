@@ -30,7 +30,6 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   const pathname = usePathname();
   const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Close mobile drawer on route transition without cascading effect renders
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
     setIsMobileOpen(false);

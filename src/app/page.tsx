@@ -5,8 +5,8 @@ import {
   BarChart3,
   CheckCircle2,
   Kanban,
+  LockKeyhole,
   Send,
-  Sparkles,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
@@ -44,9 +44,9 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center max-w-4xl mx-auto space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#3178C6]/15 border border-[#3178C6]/30 text-[#5499EB] text-xs font-mono rounded-xs">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Precision Engineering • TypeScript Blue Design</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#3178C6]/15 border border-[#3178C6]/30 text-[#5499EB] text-xs font-mono font-semibold rounded-xs">
+          <LockKeyhole className="w-3 h-3" strokeWidth={2.5} />
+          <span>Career Hub – Powered by Telegram</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#F1F5F9] leading-tight">

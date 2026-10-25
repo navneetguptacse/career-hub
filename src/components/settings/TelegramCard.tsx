@@ -134,10 +134,10 @@ export const TelegramCard: React.FC = () => {
         <div className="space-y-4">
           <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
             <span className="text-xs font-medium text-[#94A3B8] block">
-              Your Secure Pairing Command:
+              Secure Pairing Command:
             </span>
             <div className="flex items-center gap-2">
-              <code className="flex-1 h-9 px-3 flex items-center bg-[#12171F] border border-[#202937] rounded-xs font-mono text-xs text-[#5499EB] truncate">
+              <code className="flex-1 h-9 px-3 flex items-center bg-[#12171F] border border-[#202937] rounded-xs font-mono font-semibold text-xs text-[#5499EB] truncate">
                 {isLoading
                   ? "Generating..."
                   : `/link ${telegramStatus?.pairToken || "PAIR-XXXXXX"}`}
@@ -166,7 +166,7 @@ export const TelegramCard: React.FC = () => {
               <li>Open your Telegram bot client or add your bot to a group.</li>
               <li>
                 Send the pairing command copied above:{" "}
-                <code className="text-[#5499EB] font-mono">
+                <code className="text-[#5499EB] font-mono font-semibold">
                   /link {telegramStatus?.pairToken}
                 </code>
               </li>

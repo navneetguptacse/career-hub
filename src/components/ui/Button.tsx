@@ -34,13 +34,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ghost: "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C]",
     };
 
-    // Standardized strict uniform button heights across the entire application
     const sizeStyles = {
       sm: "h-8 px-3 text-xs gap-1.5",
-      md: "h-9 px-4 text-sm gap-2",
+      md: "h-9 px-4 text-xs gap-2",
       lg: "h-10 px-5 text-sm gap-2",
       "icon-sm": "h-8 w-8 p-0 text-xs",
-      "icon-md": "h-9 w-9 p-0 text-sm",
+      "icon-md": "h-9 w-9 p-0 text-xs",
     };
 
     return (

@@ -226,7 +226,7 @@ export const UserProfileCard: React.FC = () => {
             maxLength={1000}
             onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
             placeholder="Brief statement of your technical expertise, years of experience, and career goals..."
-            className="w-full p-3 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6] transition-colors resize-none"
+            className="w-full p-3 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6] transition-colors resize-none"
           />
         </div>
 

@@ -35,7 +35,6 @@ export default function RegisterPage() {
         throw new Error(data.error || "Failed to create account");
       }
 
-      // Auto sign-in immediately upon registration
       const signInRes = await signIn("credentials", {
         redirect: false,
         email,
