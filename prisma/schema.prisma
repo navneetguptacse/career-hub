@@ -56,10 +56,6 @@ model User {
   role              Role                  @default(USER)
   telegramChatId    String?               @unique
   telegramPairToken String?               @unique
-  llmProvider       String?               @default("GEMINI")
-  llmApiKeyHash     String?               @db.Text
-  llmEndpoint       String?
-  llmModel          String?
   accounts          Account[]
   sessions          Session[]
   applications      JobApplication[]

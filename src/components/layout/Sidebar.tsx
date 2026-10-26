@@ -7,10 +7,10 @@ import { useSession } from "next-auth/react";
 import {
   BarChart3,
   BookOpen,
-  Briefcase,
   ChevronLeft,
   ChevronRight,
-  LayoutDashboard,
+  Layers2,
+  LayoutPanelLeft,
   Send,
   Settings,
   ShieldAlert,
@@ -30,13 +30,13 @@ export const Sidebar: React.FC = () => {
     {
       name: "Dashboard",
       href: "/dashboard",
-      icon: LayoutDashboard,
+      icon: LayoutPanelLeft,
       active: pathname === "/dashboard",
     },
     {
       name: "Applications",
       href: "/applications",
-      icon: Briefcase,
+      icon: Layers2,
       active: pathname.startsWith("/applications"),
     },
     {

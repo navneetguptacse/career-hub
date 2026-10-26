@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { scrapeJobUrl } from "@/lib/scraper";
-import { decryptApiKey } from "@/lib/encryption";
-import type { UserLlmConfig } from "@/lib/ai-extractor";
 import {
   sendTelegramMessage,
   extractUrlFromTelegramMessage,
@@ -88,21 +86,8 @@ export async function POST(req: Request) {
       "FULL_TIME";
     let currency = "USD";
 
-    let userConfig: UserLlmConfig | undefined;
-    if (user.llmApiKeyHash) {
-      const decrypted = decryptApiKey(user.llmApiKeyHash);
-      if (decrypted) {
-        userConfig = {
-          provider: user.llmProvider,
-          apiKey: decrypted,
-          endpoint: user.llmEndpoint,
-          model: user.llmModel,
-        };
-      }
-    }
-
     try {
-      const scraped = await scrapeJobUrl(jobUrl, userConfig);
+      const scraped = await scrapeJobUrl(jobUrl);
       jobTitle = scraped.jobTitle;
       companyName = scraped.companyName;
       jobDescription = scraped.jobDescription || "";

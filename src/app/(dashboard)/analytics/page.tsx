@@ -137,9 +137,7 @@ export default function AnalyticsPage() {
               <BarChart className="w-4 h-4 text-[#3178C6]" />
               Pipeline Funnel Breakdown
             </h3>
-            <span className="text-xs font-mono text-[#94A3B8]">
-              {total} Total
-            </span>
+            <span className="text-xs text-[#94A3B8]">{total} Total</span>
           </div>
 
           <div className="space-y-3">

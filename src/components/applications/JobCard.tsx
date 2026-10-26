@@ -8,7 +8,7 @@ import {
   MapPin,
   Trash2,
 } from "lucide-react";
-import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
+import { type ApplicationStatusType } from "@/components/ui/Badge";
 import { formatDate, cn } from "@/lib/utils";
 
 export interface JobApplicationItem {
@@ -111,7 +111,6 @@ export const JobCard: React.FC<JobCardProps> = ({
                   <span className="truncate max-w-32.5">{job.location}</span>
                 </span>
               )}
-              <Badge status={job.locationType} size="sm" />
             </div>
           </div>
         </div>

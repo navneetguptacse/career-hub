@@ -1,11 +1,17 @@
 import * as cheerio from "cheerio";
-import {
-  extractJobDetailsWithAI,
-  type ExtractedJobData,
-  type UserLlmConfig,
-} from "./ai-extractor";
 
-export type ScrapedJobData = ExtractedJobData;
+export interface ScrapedJobData {
+  jobTitle: string;
+  companyName: string;
+  location?: string | null;
+  locationType?: "REMOTE" | "HYBRID" | "ONSITE";
+  employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  currency?: string;
+  jobDescription?: string;
+  jobUrl: string;
+}
 
 function cleanText(text?: string | null): string {
   if (!text) return "";
@@ -46,10 +52,7 @@ function extractCompanyAndTitle(
   return { company, title };
 }
 
-export async function scrapeJobUrl(
-  url: string,
-  userConfig?: UserLlmConfig
-): Promise<ScrapedJobData> {
+export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
   const parsedUrl = new URL(url);
   const host = parsedUrl.hostname.toLowerCase().replace(/^www\./, "");
   const segments = parsedUrl.pathname.split("/").filter(Boolean);
@@ -82,7 +85,6 @@ export async function scrapeJobUrl(
     }
   }
 
-  // Infer role: find segment that isn't purely numeric or arbitrary IDs
   const nonIdSegments = segments.filter(
     (s) =>
       !/^[0-9a-f-]{5,}$/i.test(s) &&
@@ -108,7 +110,7 @@ export async function scrapeJobUrl(
           .trim()
       : "Software Engineer";
 
-  let baseline: ScrapedJobData = {
+  let result: ScrapedJobData = {
     jobTitle: inferredRole || "Software Engineer",
     companyName: detectedCompany || "Company",
     jobDescription: "",
@@ -120,8 +122,6 @@ export async function scrapeJobUrl(
     salaryMax: null,
     currency: "USD",
   };
-
-  let pageText = "";
 
   try {
     const response = await fetch(url, {
@@ -155,24 +155,23 @@ export async function scrapeJobUrl(
         $('meta[name="description"]').attr("content");
       const jobDescription = cleanText(ogDescription);
 
-      $("script, style, noscript, iframe, svg").remove();
-      pageText = cleanText($("body").text());
+      const fullText = (rawTitle + " " + jobDescription).toLowerCase();
+      let locationType: "REMOTE" | "HYBRID" | "ONSITE" = "REMOTE";
+      if (fullText.includes("hybrid")) locationType = "HYBRID";
+      else if (fullText.includes("on-site") || fullText.includes("onsite"))
+        locationType = "ONSITE";
 
-      baseline = {
-        ...baseline,
-        jobTitle: title || baseline.jobTitle,
-        companyName: company || baseline.companyName,
+      result = {
+        ...result,
+        jobTitle: title || result.jobTitle,
+        companyName: company || result.companyName,
         jobDescription: jobDescription.slice(0, 2000),
+        locationType,
       };
     }
-  } catch {
-    // Proceed with URL analysis & AI inference if direct HTML fetch fails
+  } catch (err) {
+    console.warn("Direct HTML scrape fallback used:", err);
   }
 
-  const contentToAnalyze =
-    pageText && pageText.length > 50
-      ? pageText
-      : `Job Link URL: ${url}\nDomain: ${parsedUrl.hostname}\nPath: ${parsedUrl.pathname}\nTitle: ${baseline.jobTitle}\nCompany: ${baseline.companyName}`;
-
-  return await extractJobDetailsWithAI(contentToAnalyze, baseline, userConfig);
+  return result;
 }
