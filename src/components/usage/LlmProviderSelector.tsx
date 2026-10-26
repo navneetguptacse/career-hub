@@ -74,7 +74,6 @@ export const LlmProviderSelector: React.FC<LlmProviderSelectorProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold">{p.name}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-[#5499EB]" />}
               </div>
               <p className="text-[11px] text-[#64748B] mt-1 line-clamp-2">
                 {p.desc}

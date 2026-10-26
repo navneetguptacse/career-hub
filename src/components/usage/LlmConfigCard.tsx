@@ -269,9 +269,8 @@ export const LlmConfigCard: React.FC = () => {
           />
 
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs flex items-start gap-2.5">
-            <Lock className="w-4 h-4 text-[#3178C6] shrink-0 mt-0.5" />
+            <Lock className="w-3.5 h-3.5 text-[#3178C6] shrink-0 mt-[0.5px]" />
             <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-              <strong className="text-[#F1F5F9]">Security Architecture:</strong>{" "}
               All API keys are cryptographically hashed and encrypted using
               AES-256-GCM before database storage. Plaintext keys are never
               stored, logged, or returned over the wire.

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSession } from "next-auth/react";
-import { ShieldCheck, User } from "lucide-react";
+import { ShieldCheck, User, UserRound } from "lucide-react";
 import { UserProfileCard } from "@/components/settings/UserProfileCard";
 import { AppearanceCard } from "@/components/settings/AppearanceCard";
 import { TelegramCard } from "@/components/settings/TelegramCard";
@@ -35,10 +35,20 @@ export default function SettingsPage() {
 
       {/* System Diagnostics & Authentication Details */}
       <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
-        <h2 className="text-sm font-semibold text-[#F1F5F9] border-b border-[#202937] pb-3 flex items-center gap-2">
-          <User className="w-4 h-4 text-[#3178C6]" />
-          Account Details
-        </h2>
+        <div className="flex items-start gap-3 border-b border-[#202937] pb-4">
+          <div className="w-10 h-10 bg-[#3178C6]/20 border border-[#3178C6]/40 rounded-xs flex items-center justify-center text-[#5499EB] shrink-0">
+            <UserRound className="w-4 h-4" />
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold text-[#F1F5F9]">
+              Account Details
+            </h2>
+            <p className="text-xs text-[#94A3B8] mt-0.5">
+              Manage your account information and access permissions.
+            </p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1">

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-mono:
@@ -151,6 +152,16 @@ html.light .text-\[\#e2e8f0\] {
   color: #0f172a !important;
 }
 
+html.light .text-\[\#CBD5E1\],
+html.light .text-\[\#cbd5e1\] {
+  color: #334155 !important;
+}
+
+html.light .bg-\[\#16263D\]\/40,
+html.light .bg-\[\#16263d\]\/40 {
+  background-color: #f8fafc !important;
+}
+
 html.light .text-\[\#94A3B8\],
 html.light .text-\[\#94a3b8\] {
   color: #475569 !important;
@@ -214,9 +225,38 @@ html.light .border-\[\#EAB308\]\/40 {
 
 /* Light mode hover state overrides - replaces dark hover with crisp subtle light hover */
 html.light .hover\:bg-\[\#18202C\]:hover,
-html.light .hover\:bg-\[\#18202c\]:hover {
+html.light .hover\:bg-\[\#18202c\]:hover,
+html.light .hover\:bg-\[\#18202C\]\/60:hover,
+html.light .hover\:bg-\[\#18202c\]\/60:hover {
   background-color: #f1f5f9 !important;
+}
+
+html.light tr.hover\:bg-\[\#18202C\]:hover td,
+html.light tr.hover\:bg-\[\#18202c\]:hover td,
+html.light tr.hover\:bg-\[\#18202C\]\/60:hover td,
+html.light tr.hover\:bg-\[\#18202c\]\/60:hover td {
   color: #0f172a !important;
+}
+
+html.light tr.hover\:bg-\[\#18202C\]:hover td span,
+html.light tr.hover\:bg-\[\#18202c\]:hover td span,
+html.light tr.hover\:bg-\[\#18202C\]\/60:hover td span,
+html.light tr.hover\:bg-\[\#18202c\]\/60:hover td span {
+  color: #0f172a !important;
+}
+
+html.light tr.hover\:bg-\[\#18202C\]:hover td .text-\[\#5499EB\],
+html.light tr.hover\:bg-\[\#18202c\]:hover td .text-\[\#5499eb\],
+html.light tr.hover\:bg-\[\#18202C\]\/60:hover td .text-\[\#5499EB\],
+html.light tr.hover\:bg-\[\#18202c\]\/60:hover td .text-\[\#5499eb\] {
+  color: #235a97 !important;
+}
+
+html.dark tr.hover\:bg-\[\#18202C\]:hover td,
+html.dark tr.hover\:bg-\[\#18202c\]:hover td,
+html.dark tr.hover\:bg-\[\#18202C\]\/60:hover td,
+html.dark tr.hover\:bg-\[\#18202c\]\/60:hover td {
+  color: #f1f5f9 !important;
 }
 
 html.light .hover\:bg-\[\#202937\]:hover,

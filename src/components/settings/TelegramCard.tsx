@@ -162,19 +162,12 @@ export const TelegramCard: React.FC = () => {
           </div>
 
           <div className="space-y-2 text-xs text-[#94A3B8]">
-            <div className="font-semibold text-[#F1F5F9]">
-              Setup Instructions:
-            </div>
+            <span className="text-xs font-medium text-[#94A3B8] block">
+              Setup Instructions
+            </span>
             <ol className="list-decimal list-inside space-y-1 text-[#94A3B8] pl-1">
               <li>Open your Telegram bot client or add your bot to a group.</li>
-              <li>
-                Send the pairing command copied above:{" "}
-                <code className="text-[#5499EB] font-mono font-semibold">
-                  {isLoading
-                    ? "Generating..."
-                    : `/link ${telegramStatus?.pairToken || "PAIR-XXXXXX"}`}
-                </code>
-              </li>
+              <li>Send the pairing command copied above.</li>
               <li>
                 Once confirmed, drop any job posting URL to immediately populate
                 your Kanban board.

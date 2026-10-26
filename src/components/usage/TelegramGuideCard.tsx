@@ -64,9 +64,6 @@ export const TelegramGuideCard: React.FC = () => {
           <div>
             <h2 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2">
               Telegram Bot Integration Guide
-              <span className="text-[10px] font-mono px-2 py-0.5 bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/40 rounded-xs font-medium">
-                Publicly Available
-              </span>
             </h2>
             <p className="text-xs text-[#94A3B8] mt-0.5">
               Automate link ingestion into your personal pipeline from direct
@@ -93,10 +90,11 @@ export const TelegramGuideCard: React.FC = () => {
       <div className="p-4 bg-[#0A0D12] border border-[#3178C6]/40 rounded-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-[#F1F5F9]">
+            <h3 className="text-xs flex gap-1.5 items-center font-semibold text-[#F1F5F9]">
+              <Terminal className="w-4 h-4 text-[#3178C6]" />
               Yes, the bot is publicly available to anyone on Telegram.
             </h3>
-            <p className="text-xs text-[#CBD5E1] mt-1 leading-relaxed">
+            <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
               Anyone in the world can search for{" "}
               <code className="text-[#5499EB] font-mono font-semibold bg-[#12171F] px-1.5 py-0.5 border border-[#202937] rounded-xs">
                 @careerhub_tracker_bot
@@ -133,27 +131,27 @@ export const TelegramGuideCard: React.FC = () => {
       </div>
 
       {/* Quick Pairing Token Card */}
-      <div className="p-4 bg-[#16263D]/40 border border-[#3178C6]/50 rounded-xs">
+      <div className="p-4 bg-[#0A0D12] border border-[#3178C6]/40 rounded-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <div className="text-xs font-semibold text-[#F1F5F9] flex items-center gap-1.5">
+          <div>
+            <h3 className="text-xs flex gap-1.5 items-center font-semibold text-[#F1F5F9]">
               <Terminal className="w-4 h-4 text-[#3178C6]" />
               Your Personal Linking Command
-            </div>
-            <p className="text-xs text-[#94A3B8]">
+            </h3>
+            <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
               Send this exact command to the bot in a direct message or group to
-              link your account:
+              link your account:{" "}
+              <span className="font-mono text-[10px] font-semibold text-[#5499EB]">
+                {isLoadingToken
+                  ? "Generating..."
+                  : pairToken
+                    ? `/link ${pairToken}`
+                    : "/link <PAIR-CODE>"}
+              </span>
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <code className="px-3 py-1.5 text-xs font-mono font-bold bg-[#0A0D12] text-[#5499EB] border border-[#3178C6]/40 rounded-xs">
-              {isLoadingToken
-                ? "Loading code..."
-                : pairToken
-                  ? `/link ${pairToken}`
-                  : "/link <PAIR-CODE>"}
-            </code>
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
             <Button
               type="button"
               variant="primary"
@@ -163,11 +161,11 @@ export const TelegramGuideCard: React.FC = () => {
               className="h-8 text-xs px-3"
             >
               {isCopied ? (
-                <Check className="w-3.5 h-3.5 text-[#10B981]" />
+                <Check className="w-3.5 h-3.5 text-white" />
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}
-              <span>{isCopied ? "Copied" : "Copy Command"}</span>
+              <span>{isCopied ? "Copied" : "Copy"}</span>
             </Button>
           </div>
         </div>
@@ -186,39 +184,40 @@ export const TelegramGuideCard: React.FC = () => {
               <div className="w-6 h-6 rounded-xs bg-[#3178C6]/20 border border-[#3178C6]/40 flex items-center justify-center text-[#5499EB]">
                 <MessageSquare className="w-3.5 h-3.5" />
               </div>
-              <span>1. In Private Direct Messages (1-on-1)</span>
+              <span>1. In Private Direct Messages</span>
             </div>
 
-            <div className="text-xs text-[#CBD5E1] space-y-2 leading-relaxed">
+            <div className="text-xs text-[#334155] dark:text-[#CBD5E1] space-y-2 leading-relaxed">
               <p>
                 Any person can start a direct chat with{" "}
-                <strong className="text-[#F1F5F9] font-mono">
+                <strong className="text-[#0F172A] dark:text-[#F1F5F9] font-mono">
                   @careerhub_tracker_bot
                 </strong>
                 .
               </p>
               <p>
                 If they send{" "}
-                <code className="text-[#5499EB] font-mono font-semibold">
+                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
                   /start
                 </code>{" "}
                 without linking, the bot welcomes them and instructs them to get
                 a code from CareerHub:
               </p>
-              <div className="p-2.5 bg-[#12171F] border-l-2 border-[#3178C6] border-y border-r rounded-xs text-xs text-[#CBD5E1] italic">
-                &ldquo;Welcome to CareerHub Bot! To connect this chat with your
+              <div className="p-2.5 bg-[#12171F] border-l-2 border-[#3178C6] border-y border-r rounded-xs text-xs text-[#334155] dark:text-[#CBD5E1]">
+                Welcome to CareerHub Bot! To connect this chat with your
                 account, please send:{" "}
-                <span className="font-mono text-[#5499EB] not-italic font-semibold">
+                <span className="font-mono text-[10px] text-[#1D4ED8] dark:text-[#5499EB] not-italic font-semibold">
                   /link PAIR-XXXXXX
                 </span>
-                &rdquo;
               </div>
               <p>
                 Once they create an account on your website, copy their code
                 from{" "}
-                <span className="text-[#F1F5F9] font-medium">/settings</span>,
-                and send{" "}
-                <code className="text-[#5499EB] font-mono font-semibold">
+                <span className="text-[#0F172A] dark:text-[#F1F5F9] font-medium font-mono">
+                  /settings
+                </span>
+                , and send{" "}
+                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
                   /link PAIR-XXXXXX
                 </code>
                 , the bot links specifically to them.
@@ -235,17 +234,17 @@ export const TelegramGuideCard: React.FC = () => {
               <span>2. In Groups</span>
             </div>
 
-            <div className="text-xs text-[#CBD5E1] space-y-2 leading-relaxed">
+            <div className="text-xs text-[#334155] dark:text-[#CBD5E1] space-y-2 leading-relaxed">
               <p>
                 Any user can add{" "}
-                <strong className="text-[#F1F5F9] font-mono">
+                <strong className="text-[#0F172A] dark:text-[#F1F5F9] font-mono">
                   @careerhub_tracker_bot
                 </strong>{" "}
                 to their own private or public job search group.
               </p>
               <p>
                 Sending{" "}
-                <code className="text-[#5499EB] font-mono font-semibold">
+                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
                   /link PAIR-XXXXXX
                 </code>{" "}
                 in that group connects the group chat to their CareerHub
@@ -268,11 +267,11 @@ export const TelegramGuideCard: React.FC = () => {
             <span>3. Security &amp; Privacy</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-[#CBD5E1] leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-[#334155] dark:text-[#CBD5E1] leading-relaxed">
             <div className="p-3 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
               <div className="font-semibold text-[#F1F5F9] flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-[#10B981]" />
-                <span>Zero Database Pollution</span>
+                <span>No Database Pollution</span>
               </div>
               <p className="text-[#94A3B8]">
                 An unlinked stranger cannot pollute your database: if someone
