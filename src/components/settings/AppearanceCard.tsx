@@ -3,10 +3,15 @@
 import React from "react";
 import { Moon, Sun, Terminal, Eclipse } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useMounted } from "@/lib/useMounted";
 import { cn } from "@/lib/utils";
 
 export const AppearanceCard: React.FC = () => {
   const { theme, setTheme } = useTheme();
+  const mounted = useMounted();
+
+  const isDark = mounted ? theme === "dark" : true;
+  const isLight = mounted ? theme === "light" : false;
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-5">
@@ -35,7 +40,7 @@ export const AppearanceCard: React.FC = () => {
               onClick={() => setTheme("dark")}
               className={cn(
                 "h-9 px-4 flex items-center justify-center gap-2 text-xs font-medium rounded-xs border transition-colors",
-                theme === "dark"
+                isDark
                   ? "bg-[#3178C6] text-white border-[#3178C6] shadow-xs"
                   : "bg-[#0A0D12] text-[#94A3B8] border-[#202937] hover:border-[#3178C6]/50 hover:text-[#F1F5F9]"
               )}
@@ -49,7 +54,7 @@ export const AppearanceCard: React.FC = () => {
               onClick={() => setTheme("light")}
               className={cn(
                 "h-9 px-4 flex items-center justify-center gap-2 text-xs font-medium rounded-xs border transition-colors",
-                theme === "light"
+                isLight
                   ? "bg-[#3178C6] text-white border-[#3178C6] shadow-xs"
                   : "bg-[#0A0D12] text-[#94A3B8] border-[#202937] hover:border-[#3178C6]/50 hover:text-[#F1F5F9]"
               )}

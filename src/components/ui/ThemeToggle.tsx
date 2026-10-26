@@ -3,6 +3,7 @@
 import React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useMounted } from "@/lib/useMounted";
 import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
@@ -17,6 +18,31 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
 }) => {
   const { theme, toggleTheme } = useTheme();
+  const mounted = useMounted();
+
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        aria-label="Toggle theme"
+        disabled
+        className={cn(
+          "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none border-[#202937] bg-[#12171F] opacity-70 cursor-default",
+          size === "sm" ? "h-8 px-2.5" : "h-9 px-3",
+          className
+        )}
+      >
+        <span
+          className={cn(
+            size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4",
+            "inline-block shrink-0"
+          )}
+        />
+        {showLabel && <span className="capitalize">Theme</span>}
+      </button>
+    );
+  }
+
   const isDark = theme === "dark";
 
   return (

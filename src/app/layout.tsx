@@ -22,6 +22,19 @@ export const metadata: Metadata = {
     "Track, organize, and automate job applications with Kanban boards, Telegram bot ingestion, and real-time career analytics.",
 };
 
+const themeScript = `(function() {
+  try {
+    var stored = localStorage.getItem('careerhub_theme');
+    if (stored === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    }
+  } catch (e) {}
+})();`;
+
 export default function RootLayout({
   children,
 }: {
@@ -33,6 +46,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${robotoMono.variable} dark`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-screen font-sans antialiased selection:bg-[#3178C6] selection:text-white transition-colors duration-150">
         <SessionProvider>
           <ThemeProvider>{children}</ThemeProvider>

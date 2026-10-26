@@ -42,25 +42,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      {/* Script to prevent flash of wrong theme before hydration */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              try {
-                var stored = localStorage.getItem('careerhub_theme');
-                if (stored === 'light') {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.classList.add('light');
-                } else {
-                  document.documentElement.classList.add('dark');
-                  document.documentElement.classList.remove('light');
-                }
-              } catch (e) {}
-            })();
-          `,
-        }}
-      />
       {children}
     </ThemeContext.Provider>
   );

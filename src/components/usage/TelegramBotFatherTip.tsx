@@ -28,10 +28,8 @@ export const TelegramBotFatherTip: React.FC = () => {
           </span>
           <span className="pt-0.5">
             Open{" "}
-            <strong className="text-[#F1F5F9] font-mono">
-              @BotFather
-            </strong>{" "}
-            on Telegram.
+            <strong className="text-[#F1F5F9] font-mono">@BotFather</strong> on
+            Telegram.
           </span>
         </div>
 
@@ -42,9 +40,7 @@ export const TelegramBotFatherTip: React.FC = () => {
           </span>
           <div className="pt-0.5 flex flex-wrap items-center gap-1.5">
             <span>Send</span>
-            <strong className="text-[#F1F5F9] font-mono">
-              /setprivacy
-            </strong>
+            <strong className="text-[#F1F5F9] font-mono">/setprivacy</strong>
             <ChevronRight className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
             <span>Select</span>
             <strong className="text-[#F1F5F9] font-mono">
@@ -52,9 +48,7 @@ export const TelegramBotFatherTip: React.FC = () => {
             </strong>
             <ChevronRight className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
             <span>Choose</span>
-            <strong className="text-[#F1F5F9] font-mono">
-              Disable
-            </strong>
+            <strong className="text-[#F1F5F9] font-mono">Disable</strong>
           </div>
         </div>
 
