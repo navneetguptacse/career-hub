@@ -62,6 +62,30 @@ const statusConfig: Record<
     text: "text-[#475569] dark:text-[#94A3B8]",
     border: "border-[#64748B]/30",
   },
+  REMOTE: {
+    label: "Remote",
+    bg: "bg-[#3178C6]/10",
+    text: "text-[#5499EB]",
+    border: "border-[#3178C6]/30",
+  },
+  HYBRID: {
+    label: "Hybrid",
+    bg: "bg-[#6366F1]/10",
+    text: "text-[#818CF8]",
+    border: "border-[#6366F1]/30",
+  },
+  ONSITE: {
+    label: "Onsite",
+    bg: "bg-[#64748B]/10",
+    text: "text-[#94A3B8]",
+    border: "border-[#64748B]/30",
+  },
+  "Bot Webhook": {
+    label: "Bot Webhook",
+    bg: "bg-[#3178C6]/15",
+    text: "text-[#5499EB]",
+    border: "border-[#3178C6]/40",
+  },
 };
 
 export const Badge: React.FC<BadgeProps> = ({

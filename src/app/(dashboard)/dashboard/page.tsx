@@ -145,9 +145,11 @@ export default function DashboardPage() {
           <div>
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-1.5">
               <span>Automate Pipeline via Telegram</span>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 bg-[#3178C6] text-white rounded-xs">
-                Bot Webhook
-              </span>
+              <Badge
+                status="Bot Webhook"
+                size="sm"
+                className="text-[#3178C6]"
+              />
             </h3>
             <p className="text-xs text-[#94A3B8] mt-0.5">
               Link your Telegram group to automatically ingest job postings
@@ -196,8 +198,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-xs text-[#94A3B8] mt-0.5 flex items-center gap-2">
                     <span>{app.jobTitle}</span>
-                    <span className="text-[#64748B]">•</span>
-                    <span>{app.locationType}</span>
+                    <Badge status={app.locationType} size="sm" />
                   </div>
                 </div>
 

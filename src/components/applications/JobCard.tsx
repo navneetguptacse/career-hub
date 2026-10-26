@@ -9,7 +9,7 @@ import {
   MapPin,
   Trash2,
 } from "lucide-react";
-import { type ApplicationStatusType } from "@/components/ui/Badge";
+import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
 export interface JobApplicationItem {
@@ -112,9 +112,7 @@ export const JobCard: React.FC<JobCardProps> = ({
                   <span className="truncate max-w-32.5">{job.location}</span>
                 </span>
               )}
-              <span className="px-1.5 py-0.5 bg-[#18202C] border border-[#202937] text-[#475569] dark:text-[#94A3B8] rounded-xs text-[10px] font-mono tracking-wide uppercase">
-                {job.locationType}
-              </span>
+              <Badge status={job.locationType} size="sm" />
             </div>
           </div>
         </div>
@@ -152,7 +150,7 @@ export const JobCard: React.FC<JobCardProps> = ({
       )}
 
       <div className="pt-2 border-t border-[#202937] flex items-center justify-between">
-        <div className="text-[10px] text-[#64748B]">
+        <div className="text-[10px] text-[#64748B] font-medium">
           {formatDate(job.appliedDate || job.createdAt)}
         </div>
 
