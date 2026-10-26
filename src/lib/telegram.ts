@@ -26,6 +26,22 @@ export async function sendTelegramMessage(
       }
     );
     const data = await response.json();
+    if (!data.ok && data.description?.includes("can't parse entities")) {
+      const retryRes = await fetch(
+        `https://api.telegram.org/bot${token}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text,
+            reply_markup: replyMarkup,
+          }),
+        }
+      );
+      const retryData = await retryRes.json();
+      return retryData.ok === true;
+    }
     return data.ok === true;
   } catch (error) {
     console.error("Failed to send Telegram message:", error);
