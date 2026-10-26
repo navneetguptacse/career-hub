@@ -104,7 +104,9 @@
 
 /* Precision Light Mode Overrides for High Contrast */
 html.light .bg-\[\#0A0D12\],
-html.light .bg-\[\#0a0d12\] {
+html.light .bg-\[\#0a0d12\],
+html.light .bg-\[\#0A0D12\]\/60,
+html.light .bg-\[\#0a0d12\]\/60 {
   background-color: #f8fafc !important;
 }
 
