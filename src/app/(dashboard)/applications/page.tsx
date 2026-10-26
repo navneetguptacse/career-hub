@@ -10,44 +10,37 @@ import {
 } from "lucide-react";
 import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
-import { JobProfileModal } from "@/components/applications/JobProfileModal";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
 
 export default function ApplicationsPage() {
   const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
   const [applications, setApplications] = useState<JobApplicationItem[]>([]);
-  const [selectedJob, setSelectedJob] = useState<JobApplicationItem | null>(
-    null
-  );
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
-  const fetchApplications = useCallback(
-    async (isBackground = false) => {
-      try {
-        const params = new URLSearchParams();
-        if (statusFilter !== "ALL") params.append("status", statusFilter);
-        if (search.trim()) params.append("search", search.trim());
+  const fetchApplications = useCallback(async () => {
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter !== "ALL") params.append("status", statusFilter);
+      if (search.trim()) params.append("search", search.trim());
 
-        const res = await fetch(`/api/applications?${params.toString()}`);
-        if (res.ok) {
-          const data = await res.json();
-          setApplications(data.applications || []);
-        }
-      } catch (err) {
-        console.error("Failed to fetch applications:", err);
-      } finally {
-        if (!isBackground) setIsLoading(false);
+      const res = await fetch(`/api/applications?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        setApplications(data.applications || []);
       }
-    },
-    [search, statusFilter]
-  );
+    } catch (err) {
+      console.error("Failed to fetch applications:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [search, statusFilter]);
 
   useEffect(() => {
     let isMounted = true;
-    async function load(isBackground = false) {
+    async function load() {
       try {
         const params = new URLSearchParams();
         if (statusFilter !== "ALL") params.append("status", statusFilter);
@@ -61,35 +54,19 @@ export default function ApplicationsPage() {
       } catch (err) {
         console.error("Failed to load applications:", err);
       } finally {
-        if (isMounted && !isBackground) setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     }
 
     load();
 
-    // Live background polling every 4 seconds for instant Telegram ingestion reflection
-    const pollTimer = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        load(true);
-      }
-    }, 4000);
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        load(true);
-      }
-    };
-
     const handleRefresh = () => {
-      load(false);
+      load();
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("careerhub:refresh", handleRefresh);
     return () => {
       isMounted = false;
-      clearInterval(pollTimer);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("careerhub:refresh", handleRefresh);
     };
   }, [search, statusFilter]);
@@ -215,41 +192,14 @@ export default function ApplicationsPage() {
           applications={applications}
           onStatusChange={handleStatusChange}
           onDelete={handleDelete}
-          onSelect={(job) => setSelectedJob(job)}
         />
       ) : (
         <ApplicationTable
           applications={applications}
           onStatusChange={handleStatusChange}
           onDelete={handleDelete}
-          onSelect={(job) => setSelectedJob(job)}
         />
       )}
-
-      {/* Complete Job Profile Modal */}
-      <JobProfileModal
-        job={selectedJob}
-        isOpen={Boolean(selectedJob)}
-        onClose={() => setSelectedJob(null)}
-        onStatusChange={(id, newStatus) => {
-          handleStatusChange(id, newStatus);
-          setSelectedJob((prev) =>
-            prev && prev.id === id ? { ...prev, status: newStatus } : prev
-          );
-        }}
-        onDelete={(id) => {
-          handleDelete(id);
-          setSelectedJob(null);
-        }}
-        onUpdated={(updated) => {
-          setApplications((prev) =>
-            prev.map((app) => (app.id === updated.id ? updated : app))
-          );
-          setSelectedJob((prev) =>
-            prev && prev.id === updated.id ? updated : prev
-          );
-        }}
-      />
     </div>
   );
 }

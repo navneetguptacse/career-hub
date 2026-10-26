@@ -27,27 +27,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(
-    null
-  );
-  const isTelegramConnected =
-    realtimeConnected ?? Boolean(user?.telegramConnected);
-
-  React.useEffect(() => {
-    const handlePaired = () => {
-      setRealtimeConnected(true);
-    };
-    const handleUnlinked = () => {
-      setRealtimeConnected(false);
-    };
-
-    window.addEventListener("careerhub:telegram-paired", handlePaired);
-    window.addEventListener("careerhub:telegram-unlinked", handleUnlinked);
-    return () => {
-      window.removeEventListener("careerhub:telegram-paired", handlePaired);
-      window.removeEventListener("careerhub:telegram-unlinked", handleUnlinked);
-    };
-  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -79,15 +58,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-2.5">
-        {/* Telegram status link - shown in theme blue only when connected */}
-        {isTelegramConnected && (
+        {/* Telegram status link */}
+        {user?.telegramConnected ? (
           <Link
             href="/settings"
-            title="Telegram Bot Connected"
-            aria-label="Telegram Bot Connected"
-            className="h-8 w-8 inline-flex items-center justify-center text-[#3178C6] bg-[#3178C6]/10 border border-[#3178C6]/30 hover:bg-[#3178C6]/20 hover:border-[#3178C6]/50 rounded-xs transition-colors shadow-xs"
+            title="Telegram Bot Paired"
+            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs font-mono"
           >
-            <Send className="w-3.5 h-3.5 text-[#3178C6]" />
+            <Send className="w-3 h-3 text-[#3178C6]" />
+          </Link>
+        ) : (
+          <Link
+            href="/settings"
+            title="Connect Telegram Bot"
+            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#94A3B8] hover:text-[#5499EB] bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors"
+          >
+            <Send className="w-3 h-3" />
           </Link>
         )}
 

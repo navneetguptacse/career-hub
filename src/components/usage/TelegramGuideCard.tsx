@@ -19,46 +19,25 @@ import { TelegramCommandsTable } from "./TelegramCommandsTable";
 
 export const TelegramGuideCard: React.FC = () => {
   const [pairToken, setPairToken] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
   const [isLoadingToken, setIsLoadingToken] = useState(true);
 
   useEffect(() => {
-    let isCancelled = false;
-    async function fetchPairStatus() {
+    async function fetchPairToken() {
       try {
         const res = await fetch("/api/telegram/pair");
-        if (res.ok && !isCancelled) {
+        if (res.ok) {
           const data = await res.json();
           setPairToken(data.pairToken || null);
-          setIsConnected(Boolean(data.connected));
         }
       } catch (err) {
         console.error("Failed to load pair token:", err);
       } finally {
-        if (!isCancelled) setIsLoadingToken(false);
+        setIsLoadingToken(false);
       }
     }
-    fetchPairStatus();
-
-    const pollInterval = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        fetchPairStatus();
-      }
-    }, 3000);
-
-    const handlePaired = () => setIsConnected(true);
-    const handleUnlinked = () => setIsConnected(false);
-
-    window.addEventListener("careerhub:telegram-paired", handlePaired);
-    window.addEventListener("careerhub:telegram-unlinked", handleUnlinked);
-    return () => {
-      isCancelled = true;
-      clearInterval(pollInterval);
-      window.removeEventListener("careerhub:telegram-paired", handlePaired);
-      window.removeEventListener("careerhub:telegram-unlinked", handleUnlinked);
-    };
+    fetchPairToken();
   }, []);
 
   const handleCopyCommand = () => {
@@ -173,28 +152,21 @@ export const TelegramGuideCard: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-            {isConnected ? (
-              <span className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-mono font-medium text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 rounded-xs">
-                <Check className="w-3.5 h-3.5" />
-                <span>Account Paired</span>
-              </span>
-            ) : (
-              <Button
-                type="button"
-                variant="primary"
-                size="sm"
-                onClick={handleCopyCommand}
-                disabled={!pairToken}
-                className="h-8 text-xs px-3"
-              >
-                {isCopied ? (
-                  <Check className="w-3.5 h-3.5 text-white" />
-                ) : (
-                  <Copy className="w-3.5 h-3.5" />
-                )}
-                <span>{isCopied ? "Copied" : "Copy"}</span>
-              </Button>
-            )}
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={handleCopyCommand}
+              disabled={!pairToken}
+              className="h-8 text-xs px-3"
+            >
+              {isCopied ? (
+                <Check className="w-3.5 h-3.5 text-white" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+              <span>{isCopied ? "Copied" : "Copy"}</span>
+            </Button>
           </div>
         </div>
       </div>

@@ -37,21 +37,12 @@ export const TelegramCard: React.FC = () => {
 
   useEffect(() => {
     let isCancelled = false;
-
-    async function loadStatus() {
+    async function load() {
       try {
         const res = await fetch("/api/telegram/pair");
         if (res.ok && !isCancelled) {
-          const data: TelegramStatus = await res.json();
-          setTelegramStatus((prev) => {
-            if (!prev?.connected && data.connected) {
-              update({ user: { telegramConnected: true } });
-              window.dispatchEvent(
-                new CustomEvent("careerhub:telegram-paired", { detail: data })
-              );
-            }
-            return data;
-          });
+          const data = await res.json();
+          setTelegramStatus(data);
         }
       } catch (err) {
         console.error("Failed to fetch Telegram status:", err);
@@ -59,29 +50,11 @@ export const TelegramCard: React.FC = () => {
         if (!isCancelled) setIsLoading(false);
       }
     }
-
-    loadStatus();
-
-    // Poll every 2.5s while active to automatically detect Telegram pairing
-    const pollTimer = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        loadStatus();
-      }
-    }, 2500);
-
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        loadStatus();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibility);
+    load();
     return () => {
       isCancelled = true;
-      clearInterval(pollTimer);
-      document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [update]);
+  }, []);
 
   const handleCopyToken = () => {
     if (!telegramStatus?.pairToken) return;
@@ -98,7 +71,6 @@ export const TelegramCard: React.FC = () => {
       if (res.ok) {
         await fetchTelegramStatus();
         await update({ user: { telegramConnected: false } });
-        window.dispatchEvent(new CustomEvent("careerhub:telegram-unlinked"));
       }
     } catch (err) {
       console.error("Disconnect error:", err);
