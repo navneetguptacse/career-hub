@@ -27,6 +27,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(
+    null
+  );
+  const isTelegramConnected =
+    realtimeConnected ?? Boolean(user?.telegramConnected);
+
+  React.useEffect(() => {
+    const handlePaired = () => {
+      setRealtimeConnected(true);
+    };
+    const handleUnlinked = () => {
+      setRealtimeConnected(false);
+    };
+
+    window.addEventListener("careerhub:telegram-paired", handlePaired);
+    window.addEventListener("careerhub:telegram-unlinked", handleUnlinked);
+    return () => {
+      window.removeEventListener("careerhub:telegram-paired", handlePaired);
+      window.removeEventListener("careerhub:telegram-unlinked", handleUnlinked);
+    };
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -59,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
 
       <div className="flex items-center gap-2 sm:gap-2.5">
         {/* Telegram status link */}
-        {user?.telegramConnected ? (
+        {isTelegramConnected ? (
           <Link
             href="/settings"
             title="Telegram Bot Paired"

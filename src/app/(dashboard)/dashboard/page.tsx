@@ -14,17 +14,21 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "@/components/applications/JobCard";
+import { JobProfileModal } from "@/components/applications/JobProfileModal";
 import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [applications, setApplications] = useState<JobApplicationItem[]>([]);
+  const [selectedJob, setSelectedJob] = useState<JobApplicationItem | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function loadData() {
+    async function loadData(isBackground = false) {
       try {
         const res = await fetch("/api/applications");
         if (res.ok && isMounted) {
@@ -34,19 +38,35 @@ export default function DashboardPage() {
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (isMounted && !isBackground) setIsLoading(false);
       }
     }
 
     loadData();
 
-    const handleRefresh = () => {
-      loadData();
+    // Auto-refresh interval (every 4s) when page is visible for automatic ingestion reflection
+    const pollInterval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        loadData(true);
+      }
+    }, 4000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        loadData(true);
+      }
     };
 
+    const handleRefresh = () => {
+      loadData(false);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("careerhub:refresh", handleRefresh);
     return () => {
       isMounted = false;
+      clearInterval(pollInterval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("careerhub:refresh", handleRefresh);
     };
   }, []);
@@ -190,10 +210,11 @@ export default function DashboardPage() {
             {recentApps.map((app) => (
               <div
                 key={app.id}
-                className="p-3.5 flex items-center justify-between hover:bg-[#18202C] transition-colors"
+                onClick={() => setSelectedJob(app)}
+                className="p-3.5 flex items-center justify-between hover:bg-[#18202C] transition-colors cursor-pointer group"
               >
                 <div>
-                  <div className="font-semibold text-sm text-[#F1F5F9]">
+                  <div className="font-semibold text-sm text-[#F1F5F9] group-hover:text-[#5499EB] transition-colors">
                     {app.companyName}
                   </div>
                   <div className="text-xs text-[#94A3B8] mt-0.5 flex items-center gap-2">
@@ -213,6 +234,35 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Complete Job Profile Modal */}
+      <JobProfileModal
+        job={selectedJob}
+        isOpen={Boolean(selectedJob)}
+        onClose={() => setSelectedJob(null)}
+        onStatusChange={(id, newStatus) => {
+          setApplications((prev) =>
+            prev.map((app) =>
+              app.id === id ? { ...app, status: newStatus } : app
+            )
+          );
+          setSelectedJob((prev) =>
+            prev && prev.id === id ? { ...prev, status: newStatus } : prev
+          );
+        }}
+        onDelete={(id) => {
+          setApplications((prev) => prev.filter((app) => app.id !== id));
+          setSelectedJob(null);
+        }}
+        onUpdated={(updated) => {
+          setApplications((prev) =>
+            prev.map((app) => (app.id === updated.id ? updated : app))
+          );
+          setSelectedJob((prev) =>
+            prev && prev.id === updated.id ? updated : prev
+          );
+        }}
+      />
     </div>
   );
 }

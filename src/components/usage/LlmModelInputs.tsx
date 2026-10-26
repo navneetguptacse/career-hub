@@ -55,7 +55,7 @@ export const LlmModelInputs: React.FC<LlmModelInputsProps> = ({
   return (
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-[#94A3B8]">
-        Custom Model Override
+        Model Override
       </label>
       <input
         type="text"

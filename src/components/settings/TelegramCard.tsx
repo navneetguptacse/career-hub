@@ -37,12 +37,21 @@ export const TelegramCard: React.FC = () => {
 
   useEffect(() => {
     let isCancelled = false;
-    async function load() {
+
+    async function loadStatus() {
       try {
         const res = await fetch("/api/telegram/pair");
         if (res.ok && !isCancelled) {
-          const data = await res.json();
-          setTelegramStatus(data);
+          const data: TelegramStatus = await res.json();
+          setTelegramStatus((prev) => {
+            if (!prev?.connected && data.connected) {
+              update({ user: { telegramConnected: true } });
+              window.dispatchEvent(
+                new CustomEvent("careerhub:telegram-paired", { detail: data })
+              );
+            }
+            return data;
+          });
         }
       } catch (err) {
         console.error("Failed to fetch Telegram status:", err);
@@ -50,11 +59,29 @@ export const TelegramCard: React.FC = () => {
         if (!isCancelled) setIsLoading(false);
       }
     }
-    load();
+
+    loadStatus();
+
+    // Poll every 2.5s while active to automatically detect Telegram pairing
+    const pollTimer = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        loadStatus();
+      }
+    }, 2500);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        loadStatus();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       isCancelled = true;
+      clearInterval(pollTimer);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, []);
+  }, [update]);
 
   const handleCopyToken = () => {
     if (!telegramStatus?.pairToken) return;
@@ -71,6 +98,7 @@ export const TelegramCard: React.FC = () => {
       if (res.ok) {
         await fetchTelegramStatus();
         await update({ user: { telegramConnected: false } });
+        window.dispatchEvent(new CustomEvent("careerhub:telegram-unlinked"));
       }
     } catch (err) {
       console.error("Disconnect error:", err);
@@ -158,6 +186,13 @@ export const TelegramCard: React.FC = () => {
                 )}
                 <span>{isCopied ? "Copied" : "Copy"}</span>
               </Button>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+              <span className="text-[11px] font-mono text-[#94A3B8]">
+                Listening for bot pairing. Once sent in Telegram, this updates
+                automatically.
+              </span>
             </div>
           </div>
 

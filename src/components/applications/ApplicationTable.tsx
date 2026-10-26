@@ -10,6 +10,7 @@ interface ApplicationTableProps {
   applications: JobApplicationItem[];
   onStatusChange: (id: string, newStatus: ApplicationStatusType) => void;
   onDelete: (id: string) => void;
+  onSelect?: (job: JobApplicationItem) => void;
 }
 
 const ALL_STATUSES: ApplicationStatusType[] = [
@@ -41,6 +42,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   applications,
   onStatusChange,
   onDelete,
+  onSelect,
 }) => {
   if (applications.length === 0) {
     return (
@@ -67,7 +69,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
           {applications.map((app) => (
             <tr
               key={app.id}
-              className="hover:bg-[#18202C] transition-colors text-[#F1F5F9]"
+              onClick={() => onSelect?.(app)}
+              className="hover:bg-[#18202C] transition-colors text-[#F1F5F9] cursor-pointer"
             >
               <td className="px-4 py-3.5">
                 <div className="flex items-center gap-2">
@@ -83,6 +86,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               <td className="px-4 py-3.5">
                 <select
                   value={app.status}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) =>
                     onStatusChange(
                       app.id,
@@ -133,6 +137,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       href={app.jobUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       title="Open in browser"
                       className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors"
                     >
@@ -140,7 +145,10 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     </a>
                   )}
                   <button
-                    onClick={() => onDelete(app.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(app.id);
+                    }}
                     title="Delete application"
                     className="h-8 w-8 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
                   >

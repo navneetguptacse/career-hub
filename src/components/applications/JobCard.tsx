@@ -34,6 +34,7 @@ interface JobCardProps {
   job: JobApplicationItem;
   onStatusChange: (id: string, newStatus: ApplicationStatusType) => void;
   onDelete: (id: string) => void;
+  onSelect?: (job: JobApplicationItem) => void;
 }
 
 const NEXT_STATUSES: Record<
@@ -53,6 +54,7 @@ export const JobCard: React.FC<JobCardProps> = ({
   job,
   onStatusChange,
   onDelete,
+  onSelect,
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -84,8 +86,9 @@ export const JobCard: React.FC<JobCardProps> = ({
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={() => onSelect?.(job)}
       className={cn(
-        "group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/60 rounded-xs transition-all shadow-xs space-y-2.5 cursor-grab active:cursor-grabbing select-none",
+        "group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/60 rounded-xs transition-all shadow-xs space-y-2.5 cursor-pointer active:cursor-grabbing select-none",
         isDragging && "opacity-40 border-dashed border-[#3178C6] scale-[0.98]"
       )}
     >
@@ -121,6 +124,7 @@ export const JobCard: React.FC<JobCardProps> = ({
             href={job.jobUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             title="Open in browser"
             className="text-[#94A3B8] hover:text-[#3178C6] hover:bg-[#18202C] p-1 rounded-xs transition-colors shrink-0"
           >
@@ -143,7 +147,10 @@ export const JobCard: React.FC<JobCardProps> = ({
         <div className="flex items-center gap-1.5">
           {nextStatus && (
             <button
-              onClick={() => onStatusChange(job.id, nextStatus)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange(job.id, nextStatus);
+              }}
               title={`Advance to ${nextStatus}`}
               className="h-6 px-2 inline-flex items-center gap-0.5 text-[10px] font-mono text-[#5499EB] hover:text-white bg-[#3178C6]/15 hover:bg-[#3178C6] border border-[#3178C6]/30 rounded-xs transition-colors"
             >

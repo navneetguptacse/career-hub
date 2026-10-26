@@ -10,7 +10,6 @@ import {
   AlertCircle,
   Trash2,
   Lock,
-  RefreshCw,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -186,13 +185,6 @@ export const LlmConfigCard: React.FC = () => {
             </p>
           </div>
         </div>
-
-        {hasStoredKey && (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#10B981]/15 border border-[#10B981]/40 rounded-xs text-[#10B981] text-[11px] font-mono shrink-0">
-            <Lock className="w-3.5 h-3.5" />
-            <span>Active: {keyHint}</span>
-          </div>
-        )}
       </div>
 
       {feedback && (
@@ -224,11 +216,11 @@ export const LlmConfigCard: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-[#94A3B8] flex items-center gap-1.5">
                 <Key className="w-3.5 h-3.5 text-[#3178C6]" />
-                API Key {hasStoredKey ? "(Leave blank to keep existing)" : "*"}
+                API Key
               </label>
               {hasStoredKey && (
                 <span className="text-[10px] text-[#64748B] font-mono">
-                  Currently Stored: {keyHint}
+                  {keyHint}
                 </span>
               )}
             </div>
@@ -298,7 +290,6 @@ export const LlmConfigCard: React.FC = () => {
                 isLoading={isTesting}
                 disabled={isSaving || isTesting || (!apiKey && !hasStoredKey)}
               >
-                <RefreshCw className="w-3.5 h-3.5" />
                 <span>Test Connection</span>
               </Button>
             </div>
