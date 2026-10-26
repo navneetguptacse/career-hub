@@ -114,9 +114,12 @@ export const TelegramCard: React.FC = () => {
       {telegramStatus?.connected ? (
         <div className="space-y-3">
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs text-xs space-y-1">
-            <div className="text-[#94A3B8]">Connected Telegram Chat ID:</div>
-            <div className="font-mono text-[#F1F5F9]">
-              {telegramStatus.chatId}
+            <div className="text-[#94A3B8]">Telegram Connected</div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="text-[#94A3B8]">Chat ID:</span>
+              <span className="font-mono text-[#F1F5F9] font-medium">
+                {telegramStatus.chatId}
+              </span>
             </div>
           </div>
           <Button
@@ -127,14 +130,14 @@ export const TelegramCard: React.FC = () => {
             className="text-[#EF4444] hover:border-[#EF4444] gap-1.5"
           >
             <Unlink className="w-3.5 h-3.5" />
-            <span>Unlink Telegram Bot</span>
+            <span>Unlink</span>
           </Button>
         </div>
       ) : (
         <div className="space-y-4">
           <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
             <span className="text-xs font-medium text-[#94A3B8] block">
-              Secure Pairing Command:
+              Secure Pairing Command
             </span>
             <div className="flex items-center gap-2">
               <code className="flex-1 h-9 px-3 flex items-center bg-[#12171F] border border-[#202937] rounded-xs font-mono font-semibold text-xs text-[#5499EB] truncate">

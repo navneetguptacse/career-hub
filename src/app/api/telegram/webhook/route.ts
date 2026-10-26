@@ -80,12 +80,25 @@ export async function POST(req: Request) {
     let jobTitle = "Job Position";
     let companyName = "Unknown Company";
     let jobDescription = "";
+    let location: string | null = null;
+    let locationType: "REMOTE" | "HYBRID" | "ONSITE" = "REMOTE";
+    let employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" =
+      "FULL_TIME";
+    let salaryMin: number | null = null;
+    let salaryMax: number | null = null;
+    let currency = "USD";
 
     try {
       const scraped = await scrapeJobUrl(jobUrl);
       jobTitle = scraped.jobTitle;
       companyName = scraped.companyName;
       jobDescription = scraped.jobDescription || "";
+      location = scraped.location || null;
+      if (scraped.locationType) locationType = scraped.locationType;
+      if (scraped.employmentType) employmentType = scraped.employmentType;
+      if (typeof scraped.salaryMin === "number") salaryMin = scraped.salaryMin;
+      if (typeof scraped.salaryMax === "number") salaryMax = scraped.salaryMax;
+      if (scraped.currency) currency = scraped.currency;
     } catch {
       const domain = new URL(jobUrl).hostname.replace(/^www\./, "");
       companyName = domain.split(".")[0];
@@ -100,6 +113,12 @@ export async function POST(req: Request) {
         jobTitle,
         jobUrl,
         jobDescription: jobDescription || null,
+        location,
+        locationType,
+        employmentType,
+        salaryMin,
+        salaryMax,
+        currency,
         source: "TELEGRAM",
         status: "WISHLIST",
         activities: {

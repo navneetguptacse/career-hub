@@ -63,19 +63,23 @@ export const Sidebar: React.FC = () => {
   ];
 
   const content = (
-    <div className="flex flex-col justify-between h-full p-3">
+    <div className="flex flex-col justify-between h-full p-3 overflow-hidden select-none">
       <div className="space-y-1">
-        <div className="flex items-center justify-between px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
-          <span>Pipeline Navigation</span>
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            title="Hide Sidebar"
-            aria-label="Hide sidebar"
-            className="hidden md:flex items-center justify-center h-6 w-6 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] rounded-xs transition-colors"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              title="Collapse Sidebar"
+              aria-label="Collapse sidebar"
+              className="hidden md:flex items-center justify-center h-8 w-8 text-[#94A3B8] hover:text-[#5499EB] bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs cursor-pointer shrink-0"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+              Pipeline
+            </span>
+          </div>
         </div>
 
         {navigation.map((item) => {
@@ -131,19 +135,19 @@ export const Sidebar: React.FC = () => {
         <button
           type="button"
           onClick={toggleSidebar}
-          title="Show Sidebar"
-          aria-label="Show sidebar"
-          className="hidden md:flex absolute top-3 left-0 z-20 h-7 w-6 bg-[#12171F] border border-l-0 border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-r-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+          title="Expand Sidebar"
+          aria-label="Expand sidebar"
+          className="hidden md:flex absolute top-3 left-3 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
         >
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       )}
 
       {/* Desktop Sidebar (toggleable) */}
       <aside
         className={cn(
-          "border-r border-[#202937] bg-[#0A0D12] shrink-0 transition-all duration-200 hidden md:block",
-          isCollapsed ? "w-0 p-0 border-r-0 overflow-hidden" : "w-56"
+          "h-full border-r border-[#202937] bg-[#0A0D12] shrink-0 transition-all duration-200 hidden md:block overflow-hidden",
+          isCollapsed ? "w-0 p-0 border-r-0" : "w-56"
         )}
       >
         {!isCollapsed && content}

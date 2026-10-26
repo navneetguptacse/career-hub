@@ -1,12 +1,7 @@
 import * as cheerio from "cheerio";
+import { extractJobDetailsWithAI, type ExtractedJobData } from "./ai-extractor";
 
-export interface ScrapedJobData {
-  jobTitle: string;
-  companyName: string;
-  location?: string;
-  jobDescription?: string;
-  jobUrl: string;
-}
+export type ScrapedJobData = ExtractedJobData;
 
 function cleanText(text?: string | null): string {
   if (!text) return "";
@@ -83,10 +78,21 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
     $('meta[name="description"]').attr("content");
   const jobDescription = cleanText(ogDescription);
 
-  return {
+  $("script, style, noscript, iframe, svg").remove();
+  const pageText = cleanText($("body").text());
+
+  const baseline: ScrapedJobData = {
     jobTitle: title || "Job Position",
     companyName: company || "Unknown Company",
     jobDescription: jobDescription.slice(0, 2000),
     jobUrl: url,
+    location: null,
+    locationType: "REMOTE",
+    employmentType: "FULL_TIME",
+    salaryMin: null,
+    salaryMax: null,
+    currency: "USD",
   };
+
+  return await extractJobDetailsWithAI(pageText || rawTitle, baseline);
 }

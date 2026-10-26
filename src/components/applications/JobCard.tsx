@@ -8,9 +8,10 @@ import {
   Trash2,
   DollarSign,
   ChevronRight,
+  GripVertical,
 } from "lucide-react";
 import { type ApplicationStatusType } from "@/components/ui/Badge";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
 export interface JobApplicationItem {
   id: string;
@@ -56,6 +57,7 @@ export const JobCard: React.FC<JobCardProps> = ({
   onDelete,
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const nextStatus = NEXT_STATUSES[job.status];
 
   const handleDelete = async (e: React.MouseEvent) => {
@@ -69,17 +71,38 @@ export const JobCard: React.FC<JobCardProps> = ({
     onDelete(job.id);
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("text/plain", job.id);
+    e.dataTransfer.effectAllowed = "move";
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/60 rounded-xs transition-all shadow-xs space-y-2.5">
+    <div
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      className={cn(
+        "group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/60 rounded-xs transition-all shadow-xs space-y-2.5 cursor-grab active:cursor-grabbing select-none",
+        isDragging && "opacity-40 border-dashed border-[#3178C6] scale-[0.98]"
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F1F5F9] group-hover:text-[#5499EB] transition-colors">
-            <Building2 className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />
-            <span className="truncate max-w-42.5">{job.companyName}</span>
+        <div className="flex items-start gap-1.5 min-w-0 flex-1">
+          <GripVertical className="w-3.5 h-3.5 text-[#64748B] group-hover:text-[#94A3B8] shrink-0 mt-0.5 cursor-grab" />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F1F5F9] group-hover:text-[#5499EB] transition-colors">
+              <Building2 className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />
+              <span className="truncate max-w-42.5">{job.companyName}</span>
+            </div>
+            <h4 className="text-sm font-medium text-[#E2E8F0] mt-0.5 leading-snug line-clamp-2">
+              {job.jobTitle}
+            </h4>
           </div>
-          <h4 className="text-sm font-medium text-[#E2E8F0] mt-0.5 leading-snug line-clamp-2">
-            {job.jobTitle}
-          </h4>
         </div>
 
         {job.jobUrl && (

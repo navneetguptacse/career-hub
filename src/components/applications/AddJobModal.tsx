@@ -56,6 +56,18 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         jobTitle: data.data.jobTitle || prev.jobTitle,
         jobUrl: data.data.jobUrl || scrapeUrl.trim(),
         jobDescription: data.data.jobDescription || prev.jobDescription,
+        location: data.data.location || prev.location,
+        locationType: data.data.locationType || prev.locationType,
+        employmentType: data.data.employmentType || prev.employmentType,
+        salaryMin:
+          data.data.salaryMin !== null && data.data.salaryMin !== undefined
+            ? String(data.data.salaryMin)
+            : prev.salaryMin,
+        salaryMax:
+          data.data.salaryMax !== null && data.data.salaryMax !== undefined
+            ? String(data.data.salaryMax)
+            : prev.salaryMax,
+        currency: data.data.currency || prev.currency,
       }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error scraping link");
