@@ -6,7 +6,6 @@ import {
   Table as TableIcon,
   Search,
   Filter,
-  RefreshCw,
 } from "lucide-react";
 import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
@@ -125,14 +124,6 @@ export default function ApplicationsPage() {
               <TableIcon className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          <button
-            onClick={() => mutate()}
-            title="Refresh pipeline"
-            className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] rounded-xs transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobApplicationSchema } from "@/lib/validations";
+import { capitalizeCompanyName } from "@/lib/scraper";
 
 export async function GET(
   _req: Request,
@@ -81,7 +82,9 @@ export async function PATCH(
     const updated = await prisma.jobApplication.update({
       where: { id },
       data: {
-        ...(data.companyName && { companyName: data.companyName }),
+        ...(data.companyName && {
+          companyName: capitalizeCompanyName(data.companyName),
+        }),
         ...(data.jobTitle && { jobTitle: data.jobTitle }),
         ...(data.location !== undefined && { location: data.location || null }),
         ...(data.locationType && { locationType: data.locationType }),

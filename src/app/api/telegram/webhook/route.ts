@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { scrapeJobUrl } from "@/lib/scraper";
+import { scrapeJobUrl, capitalizeCompanyName } from "@/lib/scraper";
 import {
   sendTelegramMessage,
   extractUrlFromTelegramMessage,
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
     const app = await prisma.jobApplication.create({
       data: {
         userId: user.id,
-        companyName,
+        companyName: capitalizeCompanyName(companyName),
         jobTitle,
         jobUrl,
         jobDescription: jobDescription || null,

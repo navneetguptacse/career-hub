@@ -4,6 +4,7 @@ import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
 import { formatDate, cn } from "@/lib/utils";
 import { Globe, Pencil, Trash2 } from "lucide-react";
+import { capitalizeCompanyName } from "@/lib/scraper";
 
 interface ApplicationTableProps {
   applications: JobApplicationItem[];
@@ -72,7 +73,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               <td className="px-4 py-3.5">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm text-[#F1F5F9]">
-                    {app.companyName}
+                    {capitalizeCompanyName(app.companyName)}
                   </span>
                 </div>
                 <div className="text-xs text-[#94A3B8] mt-0.5">

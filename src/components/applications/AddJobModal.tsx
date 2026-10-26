@@ -6,6 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { refreshAllApplications } from "@/lib/hooks/useApplications";
+import { capitalizeCompanyName } from "@/lib/scraper";
 
 interface AddJobModalProps {
   isOpen: boolean;
@@ -56,8 +57,9 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
 
       setFormData((prev) => ({
         ...prev,
-        companyName:
-          data.data.companyName || prev.companyName || "Unknown Company",
+        companyName: capitalizeCompanyName(
+          data.data.companyName || prev.companyName || "Unknown Company"
+        ),
         jobTitle: data.data.jobTitle || prev.jobTitle || "Software Engineer",
         jobUrl: data.data.jobUrl || rawUrl,
         jobDescription: data.data.jobDescription || prev.jobDescription,
@@ -90,6 +92,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          companyName: capitalizeCompanyName(formData.companyName),
           appliedDate: formData.appliedDate
             ? new Date(formData.appliedDate).toISOString()
             : null,

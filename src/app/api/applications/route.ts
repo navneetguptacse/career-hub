@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobApplicationSchema } from "@/lib/validations";
+import { capitalizeCompanyName } from "@/lib/scraper";
 
 export async function GET(req: Request) {
   try {
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
     const application = await prisma.jobApplication.create({
       data: {
         userId: session.user.id,
-        companyName: data.companyName,
+        companyName: capitalizeCompanyName(data.companyName),
         jobTitle: data.jobTitle,
         location: data.location || null,
         locationType: data.locationType,

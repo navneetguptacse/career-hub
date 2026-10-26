@@ -1,164 +1,247 @@
 import * as cheerio from "cheerio";
-import { parseJsonLd } from "./jsonld-extractor";
-import { enrichJobWithLlm } from "./llm-scraper";
 
 export interface ScrapedJobData {
   jobTitle: string;
   companyName: string;
   location?: string | null;
-  locationType?: "REMOTE" | "HYBRID" | "ONSITE";
-  employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  locationType: "REMOTE" | "HYBRID" | "ONSITE";
+  employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
   salaryMin?: number | null;
   salaryMax?: number | null;
-  currency?: string;
+  currency: string;
   postedDate?: string | null;
   jobDescription?: string;
   jobUrl: string;
 }
 
-function cleanText(text?: string | null): string {
-  if (!text) return "";
-  return text.replace(/\s+/g, " ").trim();
+interface LlmExtractedData {
+  companyName?: string | null;
+  jobTitle?: string | null;
+  location?: string | null;
+  locationType?: "REMOTE" | "HYBRID" | "ONSITE";
+  employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  postedDate?: string | null;
+  summary?: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  currency?: string | null;
 }
 
-const US_CA_STATE_CODES =
-  "(?:AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC|PR|VI|GU|AB|BC|MB|NB|NL|NS|NT|NU|ON|PE|QC|SK|YT)";
+/**
+ * Capitalizes a company name so that:
+ * 1. It is never completely uppercase (e.g. "ACCENTURE" -> "Accenture")
+ * 2. It is never completely lowercase (e.g. "accenture" -> "Accenture")
+ * 3. Preserves clean casing for brands like "McKinsey", "OpenAI"
+ * 4. Cleans up redundant suffixes like " Careers", " Jobs", " - Hiring"
+ */
+export function capitalizeCompanyName(name?: string | null): string {
+  if (!name) return "";
+  let clean = name.replace(/\s+/g, " ").trim();
+  clean = clean
+    .replace(/[-|–—]\s*(?:Careers|Jobs|Hiring|Apply|Work).*$/i, "")
+    .trim();
+  clean = clean.replace(/\s+(?:Careers|Jobs|Hiring)\b/i, "").trim();
 
-function extractLocationFromText(text: string): string | null {
-  const stateRegex = new RegExp(
-    `\\b([A-Z][a-zA-Z\\s.-]+,\\s*${US_CA_STATE_CODES}\\b(?:\\s*,\\s*(?:United States|USA|US))?)`
-  );
-  const cityState = text.match(stateRegex);
-  if (cityState && cityState[1].length < 40) return cityState[1].trim();
+  if (!clean) return "";
 
-  const cityCountry = text.match(
-    /\b([A-Z][a-zA-Z\s.-]+,\s*(?:United States|United Kingdom|UK|Canada|India|Germany|Australia|Singapore|Ireland|Netherlands|France|Japan|Poland|Spain|Switzerland))\b/i
-  );
-  if (cityCountry && cityCountry[1].length < 50) return cityCountry[1].trim();
+  const isAllUpper = clean === clean.toUpperCase() && /[A-Z]/.test(clean);
+  const isAllLower = clean === clean.toLowerCase() && /[a-z]/.test(clean);
 
-  if (/\b(remote|work from home|telecommute|virtual)\b/i.test(text)) {
-    return "Remote";
+  if (isAllUpper || isAllLower) {
+    return clean
+      .toLowerCase()
+      .split(" ")
+      .map((word) => {
+        if (!word) return "";
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+  }
+
+  return clean
+    .split(" ")
+    .map((word) => {
+      if (!word) return "";
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+
+function cleanHtmlToSnippet(html: string): string {
+  try {
+    const $ = cheerio.load(html);
+    $(
+      "script, style, noscript, svg, nav, footer, header, iframe, form, button"
+    ).remove();
+
+    const title = $("title").text().replace(/\s+/g, " ").trim();
+    const metaDesc =
+      $('meta[property="og:description"]').attr("content") ||
+      $('meta[name="description"]').attr("content") ||
+      "";
+    const bodyText = $("body").text().replace(/\s+/g, " ").trim();
+
+    return `Page Title: ${title}\nDescription: ${metaDesc}\nContent:\n${bodyText}`.slice(
+      0,
+      4000
+    );
+  } catch {
+    return "";
+  }
+}
+
+function inferFallbackFromUrl(url: string): {
+  company: string;
+  role: string;
+} {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    const parts = host.split(".");
+    let rawCompany = parts[0] || "Company";
+
+    if (
+      (host.includes("greenhouse.io") ||
+        host.includes("lever.co") ||
+        host.includes("ashbyhq.com")) &&
+      parsed.pathname
+    ) {
+      const seg = parsed.pathname.split("/").filter(Boolean)[0];
+      if (seg && !["jobs", "job", "view", "apply"].includes(seg.toLowerCase())) {
+        rawCompany = seg;
+      }
+    }
+
+    const segments = parsed.pathname
+      .split("/")
+      .filter(
+        (s) =>
+          s &&
+          !/^[0-9a-f-]{5,}$/i.test(s) &&
+          !/^\d+$/.test(s) &&
+          !["jobs", "job", "view", "apply", "careers"].includes(s.toLowerCase())
+      );
+    const rawRole = segments[segments.length - 1] || "Job Position";
+    const role = rawRole
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .trim();
+
+    return {
+      company: capitalizeCompanyName(rawCompany),
+      role: role || "Job Position",
+    };
+  } catch {
+    return { company: "Company", role: "Job Position" };
+  }
+}
+
+async function extractJobWithLlm(
+  contentSnippet: string,
+  url: string,
+  fallbackCompany: string
+): Promise<LlmExtractedData | null> {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
+
+  if (!geminiKey && !openaiKey) {
+    return null;
+  }
+
+  const prompt = `You are an expert AI job extractor. Extract structured job metadata from this job posting text:
+Target URL: ${url}
+Preliminary Company: ${fallbackCompany}
+
+Text:
+${contentSnippet}
+
+Return ONLY a JSON object with this exact schema:
+{
+  "companyName": "Capitalized employer name (e.g. Accenture, Google, Stripe) or null",
+  "jobTitle": "Job position title (e.g. Operations Engineer) or null",
+  "location": "City, State/Region, Country or Remote or null",
+  "locationType": "REMOTE" | "HYBRID" | "ONSITE",
+  "employmentType": "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP",
+  "postedDate": "YYYY-MM-DD or null",
+  "summary": "1-2 sentence overview or null",
+  "salaryMin": null,
+  "salaryMax": null,
+  "currency": "USD"
+}`;
+
+  try {
+    if (geminiKey) {
+      const model = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              temperature: 0.1,
+            },
+          }),
+          signal: controller.signal,
+        }
+      );
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawJson) {
+          return JSON.parse(rawJson) as LlmExtractedData;
+        }
+      }
+    }
+
+    if (openaiKey) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${openaiKey}`,
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+          temperature: 0.1,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        const rawJson = data?.choices?.[0]?.message?.content;
+        if (rawJson) {
+          return JSON.parse(rawJson) as LlmExtractedData;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("LLM extraction failed or timed out:", err);
   }
 
   return null;
 }
 
-function extractCompanyAndTitle(
-  rawTitle: string,
-  rawSiteName: string,
-  domain: string
-): { company: string; title: string; location?: string } {
-  let title = rawTitle;
-  let company = rawSiteName;
-  let detectedLocation: string | undefined;
-
-  const separators = [" at ", " - ", " – ", " — ", " | ", " : "];
-  for (const sep of separators) {
-    if (rawTitle.includes(sep)) {
-      const parts = rawTitle.split(sep).map((p) => cleanText(p));
-      if (parts.length >= 2) {
-        title = parts[0];
-        for (let i = 1; i < parts.length; i++) {
-          const loc = extractLocationFromText(parts[i]);
-          if (loc && !detectedLocation) {
-            detectedLocation = loc;
-            continue;
-          }
-          if (
-            !company ||
-            company.toLowerCase().includes("careers") ||
-            company.toLowerCase().includes("job")
-          ) {
-            company = parts[i];
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  if (!company) {
-    const cleanDomain = domain.replace(/^www\./, "").split(".")[0];
-    company = cleanDomain.charAt(0).toUpperCase() + cleanDomain.slice(1);
-  }
-
-  return { company, title, location: detectedLocation };
-}
-
 export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
-  const parsedUrl = new URL(url);
-  const host = parsedUrl.hostname.toLowerCase().replace(/^www\./, "");
-  const segments = parsedUrl.pathname.split("/").filter(Boolean);
+  const fallback = inferFallbackFromUrl(url);
 
-  let detectedCompany = "";
-  if (
-    (host.includes("greenhouse.io") ||
-      host.includes("lever.co") ||
-      host.includes("ashbyhq.com")) &&
-    segments[0]
-  ) {
-    const candidate = segments[0].toLowerCase();
-    if (!["jobs", "job", "view", "apply"].includes(candidate)) {
-      detectedCompany = candidate.charAt(0).toUpperCase() + candidate.slice(1);
-    }
-  }
-
-  if (!detectedCompany) {
-    if (host.includes("microsoft.")) detectedCompany = "Microsoft";
-    else if (host.includes("google.")) detectedCompany = "Google";
-    else if (host.includes("stripe.")) detectedCompany = "Stripe";
-    else if (host.includes("amazon.")) detectedCompany = "Amazon";
-    else if (host.includes("meta.") || host.includes("facebook."))
-      detectedCompany = "Meta";
-    else if (host.includes("apple.")) detectedCompany = "Apple";
-    else if (host.includes("netflix.")) detectedCompany = "Netflix";
-    else {
-      const mainPart = host.split(".")[0];
-      detectedCompany = mainPart.charAt(0).toUpperCase() + mainPart.slice(1);
-    }
-  }
-
-  const nonIdSegments = segments.filter(
-    (s) =>
-      !/^[0-9a-f-]{5,}$/i.test(s) &&
-      !/^\d+$/.test(s) &&
-      ![
-        "d",
-        "jobs",
-        "view",
-        "job",
-        "careers",
-        "position",
-        "apply",
-        "spreadsheets",
-        "document",
-      ].includes(s.toLowerCase())
-  );
-  const rawRole = nonIdSegments[nonIdSegments.length - 1] || "";
-  const inferredRole =
-    rawRole.length > 2 && !/^\d+$/.test(rawRole)
-      ? rawRole
-          .replace(/[-_]+/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase())
-          .trim()
-      : "Software Engineer";
-
-  let result: ScrapedJobData = {
-    jobTitle: inferredRole || "Software Engineer",
-    companyName: detectedCompany || "Company",
-    jobDescription: "",
-    jobUrl: url,
-    location: "Unspecified",
-    locationType: "ONSITE",
-    employmentType: "FULL_TIME",
-    salaryMin: null,
-    salaryMax: null,
-    currency: "USD",
-    postedDate: null,
-  };
-
+  let rawHtml = "";
   try {
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -166,117 +249,58 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
       },
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(8000),
     });
 
-    if (response.ok) {
-      const html = await response.text();
-      const $ = cheerio.load(html);
-
-      const jsonLdData = parseJsonLd($);
-      if (jsonLdData) {
-        if (jsonLdData.title) result.jobTitle = jsonLdData.title;
-        if (jsonLdData.company) result.companyName = jsonLdData.company;
-        if (jsonLdData.location) result.location = jsonLdData.location;
-        if (jsonLdData.locationType)
-          result.locationType = jsonLdData.locationType;
-        if (jsonLdData.employmentType)
-          result.employmentType = jsonLdData.employmentType;
-        if (jsonLdData.postedDate) result.postedDate = jsonLdData.postedDate;
-        if (jsonLdData.description)
-          result.jobDescription = jsonLdData.description;
-      }
-
-      const ogTitle = $('meta[property="og:title"]').attr("content");
-      const metaTitle = $("title").text();
-      const rawTitle = cleanText(ogTitle || metaTitle);
-      const ogSiteName = $('meta[property="og:site_name"]').attr("content");
-      const {
-        company,
-        title,
-        location: titleLocation,
-      } = extractCompanyAndTitle(
-        rawTitle,
-        cleanText(ogSiteName),
-        parsedUrl.hostname
-      );
-
-      if (!jsonLdData?.title && title) result.jobTitle = title;
-      if (!jsonLdData?.company && company) result.companyName = company;
-
-      const metaLocation =
-        $('meta[name="job_location"]').attr("content") ||
-        $('meta[name="location"]').attr("content") ||
-        $('meta[property="og:locality"]').attr("content") ||
-        $('meta[name="geo.placename"]').attr("content");
-
-      let domLocation = cleanText(
-        $(
-          '.location, .job-location, [itemprop="jobLocation"], [data-qa="job-location"], [data-qa*="location"], [aria-label*="location"]'
-        )
-          .first()
-          .text()
-      );
-
-      if (!domLocation) {
-        const placeIcon = $('i:contains("place")').first();
-        if (placeIcon.length > 0) {
-          const sibling = cleanText(placeIcon.next("span").text());
-          if (sibling) {
-            domLocation = sibling;
-          } else {
-            const parentText = cleanText(placeIcon.parent().text()).replace(
-              /^place\s*/i,
-              ""
-            );
-            if (parentText) domLocation = parentText;
-          }
-        }
-      }
-
-      const resolvedLoc = cleanText(
-        jsonLdData?.location ||
-          metaLocation ||
-          domLocation ||
-          titleLocation ||
-          extractLocationFromText(rawTitle)
-      );
-
-      if (resolvedLoc) {
-        result.location = resolvedLoc;
-        const lowerLoc = resolvedLoc.toLowerCase();
-        if (lowerLoc.includes("hybrid")) {
-          result.locationType = "HYBRID";
-        } else if (
-          lowerLoc.includes("remote") ||
-          lowerLoc.includes("virtual")
-        ) {
-          result.locationType = "REMOTE";
-        } else {
-          result.locationType = "ONSITE";
-        }
-      }
-
-      if (result.companyName) {
-        result.companyName = result.companyName
-          .replace(/\s+(Careers|Jobs|Hiring)\b/i, "")
-          .trim();
-      }
-
-      if (!result.jobDescription) {
-        const ogDescription =
-          $('meta[property="og:description"]').attr("content") ||
-          $('meta[name="description"]').attr("content");
-        if (ogDescription) {
-          result.jobDescription = cleanText(ogDescription).slice(0, 2000);
-        }
-      }
-
-      result = await enrichJobWithLlm(html, url, result);
+    if (res.ok) {
+      rawHtml = await res.text();
     }
   } catch (err) {
-    console.warn("Direct HTML scrape fallback used:", err);
+    console.warn("HTML fetch failed for URL:", url, err);
   }
 
-  return result;
+  const snippet = rawHtml ? cleanHtmlToSnippet(rawHtml) : "";
+  const llmData = snippet
+    ? await extractJobWithLlm(snippet, url, fallback.company)
+    : null;
+
+  const validLocationTypes: Array<"REMOTE" | "HYBRID" | "ONSITE"> = [
+    "REMOTE",
+    "HYBRID",
+    "ONSITE",
+  ];
+  const validEmploymentTypes: Array<
+    "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP"
+  > = ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERNSHIP"];
+
+  const companyName = capitalizeCompanyName(
+    llmData?.companyName || fallback.company
+  );
+  const jobTitle = llmData?.jobTitle?.trim() || fallback.role;
+  const location = llmData?.location?.trim() || null;
+  const locationType =
+    llmData?.locationType && validLocationTypes.includes(llmData.locationType)
+      ? llmData.locationType
+      : location?.toLowerCase().includes("remote")
+        ? "REMOTE"
+        : "ONSITE";
+  const employmentType =
+    llmData?.employmentType &&
+    validEmploymentTypes.includes(llmData.employmentType)
+      ? llmData.employmentType
+      : "FULL_TIME";
+
+  return {
+    jobTitle,
+    companyName,
+    location,
+    locationType,
+    employmentType,
+    salaryMin: llmData?.salaryMin ?? null,
+    salaryMax: llmData?.salaryMax ?? null,
+    currency: llmData?.currency || "USD",
+    postedDate: llmData?.postedDate || null,
+    jobDescription: llmData?.summary || "",
+    jobUrl: url,
+  };
 }

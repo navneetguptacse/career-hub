@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { JobApplicationItem } from "./JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
+import { capitalizeCompanyName } from "@/lib/scraper";
 
 interface EditJobModalProps {
   job: JobApplicationItem | null;
@@ -26,7 +27,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
   onSuccess,
 }) => {
   const [formData, setFormData] = useState(() => ({
-    companyName: job.companyName || "",
+    companyName: capitalizeCompanyName(job.companyName),
     jobTitle: job.jobTitle || "",
     location: job.location || "",
     locationType: job.locationType || "ONSITE",
@@ -60,7 +61,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          companyName: formData.companyName.trim(),
+          companyName: capitalizeCompanyName(formData.companyName),
           jobTitle: formData.jobTitle.trim(),
           location: formData.location.trim() || null,
           locationType: formData.locationType,
