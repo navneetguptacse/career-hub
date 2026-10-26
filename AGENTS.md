@@ -112,7 +112,7 @@ CareerHub is a full-stack Next.js application designed to track, organize, and a
 ### 3.3 Role-Based Access Control (RBAC)
 
 - Roles: `USER`, `ADMIN`.
-- Protected routes handled via `middleware.ts`:
+- Protected routes handled via `proxy.ts` (Next.js 16 convention):
   - `/dashboard/*`: Requires authenticated session (`USER` or `ADMIN`).
   - `/admin/*`: Requires `role === "ADMIN"`.
   - `/api/admin/*`: Requires `role === "ADMIN"`.
@@ -249,7 +249,7 @@ career-hub/
 │   │   └── validations.ts         # Zod schemas
 │   ├── types/
 │   │   └── next-auth.d.ts         # Augmented session types
-│   └── middleware.ts              # RBAC & route protection
+│   └── proxy.ts                   # RBAC & route protection (Next.js 16 proxy convention)
 ├── .env.example
 ├── next.config.ts
 ├── tailwind.config.ts
