@@ -42,6 +42,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "icon-md": "h-9 w-9 p-0 text-xs",
     };
 
+    const isIconOnly = size === "icon-sm" || size === "icon-md";
+
     return (
       <button
         ref={ref}
@@ -54,9 +56,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {isLoading && (
+        {isLoading ? (
           <svg
-            className="animate-spin -ml-0.5 h-3.5 w-3.5 text-current shrink-0"
+            className={cn(
+              "animate-spin shrink-0",
+              variant === "primary" ? "text-white" : "text-[#3178C6]",
+              isIconOnly ? "h-4 w-4" : "h-3.5 w-3.5 -ml-0.5"
+            )}
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -74,8 +80,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               d="M4 12a8 8 0 018-8v8z"
             />
           </svg>
-        )}
-        {children}
+        ) : null}
+        {!isIconOnly ? children : !isLoading ? children : null}
       </button>
     );
   }

@@ -38,36 +38,42 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
   });
 
   const handleScrape = async () => {
-    if (!scrapeUrl.trim()) return;
+    const rawUrl = scrapeUrl.trim();
+    if (!rawUrl) return;
+
     setIsScraping(true);
     setError(null);
+    setFormData((prev) => ({ ...prev, jobUrl: rawUrl }));
+
     try {
       const res = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: scrapeUrl.trim() }),
+        body: JSON.stringify({ url: rawUrl }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to parse link");
 
       setFormData((prev) => ({
         ...prev,
-        companyName: data.data.companyName || prev.companyName,
-        jobTitle: data.data.jobTitle || prev.jobTitle,
-        jobUrl: data.data.jobUrl || scrapeUrl.trim(),
+        companyName:
+          data.data.companyName || prev.companyName || "Unknown Company",
+        jobTitle: data.data.jobTitle || prev.jobTitle || "Software Engineer",
+        jobUrl: data.data.jobUrl || rawUrl,
         jobDescription: data.data.jobDescription || prev.jobDescription,
-        location: data.data.location || prev.location,
-        locationType: data.data.locationType || prev.locationType,
-        employmentType: data.data.employmentType || prev.employmentType,
+        location: data.data.location || prev.location || "Remote",
+        locationType: data.data.locationType || prev.locationType || "REMOTE",
+        employmentType:
+          data.data.employmentType || prev.employmentType || "FULL_TIME",
         salaryMin:
           data.data.salaryMin !== null && data.data.salaryMin !== undefined
             ? String(data.data.salaryMin)
-            : prev.salaryMin,
+            : prev.salaryMin || "120000",
         salaryMax:
           data.data.salaryMax !== null && data.data.salaryMax !== undefined
             ? String(data.data.salaryMax)
-            : prev.salaryMax,
-        currency: data.data.currency || prev.currency,
+            : prev.salaryMax || "160000",
+        currency: data.data.currency || prev.currency || "USD",
       }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error scraping link");
@@ -143,7 +149,10 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
               type="url"
               placeholder="https://linkedin.com/jobs/view/..."
               value={scrapeUrl}
-              onChange={(e) => setScrapeUrl(e.target.value)}
+              onChange={(e) => {
+                setScrapeUrl(e.target.value);
+                setFormData((prev) => ({ ...prev, jobUrl: e.target.value }));
+              }}
               className="flex-1 h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
             />
             <Button
@@ -152,6 +161,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
               size="icon-md"
               onClick={handleScrape}
               isLoading={isScraping}
+              disabled={isScraping || !scrapeUrl.trim()}
               title="Auto-fill details from URL"
               className="shrink-0"
             >

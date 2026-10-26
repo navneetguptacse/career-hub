@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Building2,
   ExternalLink,
   MapPin,
   Trash2,
@@ -96,10 +95,12 @@ export const JobCard: React.FC<JobCardProps> = ({
           <GripVertical className="w-3.5 h-3.5 text-[#64748B] group-hover:text-[#94A3B8] shrink-0 mt-0.5 cursor-grab" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F1F5F9] group-hover:text-[#5499EB] transition-colors">
-              <Building2 className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />
-              <span className="truncate max-w-42.5">{job.companyName}</span>
+              {/* <Building2 className="w-3.5 h-3.5 text-[#3178C6] shrink-0" /> */}
+              <span className="truncate max-w-42.5 font-medium">
+                {job.companyName}
+              </span>
             </div>
-            <h4 className="text-sm font-medium text-[#E2E8F0] mt-0.5 leading-snug line-clamp-2">
+            <h4 className="text-xs text-[#E2E8F0] mt-0.5 leading-snug line-clamp-2 font-medium">
               {job.jobTitle}
             </h4>
           </div>

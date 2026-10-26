@@ -114,10 +114,10 @@ export const TelegramCard: React.FC = () => {
       {telegramStatus?.connected ? (
         <div className="space-y-3">
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs text-xs space-y-1">
-            <div className="text-[#94A3B8]">Telegram Connected</div>
+            <div className="text-[#F1F5F9] font-medium">Telegram Connected</div>
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-[#94A3B8]">Chat ID:</span>
-              <span className="font-mono text-[#F1F5F9] font-medium">
+              <span className="text-[#F1F5F9]">Chat ID</span>
+              <span className="font-mono text-[#F1F5F9]">
                 {telegramStatus.chatId}
               </span>
             </div>

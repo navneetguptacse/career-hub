@@ -52,8 +52,9 @@ async function extractWithGemini(
   const models = [
     process.env.GEMINI_MODEL,
     "gemini-3.5-flash",
-    "gemini-2.5-flash",
-    "gemini-1.5-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
     "gemini-flash-latest",
   ].filter(Boolean) as string[];
 
@@ -78,7 +79,7 @@ async function extractWithGemini(
             maxOutputTokens: 1024,
           },
         }),
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(6000),
       });
 
       if (!res.ok) continue;
