@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { parseJsonLd } from "./jsonld-extractor";
 
 export interface ScrapedJobData {
   jobTitle: string;
@@ -18,26 +19,52 @@ function cleanText(text?: string | null): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+function extractLocationFromText(text: string): string | null {
+  const cityState = text.match(
+    /\b([A-Z][a-zA-Z\s.-]+,\s*[A-Z]{2}\b(?:\s*,\s*(?:United States|USA|US))?)/
+  );
+  if (cityState && cityState[1].length < 40) return cityState[1].trim();
+
+  const cityCountry = text.match(
+    /\b([A-Z][a-zA-Z\s.-]+,\s*(?:United States|United Kingdom|UK|Canada|India|Germany|Australia|Singapore|Ireland|Netherlands|France|Japan|Poland|Spain|Switzerland))\b/i
+  );
+  if (cityCountry && cityCountry[1].length < 50) return cityCountry[1].trim();
+
+  if (/\b(remote|work from home|telecommute|virtual)\b/i.test(text)) {
+    return "Remote";
+  }
+
+  return null;
+}
+
 function extractCompanyAndTitle(
   rawTitle: string,
   rawSiteName: string,
   domain: string
-): { company: string; title: string } {
+): { company: string; title: string; location?: string } {
   let title = rawTitle;
   let company = rawSiteName;
+  let detectedLocation: string | undefined;
 
   const separators = [" at ", " - ", " – ", " — ", " | ", " : "];
   for (const sep of separators) {
     if (rawTitle.includes(sep)) {
-      const parts = rawTitle.split(sep);
+      const parts = rawTitle.split(sep).map((p) => cleanText(p));
       if (parts.length >= 2) {
-        title = cleanText(parts[0]);
-        if (
-          !company ||
-          company.toLowerCase().includes("careers") ||
-          company.toLowerCase().includes("job")
-        ) {
-          company = cleanText(parts[1]);
+        title = parts[0];
+        for (let i = 1; i < parts.length; i++) {
+          const loc = extractLocationFromText(parts[i]);
+          if (loc && !detectedLocation) {
+            detectedLocation = loc;
+            continue;
+          }
+          if (
+            !company ||
+            company.toLowerCase().includes("careers") ||
+            company.toLowerCase().includes("job")
+          ) {
+            company = parts[i];
+          }
         }
         break;
       }
@@ -49,7 +76,7 @@ function extractCompanyAndTitle(
     company = cleanDomain.charAt(0).toUpperCase() + cleanDomain.slice(1);
   }
 
-  return { company, title };
+  return { company, title, location: detectedLocation };
 }
 
 export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
@@ -71,9 +98,9 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
   }
 
   if (!detectedCompany) {
-    if (host.includes("google.")) detectedCompany = "Google";
+    if (host.includes("microsoft.")) detectedCompany = "Microsoft";
+    else if (host.includes("google.")) detectedCompany = "Google";
     else if (host.includes("stripe.")) detectedCompany = "Stripe";
-    else if (host.includes("microsoft.")) detectedCompany = "Microsoft";
     else if (host.includes("amazon.")) detectedCompany = "Amazon";
     else if (host.includes("meta.") || host.includes("facebook."))
       detectedCompany = "Meta";
@@ -110,13 +137,13 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
           .trim()
       : "Software Engineer";
 
-  let result: ScrapedJobData = {
+  const result: ScrapedJobData = {
     jobTitle: inferredRole || "Software Engineer",
     companyName: detectedCompany || "Company",
     jobDescription: "",
     jobUrl: url,
-    location: "Remote",
-    locationType: "REMOTE",
+    location: "Unspecified",
+    locationType: "ONSITE",
     employmentType: "FULL_TIME",
     salaryMin: null,
     salaryMax: null,
@@ -139,35 +166,69 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
       const html = await response.text();
       const $ = cheerio.load(html);
 
+      const jsonLdData = parseJsonLd($);
+      if (jsonLdData) {
+        if (jsonLdData.title) result.jobTitle = jsonLdData.title;
+        if (jsonLdData.company) result.companyName = jsonLdData.company;
+        if (jsonLdData.location) result.location = jsonLdData.location;
+        if (jsonLdData.locationType) result.locationType = jsonLdData.locationType;
+        if (jsonLdData.employmentType)
+          result.employmentType = jsonLdData.employmentType;
+        if (jsonLdData.description)
+          result.jobDescription = jsonLdData.description;
+      }
+
       const ogTitle = $('meta[property="og:title"]').attr("content");
       const metaTitle = $("title").text();
       const rawTitle = cleanText(ogTitle || metaTitle);
-
       const ogSiteName = $('meta[property="og:site_name"]').attr("content");
-      const { company, title } = extractCompanyAndTitle(
+      const { company, title, location: titleLocation } = extractCompanyAndTitle(
         rawTitle,
         cleanText(ogSiteName),
         parsedUrl.hostname
       );
 
-      const ogDescription =
-        $('meta[property="og:description"]').attr("content") ||
-        $('meta[name="description"]').attr("content");
-      const jobDescription = cleanText(ogDescription);
+      if (!jsonLdData?.title && title) result.jobTitle = title;
+      if (!jsonLdData?.company && company) result.companyName = company;
 
-      const fullText = (rawTitle + " " + jobDescription).toLowerCase();
-      let locationType: "REMOTE" | "HYBRID" | "ONSITE" = "REMOTE";
-      if (fullText.includes("hybrid")) locationType = "HYBRID";
-      else if (fullText.includes("on-site") || fullText.includes("onsite"))
-        locationType = "ONSITE";
+      const metaLocation =
+        $('meta[name="job_location"]').attr("content") ||
+        $('meta[name="location"]').attr("content") ||
+        $('meta[property="og:locality"]').attr("content") ||
+        $('meta[name="geo.placename"]').attr("content") ||
+        $(
+          '.location, .job-location, [itemprop="jobLocation"], [data-qa="job-location"]'
+        )
+          .first()
+          .text();
 
-      result = {
-        ...result,
-        jobTitle: title || result.jobTitle,
-        companyName: company || result.companyName,
-        jobDescription: jobDescription.slice(0, 2000),
-        locationType,
-      };
+      const resolvedLoc = cleanText(
+        jsonLdData?.location ||
+          metaLocation ||
+          titleLocation ||
+          extractLocationFromText(rawTitle)
+      );
+
+      if (resolvedLoc) {
+        result.location = resolvedLoc;
+        const lowerLoc = resolvedLoc.toLowerCase();
+        if (lowerLoc.includes("hybrid")) {
+          result.locationType = "HYBRID";
+        } else if (lowerLoc.includes("remote")) {
+          result.locationType = "REMOTE";
+        } else {
+          result.locationType = "ONSITE";
+        }
+      }
+
+      if (!result.jobDescription) {
+        const ogDescription =
+          $('meta[property="og:description"]').attr("content") ||
+          $('meta[name="description"]').attr("content");
+        if (ogDescription) {
+          result.jobDescription = cleanText(ogDescription).slice(0, 2000);
+        }
+      }
     }
   } catch (err) {
     console.warn("Direct HTML scrape fallback used:", err);

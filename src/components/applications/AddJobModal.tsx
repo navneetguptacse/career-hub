@@ -59,8 +59,8 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         jobTitle: data.data.jobTitle || prev.jobTitle || "Software Engineer",
         jobUrl: data.data.jobUrl || rawUrl,
         jobDescription: data.data.jobDescription || prev.jobDescription,
-        location: data.data.location || prev.location || "Remote",
-        locationType: data.data.locationType || prev.locationType || "REMOTE",
+        location: data.data.location || prev.location || "",
+        locationType: data.data.locationType || prev.locationType || "ONSITE",
         employmentType:
           data.data.employmentType || prev.employmentType || "FULL_TIME",
         currency: data.data.currency || prev.currency || "USD",

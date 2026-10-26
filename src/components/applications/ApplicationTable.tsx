@@ -63,7 +63,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#202937]">
+        <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#202937]">
           {applications.map((app) => (
             <tr
               key={app.id}

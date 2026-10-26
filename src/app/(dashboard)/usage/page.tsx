@@ -18,8 +18,8 @@ export default function UsagePage() {
               </h1>
             </div>
             <p className="text-xs text-[#94A3B8] mt-1">
-              Complete guide to Telegram bot pairing and automated job
-              pipeline ingestion.
+              Complete guide to Telegram bot pairing and automated job pipeline
+              ingestion.
             </p>
           </div>
         </div>

@@ -137,6 +137,13 @@ html.light .border-\[\#202937\]\/80 {
   border-color: #e2e8f0 !important;
 }
 
+html.light .divide-\[\#202937\] > *,
+html.light .divide-\[\#202937\] > :not([hidden]) ~ :not([hidden]),
+html.light .divide-\[\#202937\]\/30 > *,
+html.light .divide-\[\#202937\]\/50 > * {
+  border-color: #e2e8f0 !important;
+}
+
 html.light .border-\[\#2D3B4E\],
 html.light .border-\[\#2d3b4e\] {
   border-color: #cbd5e1 !important;

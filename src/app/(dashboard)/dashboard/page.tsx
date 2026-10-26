@@ -186,7 +186,7 @@ export default function DashboardPage() {
             navigation bar to get started!
           </div>
         ) : (
-          <div className="border border-[#202937] rounded-xs bg-[#12171F] divide-y divide-[#202937]">
+          <div className="border border-[#202937] rounded-xs bg-[#12171F] divide-y divide-[#E2E8F0] dark:divide-[#202937]">
             {recentApps.map((app) => (
               <div
                 key={app.id}
