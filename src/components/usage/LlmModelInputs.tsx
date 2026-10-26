@@ -55,13 +55,13 @@ export const LlmModelInputs: React.FC<LlmModelInputsProps> = ({
   return (
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-[#94A3B8]">
-        Custom Model Override (Optional)
+        Custom Model Override
       </label>
       <input
         type="text"
         value={model}
         onChange={(e) => setModel(e.target.value)}
-        placeholder={`Default: ${meta.defaultModel}`}
+        placeholder={`${meta.defaultModel}`}
         className="w-full h-9 px-3 text-xs bg-[#0A0D12] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6] font-mono"
       />
     </div>
