@@ -115,13 +115,13 @@ export const TelegramGuideCard: React.FC = () => {
 
           <Button
             type="button"
-            variant="ghost"
+            variant="primary"
             size="sm"
             onClick={handleCopyLink}
-            className="h-8 text-xs px-2.5 text-[#94A3B8] hover:text-[#F1F5F9] border border-[#202937] shrink-0 self-start sm:self-auto"
+            className="h-8 text-xs px-2.5 shrink-0 self-start sm:self-auto"
           >
             {isCopiedLink ? (
-              <Check className="w-3 h-3 text-[#3178C6]" />
+              <Check className="w-3 h-3 text-white" />
             ) : (
               <Copy className="w-3 h-3" strokeWidth={2.4} />
             )}
@@ -158,12 +158,12 @@ export const TelegramGuideCard: React.FC = () => {
               size="sm"
               onClick={handleCopyCommand}
               disabled={!pairToken}
-              className="h-8 text-xs px-3"
+              className="h-8 text-xs px-2.5 shrink-0 self-start sm:self-auto"
             >
               {isCopied ? (
-                <Check className="w-3.5 h-3.5 text-white" />
+                <Check className="w-3 h-3 text-white" />
               ) : (
-                <Copy className="w-3.5 h-3.5" />
+                <Copy className="w-3 h-3" strokeWidth={2.4} />
               )}
               <span>{isCopied ? "Copied" : "Copy"}</span>
             </Button>

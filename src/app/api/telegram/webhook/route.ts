@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { scrapeJobUrl, capitalizeCompanyName } from "@/lib/scraper";
+import {
+  scrapeJobUrl,
+  capitalizeCompanyName,
+  type UserLlmConfig,
+} from "@/lib/scraper";
+import { decryptApiKey } from "@/lib/encryption";
 import {
   sendTelegramMessage,
   extractUrlFromTelegramMessage,
@@ -88,8 +93,18 @@ export async function POST(req: Request) {
 
     let appliedDate: Date | null = null;
 
+    let userConfig: UserLlmConfig | undefined = undefined;
+    if (user.llmProvider) {
+      userConfig = {
+        provider: user.llmProvider as UserLlmConfig["provider"],
+        apiKey: decryptApiKey(user.llmApiKeyHash),
+        endpoint: user.llmEndpoint,
+        model: user.llmModel,
+      };
+    }
+
     try {
-      const scraped = await scrapeJobUrl(jobUrl);
+      const scraped = await scrapeJobUrl(jobUrl, userConfig);
       jobTitle = scraped.jobTitle;
       companyName = scraped.companyName;
       jobDescription = scraped.jobDescription || "";

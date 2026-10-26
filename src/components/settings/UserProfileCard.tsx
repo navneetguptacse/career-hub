@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { ShieldCheck } from "lucide-react";
+import { CircleCheck, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -199,8 +199,8 @@ export const UserProfileCard: React.FC = () => {
               <span className="truncate">
                 {profile.email || session?.user?.email}
               </span>
-              <span className="text-[11px] text-[#10B981] bg-[#10B981]/15 px-1.5 py-0.5 rounded-xs shrink-0">
-                Verified
+              <span className="text-[11px] text-[#10B981] shrink-0">
+                <CircleCheck className="w-3.5 h-3.5" />
               </span>
             </div>
           </div>

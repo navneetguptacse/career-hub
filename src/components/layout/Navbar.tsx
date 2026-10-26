@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useSidebar } from "@/components/providers/SidebarProvider";
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 interface NavbarProps {
   onOpenAddModal: () => void;
@@ -23,7 +24,9 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
   const { data: session } = useSession();
   const { toggleMobileSidebar } = useSidebar();
+  const { isPaired } = useTelegramStatus();
   const user = session?.user;
+  const telegramConnected = isPaired || Boolean(user?.telegramConnected);
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -59,13 +62,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
 
       <div className="flex items-center gap-2 sm:gap-2.5">
         {/* Telegram status link */}
-        {user?.telegramConnected ? (
+        {telegramConnected ? (
           <Link
             href="/settings"
             title="Telegram Bot Paired"
-            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs font-mono"
+            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#3178C6] bg-[#3178C6]/15 border border-[#3178C6] rounded-xs transition-colors hover:bg-[#3178C6]/25 shadow-xs"
           >
-            <Send className="w-3 h-3 text-[#3178C6]" />
+            <Send className="w-3.5 h-3.5 fill-[#3178C6] text-[#3178C6]" />
           </Link>
         ) : (
           <Link

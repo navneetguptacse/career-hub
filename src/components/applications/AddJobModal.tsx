@@ -167,6 +167,15 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
               <PencilSparkles className="w-4 h-4 text-[#3178C6]" />
             </Button>
           </div>
+          <div className="flex items-center justify-between text-[11px] text-[#64748B] pt-0.5">
+            <span>Powered by AI extraction</span>
+            <a
+              href="/settings"
+              className="text-[#5499EB] hover:underline transition-colors"
+            >
+              Configure Provider &rarr;
+            </a>
+          </div>
         </div>
 
         {error && (

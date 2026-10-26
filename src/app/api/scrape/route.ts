@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { scrapeUrlSchema } from "@/lib/validations";
-import { scrapeJobUrl } from "@/lib/scraper";
+import { scrapeJobUrl, type UserLlmConfig } from "@/lib/scraper";
+import { decryptApiKey } from "@/lib/encryption";
 
 export async function POST(req: Request) {
   try {
@@ -20,7 +22,27 @@ export async function POST(req: Request) {
       );
     }
 
-    const scrapedData = await scrapeJobUrl(parsed.data.url);
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        llmProvider: true,
+        llmApiKeyHash: true,
+        llmEndpoint: true,
+        llmModel: true,
+      },
+    });
+
+    let userConfig: UserLlmConfig | undefined = undefined;
+    if (user?.llmProvider) {
+      userConfig = {
+        provider: user.llmProvider as UserLlmConfig["provider"],
+        apiKey: decryptApiKey(user.llmApiKeyHash),
+        endpoint: user.llmEndpoint,
+        model: user.llmModel,
+      };
+    }
+
+    const scrapedData = await scrapeJobUrl(parsed.data.url, userConfig);
     return NextResponse.json({ data: scrapedData });
   } catch (error) {
     console.error("POST /api/scrape error:", error);

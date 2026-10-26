@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Check, Copy, Send, Unlink } from "lucide-react";
+import { mutate } from "swr";
+import { Check, CircleCheck, Copy, Send, Unlink } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface TelegramStatus {
@@ -70,6 +71,7 @@ export const TelegramCard: React.FC = () => {
       const res = await fetch("/api/telegram/pair", { method: "DELETE" });
       if (res.ok) {
         await fetchTelegramStatus();
+        await mutate("/api/telegram/pair");
         await update({ user: { telegramConnected: false } });
       }
     } catch (err) {
@@ -100,7 +102,7 @@ export const TelegramCard: React.FC = () => {
         <div>
           {telegramStatus?.connected ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 rounded-xs">
-              <Check className="w-3.5 h-3.5" />
+              <CircleCheck className="w-3.5 h-3.5" />
               Paired
             </span>
           ) : (

@@ -77,7 +77,8 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update application");
+      if (!res.ok)
+        throw new Error(data.error || "Failed to update application");
 
       onSuccess();
       onClose();

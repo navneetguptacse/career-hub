@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ChevronRight,
   Globe,
   GripVertical,
   MapPin,
-  MoreVertical,
+  Trash2,
 } from "lucide-react";
-import { type ApplicationStatusType } from "@/components/ui/Badge";
+import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { formatDate, cn } from "@/lib/utils";
 import { capitalizeCompanyName } from "@/lib/scraper";
 
@@ -38,24 +38,17 @@ interface JobCardProps {
   onEdit?: (job: JobApplicationItem) => void;
 }
 
-const ALL_STATUS_OPTIONS: ApplicationStatusType[] = [
-  "WISHLIST",
-  "APPLIED",
-  "SCREENING",
-  "INTERVIEW",
-  "OFFER",
-  "REJECTED",
-  "WITHDRAWN",
-];
-
-const STATUS_LABELS: Record<ApplicationStatusType, string> = {
-  WISHLIST: "Wishlist",
-  APPLIED: "Applied",
-  SCREENING: "Screening",
-  INTERVIEW: "Interview",
-  OFFER: "Offer",
-  REJECTED: "Rejected",
-  WITHDRAWN: "Withdrawn",
+const NEXT_STATUSES: Record<
+  ApplicationStatusType,
+  ApplicationStatusType | null
+> = {
+  WISHLIST: "APPLIED",
+  APPLIED: "SCREENING",
+  SCREENING: "INTERVIEW",
+  INTERVIEW: "OFFER",
+  OFFER: null,
+  REJECTED: null,
+  WITHDRAWN: null,
 };
 
 export const JobCard: React.FC<JobCardProps> = ({
@@ -65,21 +58,12 @@ export const JobCard: React.FC<JobCardProps> = ({
   onEdit,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showStatusMenu, setShowStatusMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const nextStatus = NEXT_STATUSES[job.status];
 
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsMenuOpen(false);
-        setShowStatusMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMenuOpen]);
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(job);
+  };
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("text/plain", job.id);
@@ -98,14 +82,18 @@ export const JobCard: React.FC<JobCardProps> = ({
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={() => onEdit?.(job)}
       className={cn(
-        "group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/60 rounded-xs transition-all shadow-xs space-y-2.5 cursor-grab active:cursor-grabbing select-none",
+        "group relative p-3 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/80 rounded-xs transition-all shadow-xs space-y-2.5 cursor-pointer active:cursor-grabbing select-none",
         isDragging && "opacity-40 border-dashed border-[#3178C6] scale-[0.98]"
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-start gap-2 min-w-0 flex-1">
-          <GripVertical className="w-3.5 h-3.5 text-[#64748B] group-hover:text-[#94A3B8] shrink-0 mt-0.5 cursor-grab" />
+          <GripVertical
+            onClick={(e) => e.stopPropagation()}
+            className="w-3.5 h-3.5 text-[#64748B] group-hover:text-[#94A3B8] shrink-0 mt-0.5 cursor-grab"
+          />
           <div className="min-w-0 flex-1 space-y-1.5">
             <div>
               <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F1F5F9] group-hover:text-[#5499EB] transition-colors">
@@ -118,12 +106,16 @@ export const JobCard: React.FC<JobCardProps> = ({
               </h4>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#94A3B8]">
+            {/* WorkType on line 1, Location on line 2 (separate lines, not flexed) */}
+            <div className="space-y-1 pt-0.5">
+              <div>
+                <Badge status={job.locationType} size="sm" />
+              </div>
               {job.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-[#64748B]" />
-                  <span className="truncate max-w-32.5">{job.location}</span>
-                </span>
+                <div className="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+                  <MapPin className="w-3 h-3 text-[#64748B] shrink-0" />
+                  <span className="truncate max-w-44">{job.location}</span>
+                </div>
               )}
             </div>
           </div>
@@ -135,6 +127,7 @@ export const JobCard: React.FC<JobCardProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             title="Open in browser"
+            onClick={(e) => e.stopPropagation()}
             className="text-[#94A3B8] hover:text-[#3178C6] hover:bg-[#18202C] p-1 rounded-xs transition-colors shrink-0"
           >
             <Globe className="w-3.5 h-3.5" />
@@ -153,103 +146,28 @@ export const JobCard: React.FC<JobCardProps> = ({
           {formatDate(job.appliedDate || job.createdAt)}
         </div>
 
-        {/* 3-Dot Options Dropdown */}
-        <div className="relative" ref={menuRef}>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsMenuOpen((prev) => !prev);
-              setShowStatusMenu(false);
-            }}
-            title="Options"
-            className="h-6 w-6 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] rounded-xs border border-transparent hover:border-[#202937] transition-colors"
-          >
-            <MoreVertical className="w-3.5 h-3.5" />
-          </button>
-
-          {isMenuOpen && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 bottom-full mb-1 w-44 bg-[#12171F] border border-[#202937] rounded-xs shadow-xl z-30 py-1"
+        <div className="flex items-center gap-1.5">
+          {nextStatus && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange(job.id, nextStatus);
+              }}
+              title={`Advance to ${nextStatus}`}
+              className="h-6 px-2 inline-flex items-center gap-0.5 text-[10px] font-mono text-[#5499EB] hover:text-white bg-[#3178C6]/15 hover:bg-[#3178C6] border border-[#3178C6]/30 rounded-xs transition-colors"
             >
-              {!showStatusMenu ? (
-                <>
-                  {onEdit && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        onEdit(job);
-                      }}
-                      className="w-full text-left px-3 py-1.5 text-xs text-[#F1F5F9] hover:bg-[#18202C] hover:text-[#5499EB] transition-colors"
-                    >
-                      Edit
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setShowStatusMenu(true)}
-                    className="w-full text-left px-3 py-1.5 text-xs text-[#F1F5F9] hover:bg-[#18202C] hover:text-[#5499EB] transition-colors flex items-center justify-between"
-                  >
-                    <span>Status Change</span>
-                    <ChevronRight className="w-3 h-3 text-[#64748B]" />
-                  </button>
-
-                  <div className="my-1 border-t border-[#202937]" />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      onDelete(job);
-                    }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
-                  >
-                    Delete
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="px-2.5 py-1 border-b border-[#202937] flex items-center justify-between mb-0.5">
-                    <button
-                      type="button"
-                      onClick={() => setShowStatusMenu(false)}
-                      className="text-[11px] text-[#64748B] hover:text-[#F1F5F9] transition-colors font-mono"
-                    >
-                      &larr; Back
-                    </button>
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#64748B]">
-                      Status
-                    </span>
-                  </div>
-
-                  <div className="max-h-48 overflow-y-auto">
-                    {ALL_STATUS_OPTIONS.map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        onClick={() => {
-                          onStatusChange(job.id, status);
-                          setIsMenuOpen(false);
-                          setShowStatusMenu(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-3 py-1.5 text-xs transition-colors",
-                          job.status === status
-                            ? "bg-[#3178C6]/15 text-[#5499EB] font-medium"
-                            : "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C]"
-                        )}
-                      >
-                        {STATUS_LABELS[status]}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+              <span>{nextStatus}</span>
+              <ChevronRight className="w-3 h-3" />
+            </button>
           )}
+
+          <button
+            onClick={handleDelete}
+            title="Delete application"
+            className="h-6 w-6 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </div>

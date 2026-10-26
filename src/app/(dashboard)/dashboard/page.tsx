@@ -15,10 +15,12 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
 import { useApplications } from "@/lib/hooks/useApplications";
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const { applications, isLoading } = useApplications();
+  const { isPaired: isTelegramPaired } = useTelegramStatus();
 
   const metrics = {
     total: applications.length,
@@ -127,12 +129,21 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <Link href="/settings">
-          <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
-            <span>Configure Telegram</span>
-            <Link2 className="w-3.5 h-3.5" />
-          </Button>
-        </Link>
+        {isTelegramPaired ? (
+          <Link href="/settings" title="Telegram Bot Configured & Active">
+            <div className="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-xs text-xs font-medium bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] hover:bg-[#10B981]/25 transition-colors shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Configured</span>
+            </div>
+          </Link>
+        ) : (
+          <Link href="/settings">
+            <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
+              <span>Configure Telegram</span>
+              <Link2 className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Recent Applications Section */}

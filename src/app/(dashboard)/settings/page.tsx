@@ -6,6 +6,7 @@ import { ShieldCheck, UserRound } from "lucide-react";
 import { UserProfileCard } from "@/components/settings/UserProfileCard";
 import { AppearanceCard } from "@/components/settings/AppearanceCard";
 import { TelegramCard } from "@/components/settings/TelegramCard";
+import { LlmConfigCard } from "@/components/settings/LlmConfigCard";
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
 
 export default function SettingsPage() {
@@ -32,6 +33,9 @@ export default function SettingsPage() {
 
       {/* Telegram Bot Integration */}
       <TelegramCard />
+
+      {/* AI Extraction Provider Configuration */}
+      <LlmConfigCard />
 
       {/* System Diagnostics & Authentication Details */}
       <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">

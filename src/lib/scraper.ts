@@ -1,4 +1,12 @@
 import * as cheerio from "cheerio";
+import {
+  executeLlmCall,
+  type UserLlmConfig,
+  testLlmProvider,
+} from "./llm-provider";
+
+export type { UserLlmConfig };
+export { testLlmProvider };
 
 export interface ScrapedJobData {
   jobTitle: string;
@@ -27,13 +35,6 @@ interface LlmExtractedData {
   currency?: string | null;
 }
 
-/**
- * Capitalizes a company name so that:
- * 1. It is never completely uppercase (e.g. "ACCENTURE" -> "Accenture")
- * 2. It is never completely lowercase (e.g. "accenture" -> "Accenture")
- * 3. Preserves clean casing for brands like "McKinsey", "OpenAI"
- * 4. Cleans up redundant suffixes like " Careers", " Jobs", " - Hiring"
- */
 export function capitalizeCompanyName(name?: string | null): string {
   if (!name) return "";
   let clean = name.replace(/\s+/g, " ").trim();
@@ -107,7 +108,10 @@ function inferFallbackFromUrl(url: string): {
       parsed.pathname
     ) {
       const seg = parsed.pathname.split("/").filter(Boolean)[0];
-      if (seg && !["jobs", "job", "view", "apply"].includes(seg.toLowerCase())) {
+      if (
+        seg &&
+        !["jobs", "job", "view", "apply"].includes(seg.toLowerCase())
+      ) {
         rawCompany = seg;
       }
     }
@@ -139,15 +143,9 @@ function inferFallbackFromUrl(url: string): {
 async function extractJobWithLlm(
   contentSnippet: string,
   url: string,
-  fallbackCompany: string
+  fallbackCompany: string,
+  userConfig?: UserLlmConfig
 ): Promise<LlmExtractedData | null> {
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
-
-  if (!geminiKey && !openaiKey) {
-    return null;
-  }
-
   const prompt = `You are an expert AI job extractor. Extract structured job metadata from this job posting text:
 Target URL: ${url}
 Preliminary Company: ${fallbackCompany}
@@ -170,73 +168,26 @@ Return ONLY a JSON object with this exact schema:
 }`;
 
   try {
-    if (geminiKey) {
-      const model = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
-
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json",
-              temperature: 0.1,
-            },
-          }),
-          signal: controller.signal,
-        }
-      );
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (rawJson) {
-          return JSON.parse(rawJson) as LlmExtractedData;
-        }
-      }
+    let rawJson = await executeLlmCall(prompt, userConfig);
+    if (!rawJson && userConfig?.provider && userConfig.provider !== "GEMINI") {
+      rawJson = await executeLlmCall(prompt, { provider: "GEMINI" });
     }
 
-    if (openaiKey) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
-
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openaiKey}`,
-        },
-        body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          response_format: { type: "json_object" },
-          temperature: 0.1,
-        }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        const rawJson = data?.choices?.[0]?.message?.content;
-        if (rawJson) {
-          return JSON.parse(rawJson) as LlmExtractedData;
-        }
-      }
+    if (rawJson) {
+      const cleaned = rawJson.replace(/```json\s*|```\s*$/g, "").trim();
+      return JSON.parse(cleaned) as LlmExtractedData;
     }
   } catch (err) {
-    console.warn("LLM extraction failed or timed out:", err);
+    console.warn("LLM extraction call failed:", err);
   }
 
   return null;
 }
 
-export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
+export async function scrapeJobUrl(
+  url: string,
+  userConfig?: UserLlmConfig
+): Promise<ScrapedJobData> {
   const fallback = inferFallbackFromUrl(url);
 
   let rawHtml = "";
@@ -261,7 +212,7 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
 
   const snippet = rawHtml ? cleanHtmlToSnippet(rawHtml) : "";
   const llmData = snippet
-    ? await extractJobWithLlm(snippet, url, fallback.company)
+    ? await extractJobWithLlm(snippet, url, fallback.company, userConfig)
     : null;
 
   const validLocationTypes: Array<"REMOTE" | "HYBRID" | "ONSITE"> = [

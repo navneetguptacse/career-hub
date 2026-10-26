@@ -1,9 +1,10 @@
 "use client";
 
+import React from "react";
 import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
 import { formatDate, cn } from "@/lib/utils";
-import { Globe, Pencil, Trash2 } from "lucide-react";
+import { Globe, Trash2 } from "lucide-react";
 import { capitalizeCompanyName } from "@/lib/scraper";
 
 interface ApplicationTableProps {
@@ -60,6 +61,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <th className="px-4 py-3">Company & Role</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Workplace</th>
+            <th className="px-4 py-3">Link</th>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
@@ -68,7 +70,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
           {applications.map((app) => (
             <tr
               key={app.id}
-              className="hover:bg-[#18202C] transition-colors text-[#F1F5F9]"
+              onClick={() => onEdit?.(app)}
+              className="hover:bg-[#18202C] transition-colors cursor-pointer text-[#F1F5F9]"
             >
               <td className="px-4 py-3.5">
                 <div className="flex items-center gap-2">
@@ -84,6 +87,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               <td className="px-4 py-3.5">
                 <select
                   value={app.status}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) =>
                     onStatusChange(
                       app.id,
@@ -109,11 +113,33 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               </td>
 
               <td className="px-4 py-3.5">
-                <Badge status={app.locationType} size="sm" />
+                <div>
+                  <Badge status={app.locationType} size="sm" />
+                </div>
                 {app.location && (
                   <div className="text-[11px] text-[#64748B] mt-1 truncate max-w-36">
                     {app.location}
                   </div>
+                )}
+              </td>
+
+              {/* Dedicated Link Column */}
+              <td className="px-4 py-3.5">
+                {app.jobUrl ? (
+                  <a
+                    href={app.jobUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open link in browser"
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-7 w-7 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#3178C6] hover:bg-[#0A0D12] rounded-xs border border-transparent hover:border-[#202937] transition-colors"
+                  >
+                    <Globe className="w-3.5 h-3.5" />
+                  </a>
+                ) : (
+                  <span className="text-[#64748B] font-mono text-[11px] pl-2">
+                    —
+                  </span>
                 )}
               </td>
 
@@ -123,30 +149,13 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
               <td className="px-4 py-3.5 text-right">
                 <div className="flex items-center justify-end gap-1">
-                  {app.jobUrl && (
-                    <a
-                      href={app.jobUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Open in browser"
-                      className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors"
-                    >
-                      <Globe className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(app)}
-                      title="Edit application"
-                      className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] rounded-xs transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                  )}
                   <button
-                    onClick={() => onDelete(app)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(app);
+                    }}
                     title="Delete application"
-                    className="h-8 w-8 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
+                    className="h-7 w-7 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

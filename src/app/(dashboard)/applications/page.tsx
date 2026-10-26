@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Kanban,
-  Table as TableIcon,
-  Search,
-  Filter,
-} from "lucide-react";
+import { Kanban, Table as TableIcon, Search, Filter } from "lucide-react";
 import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
 import { JobApplicationItem } from "@/components/applications/JobCard";
@@ -26,21 +21,13 @@ export default function ApplicationsPage() {
   const [jobToEdit, setJobToEdit] = useState<JobApplicationItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const {
-    applications,
-    isLoading,
-    updateStatus,
-    deleteApplication,
-    mutate,
-  } = useApplications({
-    search,
-    status: statusFilter,
-  });
+  const { applications, isLoading, updateStatus, deleteApplication, mutate } =
+    useApplications({
+      search,
+      status: statusFilter,
+    });
 
-  const handleStatusChange = (
-    id: string,
-    newStatus: ApplicationStatusType
-  ) => {
+  const handleStatusChange = (id: string, newStatus: ApplicationStatusType) => {
     updateStatus(id, newStatus);
   };
 
