@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
 import { formatDate, cn } from "@/lib/utils";
@@ -58,7 +57,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <th className="px-4 py-3">Company & Role</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Workplace</th>
-            <th className="px-4 py-3">Source</th>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
@@ -110,16 +108,10 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               <td className="px-4 py-3.5">
                 <Badge status={app.locationType} size="sm" />
                 {app.location && (
-                  <div className="text-[11px] text-[#64748B] mt-0.5 truncate max-w-30">
+                  <div className="text-[11px] text-[#64748B] mt-1 truncate max-w-36">
                     {app.location}
                   </div>
                 )}
-              </td>
-
-              <td className="px-4 py-3.5">
-                <span className="font-mono text-[10px] text-[#94A3B8] px-1.5 py-0.5 bg-[#0A0D12] border border-[#202937] rounded-xs">
-                  {app.source}
-                </span>
               </td>
 
               <td className="px-4 py-3.5 font-mono text-[#64748B]">

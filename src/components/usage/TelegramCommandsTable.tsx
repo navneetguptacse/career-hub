@@ -60,7 +60,7 @@ export const TelegramCommandsTable: React.FC = () => {
               <th className="px-4 py-3">Function &amp; Outcome</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#202937]">
+          <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#202937]">
             {COMMANDS.map((item) => (
               <tr
                 key={item.command}

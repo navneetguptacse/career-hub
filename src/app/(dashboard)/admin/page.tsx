@@ -117,7 +117,7 @@ export default function AdminPage() {
                     <th className="px-3 py-2">Joined</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#202937]">
+                <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#202937]">
                   {users.map((u) => (
                     <tr key={u.id} className="hover:bg-[#18202C]">
                       <td className="px-3 py-2.5 font-medium text-[#F1F5F9]">

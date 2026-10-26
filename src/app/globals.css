@@ -139,6 +139,10 @@ html.light .border-\[\#202937\]\/80 {
 
 html.light .divide-\[\#202937\] > *,
 html.light .divide-\[\#202937\] > :not([hidden]) ~ :not([hidden]),
+html.light :where(.divide-\[\#202937\] > :not(:last-child)),
+html.light :where(.divide-y > :not(:last-child)),
+html.light .divide-y > *,
+html.light .divide-y > :not([hidden]) ~ :not([hidden]),
 html.light .divide-\[\#202937\]\/30 > *,
 html.light .divide-\[\#202937\]\/50 > * {
   border-color: #e2e8f0 !important;

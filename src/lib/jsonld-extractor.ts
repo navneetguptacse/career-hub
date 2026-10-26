@@ -51,8 +51,11 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
   const title =
     typeof job.title === "string" ? cleanText(job.title) : undefined;
   const hiringOrg = job.hiringOrganization as Record<string, unknown> | undefined;
-  const company =
+  let company =
     typeof hiringOrg?.name === "string" ? cleanText(hiringOrg.name) : undefined;
+  if (company) {
+    company = company.replace(/\s+(Careers|Jobs|Hiring)\b/i, "").trim();
+  }
 
   let locationStr = "";
   const jobLoc = job.jobLocation;
@@ -67,14 +70,24 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
           const locality = cleanText(
             (addr.addressLocality as string) || (addr.city as string)
           );
-          const region = cleanText(
+          let region = cleanText(
             (addr.addressRegion as string) || (addr.state as string)
           );
-          const country = cleanText(
+          let country = cleanText(
             typeof addr.addressCountry === "object" && addr.addressCountry !== null
               ? ((addr.addressCountry as Record<string, unknown>).name as string)
               : (addr.addressCountry as string)
           );
+
+          if (region.includes(",")) {
+            const regParts = region.split(",").map((p) => p.trim());
+            region = regParts[0];
+            if (!country && regParts[1]) country = regParts[1];
+          }
+          if (country && region.toUpperCase() === country.toUpperCase()) {
+            country = "";
+          }
+
           const parts = [locality, region, country].filter(Boolean);
           if (parts.length > 0) {
             locationStr = parts.join(", ");

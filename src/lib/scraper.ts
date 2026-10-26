@@ -19,10 +19,14 @@ function cleanText(text?: string | null): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+const US_CA_STATE_CODES =
+  "(?:AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC|PR|VI|GU|AB|BC|MB|NB|NL|NS|NT|NU|ON|PE|QC|SK|YT)";
+
 function extractLocationFromText(text: string): string | null {
-  const cityState = text.match(
-    /\b([A-Z][a-zA-Z\s.-]+,\s*[A-Z]{2}\b(?:\s*,\s*(?:United States|USA|US))?)/
+  const stateRegex = new RegExp(
+    `\\b([A-Z][a-zA-Z\\s.-]+,\\s*${US_CA_STATE_CODES}\\b(?:\\s*,\\s*(?:United States|USA|US))?)`
   );
+  const cityState = text.match(stateRegex);
   if (cityState && cityState[1].length < 40) return cityState[1].trim();
 
   const cityCountry = text.match(
@@ -159,7 +163,7 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
       },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (response.ok) {
@@ -195,16 +199,36 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
         $('meta[name="job_location"]').attr("content") ||
         $('meta[name="location"]').attr("content") ||
         $('meta[property="og:locality"]').attr("content") ||
-        $('meta[name="geo.placename"]').attr("content") ||
+        $('meta[name="geo.placename"]').attr("content");
+
+      let domLocation = cleanText(
         $(
-          '.location, .job-location, [itemprop="jobLocation"], [data-qa="job-location"]'
+          '.location, .job-location, [itemprop="jobLocation"], [data-qa="job-location"], [data-qa*="location"], [aria-label*="location"]'
         )
           .first()
-          .text();
+          .text()
+      );
+
+      if (!domLocation) {
+        const placeIcon = $('i:contains("place")').first();
+        if (placeIcon.length > 0) {
+          const sibling = cleanText(placeIcon.next("span").text());
+          if (sibling) {
+            domLocation = sibling;
+          } else {
+            const parentText = cleanText(placeIcon.parent().text()).replace(
+              /^place\s*/i,
+              ""
+            );
+            if (parentText) domLocation = parentText;
+          }
+        }
+      }
 
       const resolvedLoc = cleanText(
         jsonLdData?.location ||
           metaLocation ||
+          domLocation ||
           titleLocation ||
           extractLocationFromText(rawTitle)
       );
@@ -214,11 +238,17 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
         const lowerLoc = resolvedLoc.toLowerCase();
         if (lowerLoc.includes("hybrid")) {
           result.locationType = "HYBRID";
-        } else if (lowerLoc.includes("remote")) {
+        } else if (lowerLoc.includes("remote") || lowerLoc.includes("virtual")) {
           result.locationType = "REMOTE";
         } else {
           result.locationType = "ONSITE";
         }
+      }
+
+      if (result.companyName) {
+        result.companyName = result.companyName
+          .replace(/\s+(Careers|Jobs|Hiring)\b/i, "")
+          .trim();
       }
 
       if (!result.jobDescription) {
