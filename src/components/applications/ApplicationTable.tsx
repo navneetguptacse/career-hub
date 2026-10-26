@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { Globe, Trash2 } from "lucide-react";
 import { type ApplicationStatusType } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -68,7 +68,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       rel="noopener noreferrer"
                       className="text-[#3178C6] hover:text-[#5499EB]"
                     >
-                      <ExternalLink className="w-3 h-3 inline" />
+                      <Globe className="w-3 h-3 inline" />
                     </a>
                   )}
                 </div>

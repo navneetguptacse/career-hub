@@ -45,9 +45,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           <span className="font-semibold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
             CareerHub
           </span>
-          <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-[#3178C6]/15 text-[#5499EB] border border-[#3178C6]/30 rounded-xs">
-            v1.0
-          </span>
         </Link>
       </div>
 

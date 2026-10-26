@@ -146,6 +146,11 @@ html.light .text-\[\#f1f5f9\] {
   color: #0f172a !important;
 }
 
+html.light .text-\[\#E2E8F0\],
+html.light .text-\[\#e2e8f0\] {
+  color: #0f172a !important;
+}
+
 html.light .text-\[\#94A3B8\],
 html.light .text-\[\#94a3b8\] {
   color: #475569 !important;

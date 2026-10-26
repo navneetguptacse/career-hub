@@ -37,7 +37,7 @@ This document serves as the permanent system architecture reference, UI design s
 
 CareerHub is a full-stack Next.js application designed to track, organize, and automate job applications ingested through:
 
-1. **Interactive Web Dashboard** (Kanban Board, List/Table, Metrics, Manual Entry).
+1. **Interactive Web Dashboard** (Kanban, Table, Metrics, Manual Entry).
 2. **Telegram Group/Chat Bot Webhook** (Paste job link -> Auto-parse metadata -> Add to user's pipeline).
 3. **Direct URL Scraper API** (Fetch OpenGraph metadata from job postings).
 

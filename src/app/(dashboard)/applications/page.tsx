@@ -150,7 +150,7 @@ export default function ApplicationsPage() {
           <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs h-8">
             <button
               onClick={() => setViewMode("kanban")}
-              title="Kanban Board"
+              title="Kanban"
               className={`h-7 px-2 inline-flex items-center justify-center rounded-xs transition-colors ${
                 viewMode === "kanban"
                   ? "bg-[#3178C6] text-white"

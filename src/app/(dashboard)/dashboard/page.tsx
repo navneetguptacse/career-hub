@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import {
   CheckCircle2,
   Clock,
-  ExternalLink,
   Flame,
+  Link2,
   Send,
   SquareKanban,
 } from "lucide-react";
@@ -83,7 +83,7 @@ export default function DashboardPage() {
           <Link href="/applications">
             <Button variant="secondary" size="sm" className="gap-1.5">
               <SquareKanban className="w-3.5 h-3.5" />
-              <span>Kanban Board</span>
+              <span>Kanban</span>
             </Button>
           </Link>
         </div>
@@ -159,7 +159,7 @@ export default function DashboardPage() {
         <Link href="/settings">
           <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
             <span>Configure Telegram</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <Link2 className="w-3.5 h-3.5" />
           </Button>
         </Link>
       </div>
