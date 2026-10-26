@@ -6,6 +6,7 @@ import { ShieldCheck, User } from "lucide-react";
 import { UserProfileCard } from "@/components/settings/UserProfileCard";
 import { AppearanceCard } from "@/components/settings/AppearanceCard";
 import { TelegramCard } from "@/components/settings/TelegramCard";
+import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -56,6 +57,9 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Account Deletion & Danger Zone */}
+      <DangerZoneCard />
     </div>
   );
 }

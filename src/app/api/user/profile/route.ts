@@ -112,3 +112,27 @@ export async function PATCH(req: Request) {
     );
   }
 }
+
+export async function DELETE() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await prisma.user.delete({
+      where: { id: session.user.id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Account and all associated records permanently deleted.",
+    });
+  } catch (error) {
+    console.error("Failed to delete user account:", error);
+    return NextResponse.json(
+      { error: "Failed to delete account" },
+      { status: 500 }
+    );
+  }
+}

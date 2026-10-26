@@ -170,7 +170,9 @@ export const TelegramCard: React.FC = () => {
               <li>
                 Send the pairing command copied above:{" "}
                 <code className="text-[#5499EB] font-mono font-semibold">
-                  /link {telegramStatus?.pairToken}
+                  {isLoading
+                    ? "Generating..."
+                    : `/link ${telegramStatus?.pairToken || "PAIR-XXXXXX"}`}
                 </code>
               </li>
               <li>

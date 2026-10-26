@@ -48,6 +48,8 @@ function LoginForm() {
     signIn(provider, { callbackUrl });
   };
 
+  const isDeleted = searchParams.get("deleted") === "true";
+
   return (
     <div className="w-full max-w-sm p-6 bg-[#12171F] border border-[#202937] rounded-xs shadow-2xl space-y-5">
       <div className="text-center space-y-1.5">
@@ -61,6 +63,12 @@ function LoginForm() {
           Track applications, sync Telegram links, and accelerate your career.
         </p>
       </div>
+
+      {isDeleted && (
+        <div className="p-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs">
+          Your account and all associated data have been permanently deleted.
+        </div>
+      )}
 
       {error && (
         <div className="p-2.5 text-xs text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xs">
