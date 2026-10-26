@@ -264,3 +264,17 @@ html.light .hover\:text-\[\#5499EB\]:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
+/* Job title high-contrast styling across light and dark themes */
+.job-title-heading {
+  color: #cbd5e1;
+}
+
+html.light .job-title-heading {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+html.dark .job-title-heading {
+  color: #e2e8f0 !important;
+}

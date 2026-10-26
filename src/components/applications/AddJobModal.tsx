@@ -28,8 +28,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
     location: "",
     locationType: "REMOTE",
     employmentType: "FULL_TIME",
-    salaryMin: "",
-    salaryMax: "",
     currency: "USD",
     jobUrl: "",
     jobDescription: "",
@@ -65,14 +63,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         locationType: data.data.locationType || prev.locationType || "REMOTE",
         employmentType:
           data.data.employmentType || prev.employmentType || "FULL_TIME",
-        salaryMin:
-          data.data.salaryMin !== null && data.data.salaryMin !== undefined
-            ? String(data.data.salaryMin)
-            : prev.salaryMin || "120000",
-        salaryMax:
-          data.data.salaryMax !== null && data.data.salaryMax !== undefined
-            ? String(data.data.salaryMax)
-            : prev.salaryMax || "160000",
         currency: data.data.currency || prev.currency || "USD",
       }));
     } catch (err: unknown) {
@@ -97,8 +87,8 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          salaryMin: formData.salaryMin ? Number(formData.salaryMin) : null,
-          salaryMax: formData.salaryMax ? Number(formData.salaryMax) : null,
+          salaryMin: null,
+          salaryMax: null,
           source: formData.jobUrl ? "LINK_SCRAPER" : "MANUAL",
         }),
       });
@@ -114,8 +104,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         location: "",
         locationType: "REMOTE",
         employmentType: "FULL_TIME",
-        salaryMin: "",
-        salaryMax: "",
         currency: "USD",
         jobUrl: "",
         jobDescription: "",
@@ -241,27 +229,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
                 <option value="OFFER">Offer</option>
               </select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Input
-              label="Salary Min ($)"
-              type="number"
-              value={formData.salaryMin}
-              onChange={(e) =>
-                setFormData({ ...formData, salaryMin: e.target.value })
-              }
-              placeholder="120000"
-            />
-            <Input
-              label="Salary Max ($)"
-              type="number"
-              value={formData.salaryMax}
-              onChange={(e) =>
-                setFormData({ ...formData, salaryMax: e.target.value })
-              }
-              placeholder="160000"
-            />
           </div>
 
           <Input

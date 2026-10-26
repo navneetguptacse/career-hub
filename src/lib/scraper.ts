@@ -109,8 +109,8 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
     location: "Remote",
     locationType: "REMOTE",
     employmentType: "FULL_TIME",
-    salaryMin: 120000,
-    salaryMax: 160000,
+    salaryMin: null,
+    salaryMax: null,
     currency: "USD",
   };
 

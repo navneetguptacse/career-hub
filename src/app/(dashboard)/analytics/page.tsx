@@ -4,13 +4,12 @@ import React, { useEffect, useState } from "react";
 import {
   Activity,
   BarChart,
-  DollarSign,
+  Briefcase,
   PieChart,
   Send,
   TrendingUp,
 } from "lucide-react";
 import { JobApplicationItem } from "@/components/applications/JobCard";
-import { formatCurrency } from "@/lib/utils";
 
 export default function AnalyticsPage() {
   const [applications, setApplications] = useState<JobApplicationItem[]>([]);
@@ -57,14 +56,9 @@ export default function AnalyticsPage() {
     MANUAL: applications.filter((a) => a.source === "MANUAL").length,
   };
 
-  const salaries = applications
-    .flatMap((a) => [a.salaryMin, a.salaryMax])
-    .filter((s): s is number => typeof s === "number" && s > 0);
-
-  const avgSalary =
-    salaries.length > 0
-      ? salaries.reduce((acc, curr) => acc + curr, 0) / salaries.length
-      : 0;
+  const activeCount = applications.filter(
+    (a) => a.status !== "REJECTED" && a.status !== "WITHDRAWN"
+  ).length;
 
   const interviewRate =
     total > 0
@@ -122,14 +116,14 @@ export default function AnalyticsPage() {
 
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <span className="text-xs text-[#94A3B8] flex items-center gap-1.5">
-            <DollarSign className="w-3.5 h-3.5 text-[#EAB308]" />
-            Avg. Tracked Compensation
+            <Briefcase className="w-3.5 h-3.5 text-[#EAB308]" />
+            Active Pipeline Roles
           </span>
           <div className="text-2xl font-bold font-mono text-[#FACC15]">
-            {isLoading ? "..." : formatCurrency(avgSalary)}
+            {isLoading ? "..." : activeCount}
           </div>
           <p className="text-[11px] text-[#64748B]">
-            Computed from recorded salary ranges
+            In-flight applications currently open
           </p>
         </div>
       </div>

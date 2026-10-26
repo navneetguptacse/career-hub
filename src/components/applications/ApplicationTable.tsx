@@ -3,7 +3,7 @@
 import React from "react";
 import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 import { Globe, Trash2 } from "lucide-react";
 
 interface ApplicationTableProps {
@@ -58,7 +58,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <th className="px-4 py-3">Company & Role</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Workplace</th>
-            <th className="px-4 py-3">Salary Range</th>
             <th className="px-4 py-3">Source</th>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3 text-right">Actions</th>
@@ -114,22 +113,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                   <div className="text-[11px] text-[#64748B] mt-0.5 truncate max-w-30">
                     {app.location}
                   </div>
-                )}
-              </td>
-
-              <td className="px-4 py-3.5 font-mono text-[#10B981]">
-                {app.salaryMin || app.salaryMax ? (
-                  <span>
-                    {app.salaryMin
-                      ? formatCurrency(app.salaryMin, app.currency)
-                      : "0"}
-                    {" - "}
-                    {app.salaryMax
-                      ? formatCurrency(app.salaryMax, app.currency)
-                      : "..."}
-                  </span>
-                ) : (
-                  <span className="text-[#64748B]">N/A</span>
                 )}
               </td>
 

@@ -3,14 +3,13 @@
 import React, { useState } from "react";
 import {
   ChevronRight,
-  DollarSign,
   Globe,
   GripVertical,
   MapPin,
   Trash2,
 } from "lucide-react";
 import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 
 export interface JobApplicationItem {
   id: string;
@@ -100,7 +99,7 @@ export const JobCard: React.FC<JobCardProps> = ({
                   {job.companyName}
                 </span>
               </div>
-              <h4 className="text-xs text-[#0F172A] dark:text-[#E2E8F0] mt-0.5 leading-snug line-clamp-2 font-medium">
+              <h4 className="text-xs text-[#334155] dark:text-[#E2E8F0] job-title-heading mt-0.5 leading-snug line-clamp-2 font-medium">
                 {job.jobTitle}
               </h4>
             </div>
@@ -129,19 +128,6 @@ export const JobCard: React.FC<JobCardProps> = ({
           </a>
         )}
       </div>
-
-      {(job.salaryMin || job.salaryMax) && (
-        <div className="flex items-center gap-1 text-xs text-[#10B981] font-mono">
-          <DollarSign className="w-3 h-3" />
-          <span>
-            {job.salaryMin ? formatCurrency(job.salaryMin, job.currency) : "0"}
-            {" - "}
-            {job.salaryMax
-              ? formatCurrency(job.salaryMax, job.currency)
-              : "..."}
-          </span>
-        </div>
-      )}
 
       {job.notes && (
         <p className="text-[11px] text-[#94A3B8] line-clamp-2 bg-[#0A0D12] p-1.5 rounded-xs border border-[#202937]/60">
