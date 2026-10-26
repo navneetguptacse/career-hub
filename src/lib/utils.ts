@@ -14,15 +14,3 @@ export function formatDate(date: Date | string | null | undefined): string {
     year: "numeric",
   });
 }
-
-export function formatCurrency(
-  amount: number | null | undefined,
-  currency: string = "USD"
-): string {
-  if (amount == null) return "N/A";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}

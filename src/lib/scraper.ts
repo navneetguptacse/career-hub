@@ -1,12 +1,7 @@
 import * as cheerio from "cheerio";
-import {
-  executeLlmCall,
-  type UserLlmConfig,
-  testLlmProvider,
-} from "./llm-provider";
+import { executeLlmCall, type UserLlmConfig } from "./llm-provider";
 
 export type { UserLlmConfig };
-export { testLlmProvider };
 
 export interface ScrapedJobData {
   jobTitle: string;

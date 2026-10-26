@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { encryptApiKey, decryptApiKey, maskApiKey } from "@/lib/encryption";
-import { testLlmProvider } from "@/lib/scraper";
+import { testLlmProvider } from "@/lib/llm-provider";
 
 const llmConfigSchema = z.object({
   provider: z

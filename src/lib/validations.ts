@@ -51,24 +51,6 @@ export const jobApplicationSchema = z.object({
   notes: z.string().max(5000).optional().nullable(),
 });
 
-export const updateStatusSchema = z.object({
-  status: z.enum([
-    "WISHLIST",
-    "APPLIED",
-    "SCREENING",
-    "INTERVIEW",
-    "OFFER",
-    "REJECTED",
-    "WITHDRAWN",
-  ]),
-  note: z.string().optional(),
-});
-
 export const scrapeUrlSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 });
-
-export type RegisterInput = z.infer<typeof registerSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-export type JobApplicationInput = z.infer<typeof jobApplicationSchema>;
-export type UpdateStatusInput = z.infer<typeof updateStatusSchema>;
