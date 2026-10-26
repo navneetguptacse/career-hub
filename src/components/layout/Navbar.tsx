@@ -79,22 +79,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-2.5">
-        {/* Telegram status link */}
-        {isTelegramConnected ? (
+        {/* Telegram status link - shown in theme blue only when connected */}
+        {isTelegramConnected && (
           <Link
             href="/settings"
-            title="Telegram Bot Paired"
-            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs font-mono"
+            title="Telegram Bot Connected"
+            aria-label="Telegram Bot Connected"
+            className="h-8 w-8 inline-flex items-center justify-center text-[#3178C6] bg-[#3178C6]/10 border border-[#3178C6]/30 hover:bg-[#3178C6]/20 hover:border-[#3178C6]/50 rounded-xs transition-colors shadow-xs"
           >
-            <Send className="w-3 h-3 text-[#3178C6]" />
-          </Link>
-        ) : (
-          <Link
-            href="/settings"
-            title="Connect Telegram Bot"
-            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-xs text-[#94A3B8] hover:text-[#5499EB] bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors"
-          >
-            <Send className="w-3 h-3" />
+            <Send className="w-3.5 h-3.5 text-[#3178C6]" />
           </Link>
         )}
 

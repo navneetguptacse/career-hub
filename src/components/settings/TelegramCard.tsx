@@ -187,13 +187,6 @@ export const TelegramCard: React.FC = () => {
                 <span>{isCopied ? "Copied" : "Copy"}</span>
               </Button>
             </div>
-            <div className="flex items-center gap-2 pt-1">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              <span className="text-[11px] font-mono text-[#94A3B8]">
-                Listening for bot pairing. Once sent in Telegram, this updates
-                automatically.
-              </span>
-            </div>
           </div>
 
           <div className="space-y-2 text-xs text-[#94A3B8]">
