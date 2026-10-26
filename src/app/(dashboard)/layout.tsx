@@ -9,6 +9,7 @@ import {
   useSidebar,
 } from "@/components/providers/SidebarProvider";
 import { cn } from "@/lib/utils";
+import { refreshAllApplications } from "@/lib/hooks/useApplications";
 
 function DashboardLayoutContent({
   children,
@@ -45,6 +46,7 @@ export default function DashboardLayout({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleApplicationAdded = () => {
+    refreshAllApplications();
     window.dispatchEvent(new Event("careerhub:refresh"));
   };
 

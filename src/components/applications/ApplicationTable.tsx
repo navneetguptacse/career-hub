@@ -3,12 +3,13 @@
 import { type ApplicationStatusType, Badge } from "@/components/ui/Badge";
 import { JobApplicationItem } from "./JobCard";
 import { formatDate, cn } from "@/lib/utils";
-import { Globe, Trash2 } from "lucide-react";
+import { Globe, Pencil, Trash2 } from "lucide-react";
 
 interface ApplicationTableProps {
   applications: JobApplicationItem[];
   onStatusChange: (id: string, newStatus: ApplicationStatusType) => void;
-  onDelete: (id: string) => void;
+  onDelete: (job: JobApplicationItem) => void;
+  onEdit?: (job: JobApplicationItem) => void;
 }
 
 const ALL_STATUSES: ApplicationStatusType[] = [
@@ -40,6 +41,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   applications,
   onStatusChange,
   onDelete,
+  onEdit,
 }) => {
   if (applications.length === 0) {
     return (
@@ -131,8 +133,17 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       <Globe className="w-3.5 h-3.5" />
                     </a>
                   )}
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(app)}
+                      title="Edit application"
+                      className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] rounded-xs transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
-                    onClick={() => onDelete(app.id)}
+                    onClick={() => onDelete(app)}
                     title="Delete application"
                     className="h-8 w-8 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
                   >

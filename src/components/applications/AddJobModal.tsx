@@ -5,6 +5,7 @@ import { Link2, PencilSparkles } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { refreshAllApplications } from "@/lib/hooks/useApplications";
 
 interface AddJobModalProps {
   isOpen: boolean;
@@ -26,11 +27,12 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
     companyName: "",
     jobTitle: "",
     location: "",
-    locationType: "REMOTE",
+    locationType: "ONSITE",
     employmentType: "FULL_TIME",
     currency: "USD",
     jobUrl: "",
     jobDescription: "",
+    appliedDate: "",
     status: "WISHLIST",
     notes: "",
   });
@@ -64,6 +66,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         employmentType:
           data.data.employmentType || prev.employmentType || "FULL_TIME",
         currency: data.data.currency || prev.currency || "USD",
+        appliedDate: data.data.postedDate || prev.appliedDate || "",
       }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error scraping link");
@@ -87,6 +90,9 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          appliedDate: formData.appliedDate
+            ? new Date(formData.appliedDate).toISOString()
+            : null,
           salaryMin: null,
           salaryMax: null,
           source: formData.jobUrl ? "LINK_SCRAPER" : "MANUAL",
@@ -96,17 +102,19 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save application");
 
+      refreshAllApplications();
       onSuccess();
       onClose();
       setFormData({
         companyName: "",
         jobTitle: "",
         location: "",
-        locationType: "REMOTE",
+        locationType: "ONSITE",
         employmentType: "FULL_TIME",
         currency: "USD",
         jobUrl: "",
         jobDescription: "",
+        appliedDate: "",
         status: "WISHLIST",
         notes: "",
       });

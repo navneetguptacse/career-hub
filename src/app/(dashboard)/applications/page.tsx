@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Kanban,
   Table as TableIcon,
@@ -12,93 +12,47 @@ import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { EditJobModal } from "@/components/applications/EditJobModal";
+import { useApplications } from "@/lib/hooks/useApplications";
 
 export default function ApplicationsPage() {
   const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
-  const [applications, setApplications] = useState<JobApplicationItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
-  const fetchApplications = useCallback(async () => {
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter !== "ALL") params.append("status", statusFilter);
-      if (search.trim()) params.append("search", search.trim());
+  const [jobToDelete, setJobToDelete] = useState<JobApplicationItem | null>(
+    null
+  );
+  const [jobToEdit, setJobToEdit] = useState<JobApplicationItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-      const res = await fetch(`/api/applications?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setApplications(data.applications || []);
-      }
-    } catch (err) {
-      console.error("Failed to fetch applications:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [search, statusFilter]);
+  const {
+    applications,
+    isLoading,
+    updateStatus,
+    deleteApplication,
+    mutate,
+  } = useApplications({
+    search,
+    status: statusFilter,
+  });
 
-  useEffect(() => {
-    let isMounted = true;
-    async function load() {
-      try {
-        const params = new URLSearchParams();
-        if (statusFilter !== "ALL") params.append("status", statusFilter);
-        if (search.trim()) params.append("search", search.trim());
-
-        const res = await fetch(`/api/applications?${params.toString()}`);
-        if (res.ok && isMounted) {
-          const data = await res.json();
-          setApplications(data.applications || []);
-        }
-      } catch (err) {
-        console.error("Failed to load applications:", err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    }
-
-    load();
-
-    const handleRefresh = () => {
-      load();
-    };
-
-    window.addEventListener("careerhub:refresh", handleRefresh);
-    return () => {
-      isMounted = false;
-      window.removeEventListener("careerhub:refresh", handleRefresh);
-    };
-  }, [search, statusFilter]);
-
-  const handleStatusChange = async (
+  const handleStatusChange = (
     id: string,
     newStatus: ApplicationStatusType
   ) => {
-    setApplications((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
-    );
-
-    try {
-      const res = await fetch(`/api/applications/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) {
-        fetchApplications();
-      }
-    } catch {
-      fetchApplications();
-    }
+    updateStatus(id, newStatus);
   };
 
-  const handleDelete = async (id: string) => {
-    setApplications((prev) => prev.filter((app) => app.id !== id));
+  const handleConfirmDelete = async () => {
+    if (!jobToDelete) return;
+    setIsDeleting(true);
     try {
-      await fetch(`/api/applications/${id}`, { method: "DELETE" });
-    } catch {
-      fetchApplications();
+      await deleteApplication(jobToDelete.id);
+      setJobToDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -173,7 +127,7 @@ export default function ApplicationsPage() {
           </div>
 
           <button
-            onClick={() => fetchApplications()}
+            onClick={() => mutate()}
             title="Refresh pipeline"
             className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#F1F5F9] bg-[#0A0D12] border border-[#202937] rounded-xs transition-colors"
           >
@@ -191,15 +145,40 @@ export default function ApplicationsPage() {
         <KanbanBoard
           applications={applications}
           onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
+          onDelete={(job) => setJobToDelete(job)}
+          onEdit={(job) => setJobToEdit(job)}
         />
       ) : (
         <ApplicationTable
           applications={applications}
           onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
+          onDelete={(job) => setJobToDelete(job)}
+          onEdit={(job) => setJobToEdit(job)}
         />
       )}
+
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={!!jobToDelete}
+        onClose={() => setJobToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Job Application"
+        description={
+          jobToDelete
+            ? `Are you sure you want to delete ${jobToDelete.jobTitle} at ${jobToDelete.companyName}? This action cannot be undone.`
+            : "Are you sure you want to delete this application?"
+        }
+        confirmText="Delete Application"
+        isConfirming={isDeleting}
+      />
+
+      {/* Edit Job Modal */}
+      <EditJobModal
+        job={jobToEdit}
+        isOpen={!!jobToEdit}
+        onClose={() => setJobToEdit(null)}
+        onSuccess={() => mutate()}
+      />
     </div>
   );
 }

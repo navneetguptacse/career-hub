@@ -7,7 +7,8 @@ import { JobCard, JobApplicationItem } from "./JobCard";
 interface KanbanBoardProps {
   applications: JobApplicationItem[];
   onStatusChange: (id: string, newStatus: ApplicationStatusType) => void;
-  onDelete: (id: string) => void;
+  onDelete: (job: JobApplicationItem) => void;
+  onEdit?: (job: JobApplicationItem) => void;
 }
 
 const COLUMNS: { id: ApplicationStatusType; title: string }[] = [
@@ -23,6 +24,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   applications,
   onStatusChange,
   onDelete,
+  onEdit,
 }) => {
   const [dragOverColId, setDragOverColId] =
     React.useState<ApplicationStatusType | null>(null);
@@ -120,6 +122,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                     job={job}
                     onStatusChange={onStatusChange}
                     onDelete={onDelete}
+                    onEdit={onEdit}
                   />
                 ))
               )}

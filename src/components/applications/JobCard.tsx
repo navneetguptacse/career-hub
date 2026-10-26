@@ -6,6 +6,7 @@ import {
   Globe,
   GripVertical,
   MapPin,
+  Pencil,
   Trash2,
 } from "lucide-react";
 import { type ApplicationStatusType } from "@/components/ui/Badge";
@@ -33,7 +34,8 @@ export interface JobApplicationItem {
 interface JobCardProps {
   job: JobApplicationItem;
   onStatusChange: (id: string, newStatus: ApplicationStatusType) => void;
-  onDelete: (id: string) => void;
+  onDelete: (job: JobApplicationItem) => void;
+  onEdit?: (job: JobApplicationItem) => void;
 }
 
 const NEXT_STATUSES: Record<
@@ -53,20 +55,14 @@ export const JobCard: React.FC<JobCardProps> = ({
   job,
   onStatusChange,
   onDelete,
+  onEdit,
 }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const nextStatus = NEXT_STATUSES[job.status];
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (
-      !confirm(`Delete application for ${job.jobTitle} at ${job.companyName}?`)
-    ) {
-      return;
-    }
-    setIsDeleting(true);
-    onDelete(job.id);
+    onDelete(job);
   };
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
@@ -151,9 +147,21 @@ export const JobCard: React.FC<JobCardProps> = ({
             </button>
           )}
 
+          {onEdit && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(job);
+              }}
+              title="Edit application"
+              className="h-6 w-6 inline-flex items-center justify-center text-[#64748B] hover:text-[#5499EB] hover:bg-[#18202C] rounded-xs transition-colors"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
+
           <button
             onClick={handleDelete}
-            disabled={isDeleting}
             title="Delete application"
             className="h-6 w-6 inline-flex items-center justify-center text-[#64748B] hover:text-[#EF4444] hover:bg-[#18202C] rounded-xs transition-colors"
           >

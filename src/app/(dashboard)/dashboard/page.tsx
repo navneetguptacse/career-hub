@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
@@ -13,43 +13,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { JobApplicationItem } from "@/components/applications/JobCard";
 import { formatDate } from "@/lib/utils";
+import { useApplications } from "@/lib/hooks/useApplications";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [applications, setApplications] = useState<JobApplicationItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadData() {
-      try {
-        const res = await fetch("/api/applications");
-        if (res.ok && isMounted) {
-          const data = await res.json();
-          setApplications(data.applications || []);
-        }
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    }
-
-    loadData();
-
-    const handleRefresh = () => {
-      loadData();
-    };
-
-    window.addEventListener("careerhub:refresh", handleRefresh);
-    return () => {
-      isMounted = false;
-      window.removeEventListener("careerhub:refresh", handleRefresh);
-    };
-  }, []);
+  const { applications, isLoading } = useApplications();
 
   const metrics = {
     total: applications.length,

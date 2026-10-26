@@ -86,6 +86,8 @@ export async function POST(req: Request) {
       "FULL_TIME";
     let currency = "USD";
 
+    let appliedDate: Date | null = null;
+
     try {
       const scraped = await scrapeJobUrl(jobUrl);
       jobTitle = scraped.jobTitle;
@@ -95,6 +97,10 @@ export async function POST(req: Request) {
       if (scraped.locationType) locationType = scraped.locationType;
       if (scraped.employmentType) employmentType = scraped.employmentType;
       if (scraped.currency) currency = scraped.currency;
+      if (scraped.postedDate) {
+        const d = new Date(scraped.postedDate);
+        if (!isNaN(d.getTime())) appliedDate = d;
+      }
     } catch {
       const domain = new URL(jobUrl).hostname.replace(/^www\./, "");
       companyName = domain.split(".")[0];
@@ -112,6 +118,7 @@ export async function POST(req: Request) {
         location,
         locationType,
         employmentType,
+        appliedDate,
         salaryMin: null,
         salaryMax: null,
         currency,

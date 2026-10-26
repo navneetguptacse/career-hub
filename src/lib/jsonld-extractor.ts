@@ -6,6 +6,7 @@ export interface JsonLdJobData {
   location?: string;
   locationType?: "REMOTE" | "HYBRID" | "ONSITE";
   employmentType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  postedDate?: string;
   description?: string;
 }
 
@@ -50,7 +51,8 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
   const job = matchedJob as Record<string, unknown>;
   const title =
     typeof job.title === "string" ? cleanText(job.title) : undefined;
-  const hiringOrg = job.hiringOrganization as Record<string, unknown> | undefined;
+  const hiringOrg = job.hiringOrganization as
+    Record<string, unknown> | undefined;
   let company =
     typeof hiringOrg?.name === "string" ? cleanText(hiringOrg.name) : undefined;
   if (company) {
@@ -64,8 +66,7 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
     for (const loc of locList) {
       if (loc && typeof loc === "object") {
         const addr = (loc as Record<string, unknown>).address as
-          | Record<string, unknown>
-          | undefined;
+          Record<string, unknown> | undefined;
         if (addr) {
           const locality = cleanText(
             (addr.addressLocality as string) || (addr.city as string)
@@ -74,8 +75,10 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
             (addr.addressRegion as string) || (addr.state as string)
           );
           let country = cleanText(
-            typeof addr.addressCountry === "object" && addr.addressCountry !== null
-              ? ((addr.addressCountry as Record<string, unknown>).name as string)
+            typeof addr.addressCountry === "object" &&
+              addr.addressCountry !== null
+              ? ((addr.addressCountry as Record<string, unknown>)
+                  .name as string)
               : (addr.addressCountry as string)
           );
 
@@ -95,7 +98,9 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
           }
         }
         if (typeof (loc as Record<string, unknown>).name === "string") {
-          locationStr = cleanText((loc as Record<string, unknown>).name as string);
+          locationStr = cleanText(
+            (loc as Record<string, unknown>).name as string
+          );
           break;
         }
       } else if (typeof loc === "string" && loc.trim()) {
@@ -106,8 +111,7 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
   }
 
   const applicantReqs = job.applicantLocationRequirements as
-    | Record<string, unknown>
-    | undefined;
+    Record<string, unknown> | undefined;
   if (!locationStr && typeof applicantReqs?.name === "string") {
     locationStr = cleanText(applicantReqs.name);
   }
@@ -137,11 +141,7 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
   }
 
   let employmentType:
-    | "FULL_TIME"
-    | "PART_TIME"
-    | "CONTRACT"
-    | "INTERNSHIP"
-    | undefined;
+    "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | undefined;
   const empStr = String(job.employmentType || "").toUpperCase();
   if (empStr.includes("PART")) employmentType = "PART_TIME";
   else if (empStr.includes("CONTRACT") || empStr.includes("TEMPORARY"))
@@ -157,12 +157,18 @@ export function parseJsonLd($: cheerio.CheerioAPI): JsonLdJobData | null {
     );
   }
 
+  let postedDate: string | undefined;
+  if (typeof job.datePosted === "string" && job.datePosted.trim()) {
+    postedDate = job.datePosted.trim().slice(0, 10);
+  }
+
   return {
     title,
     company,
     location: locationStr || undefined,
     locationType,
     employmentType,
+    postedDate,
     description: description || undefined,
   };
 }

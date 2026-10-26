@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { parseJsonLd } from "./jsonld-extractor";
+import { enrichJobWithLlm } from "./llm-scraper";
 
 export interface ScrapedJobData {
   jobTitle: string;
@@ -10,6 +11,7 @@ export interface ScrapedJobData {
   salaryMin?: number | null;
   salaryMax?: number | null;
   currency?: string;
+  postedDate?: string | null;
   jobDescription?: string;
   jobUrl: string;
 }
@@ -141,7 +143,7 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
           .trim()
       : "Software Engineer";
 
-  const result: ScrapedJobData = {
+  let result: ScrapedJobData = {
     jobTitle: inferredRole || "Software Engineer",
     companyName: detectedCompany || "Company",
     jobDescription: "",
@@ -152,6 +154,7 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
     salaryMin: null,
     salaryMax: null,
     currency: "USD",
+    postedDate: null,
   };
 
   try {
@@ -175,9 +178,11 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
         if (jsonLdData.title) result.jobTitle = jsonLdData.title;
         if (jsonLdData.company) result.companyName = jsonLdData.company;
         if (jsonLdData.location) result.location = jsonLdData.location;
-        if (jsonLdData.locationType) result.locationType = jsonLdData.locationType;
+        if (jsonLdData.locationType)
+          result.locationType = jsonLdData.locationType;
         if (jsonLdData.employmentType)
           result.employmentType = jsonLdData.employmentType;
+        if (jsonLdData.postedDate) result.postedDate = jsonLdData.postedDate;
         if (jsonLdData.description)
           result.jobDescription = jsonLdData.description;
       }
@@ -186,7 +191,11 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
       const metaTitle = $("title").text();
       const rawTitle = cleanText(ogTitle || metaTitle);
       const ogSiteName = $('meta[property="og:site_name"]').attr("content");
-      const { company, title, location: titleLocation } = extractCompanyAndTitle(
+      const {
+        company,
+        title,
+        location: titleLocation,
+      } = extractCompanyAndTitle(
         rawTitle,
         cleanText(ogSiteName),
         parsedUrl.hostname
@@ -238,7 +247,10 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
         const lowerLoc = resolvedLoc.toLowerCase();
         if (lowerLoc.includes("hybrid")) {
           result.locationType = "HYBRID";
-        } else if (lowerLoc.includes("remote") || lowerLoc.includes("virtual")) {
+        } else if (
+          lowerLoc.includes("remote") ||
+          lowerLoc.includes("virtual")
+        ) {
           result.locationType = "REMOTE";
         } else {
           result.locationType = "ONSITE";
@@ -259,6 +271,8 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
           result.jobDescription = cleanText(ogDescription).slice(0, 2000);
         }
       }
+
+      result = await enrichJobWithLlm(html, url, result);
     }
   } catch (err) {
     console.warn("Direct HTML scrape fallback used:", err);
