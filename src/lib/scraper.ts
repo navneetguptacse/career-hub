@@ -1,5 +1,9 @@
 import * as cheerio from "cheerio";
-import { extractJobDetailsWithAI, type ExtractedJobData } from "./ai-extractor";
+import {
+  extractJobDetailsWithAI,
+  type ExtractedJobData,
+  type UserLlmConfig,
+} from "./ai-extractor";
 
 export type ScrapedJobData = ExtractedJobData;
 
@@ -42,7 +46,10 @@ function extractCompanyAndTitle(
   return { company, title };
 }
 
-export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
+export async function scrapeJobUrl(
+  url: string,
+  userConfig?: UserLlmConfig
+): Promise<ScrapedJobData> {
   const parsedUrl = new URL(url);
   const host = parsedUrl.hostname.toLowerCase().replace(/^www\./, "");
   const segments = parsedUrl.pathname.split("/").filter(Boolean);
@@ -167,5 +174,5 @@ export async function scrapeJobUrl(url: string): Promise<ScrapedJobData> {
       ? pageText
       : `Job Link URL: ${url}\nDomain: ${parsedUrl.hostname}\nPath: ${parsedUrl.pathname}\nTitle: ${baseline.jobTitle}\nCompany: ${baseline.companyName}`;
 
-  return await extractJobDetailsWithAI(contentToAnalyze, baseline);
+  return await extractJobDetailsWithAI(contentToAnalyze, baseline, userConfig);
 }

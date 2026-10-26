@@ -47,14 +47,16 @@ function parseJsonFromText(rawText: string): Partial<ExtractedJobData> | null {
 
 async function extractWithGemini(
   content: string,
-  apiKey: string
+  apiKey: string,
+  customModel?: string | null
 ): Promise<Partial<ExtractedJobData> | null> {
   const models = [
+    customModel,
     process.env.GEMINI_MODEL,
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
     "gemini-3.5-flash",
-    "gemini-3.6-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-3.8-flash",
     "gemini-flash-latest",
   ].filter(Boolean) as string[];
 
@@ -169,51 +171,93 @@ async function extractWithAnthropic(
   }
 }
 
+export interface UserLlmConfig {
+  provider?: "GEMINI" | "OPENAI" | "ANTHROPIC" | "CUSTOM" | string | null;
+  apiKey?: string | null;
+  endpoint?: string | null;
+  model?: string | null;
+}
+
 export async function extractJobDetailsWithAI(
   pageText: string,
-  fallback: ExtractedJobData
+  fallback: ExtractedJobData,
+  userConfig?: UserLlmConfig
 ): Promise<ExtractedJobData> {
   let aiData: Partial<ExtractedJobData> | null = null;
 
-  const geminiKey =
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_AI_API_KEY ||
-    process.env.GOOGLE_API_KEY;
-
-  const openaiKey = process.env.OPENAI_API_KEY;
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  const customKey = process.env.CUSTOM_AI_API_KEY || process.env.AI_API_KEY;
-  const customBaseUrl =
-    process.env.CUSTOM_AI_BASE_URL || process.env.AI_BASE_URL;
-
-  if (geminiKey) {
-    aiData = await extractWithGemini(pageText, geminiKey);
+  // 1. Try user-configured custom key if provided
+  if (userConfig?.apiKey) {
+    const provider = (userConfig.provider || "GEMINI").toUpperCase();
+    if (provider === "GEMINI") {
+      aiData = await extractWithGemini(
+        pageText,
+        userConfig.apiKey,
+        userConfig.model
+      );
+    } else if (provider === "OPENAI") {
+      aiData = await extractWithOpenAI(
+        pageText,
+        userConfig.apiKey,
+        userConfig.endpoint || "https://api.openai.com/v1",
+        userConfig.model || "gpt-4o-mini"
+      );
+    } else if (provider === "ANTHROPIC") {
+      aiData = await extractWithAnthropic(
+        pageText,
+        userConfig.apiKey,
+        userConfig.model || "claude-3-5-haiku-20241022"
+      );
+    } else if (provider === "CUSTOM") {
+      aiData = await extractWithOpenAI(
+        pageText,
+        userConfig.apiKey,
+        userConfig.endpoint || "http://localhost:11434/v1",
+        userConfig.model || "llama-3.1-8b-instant"
+      );
+    }
   }
 
-  if (!aiData && openaiKey) {
-    aiData = await extractWithOpenAI(
-      pageText,
-      openaiKey,
-      process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
-      process.env.OPENAI_MODEL || "gpt-4o-mini"
-    );
-  }
+  // 2. Fall back to system environment variables if user key not set or failed
+  if (!aiData) {
+    const geminiKey =
+      process.env.GEMINI_API_KEY ||
+      process.env.GOOGLE_AI_API_KEY ||
+      process.env.GOOGLE_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const customKey = process.env.CUSTOM_AI_API_KEY || process.env.AI_API_KEY;
+    const customBaseUrl =
+      process.env.CUSTOM_AI_BASE_URL || process.env.AI_BASE_URL;
 
-  if (!aiData && anthropicKey) {
-    aiData = await extractWithAnthropic(
-      pageText,
-      anthropicKey,
-      process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-20241022"
-    );
-  }
+    if (geminiKey) {
+      aiData = await extractWithGemini(pageText, geminiKey);
+    }
 
-  if (!aiData && customKey && customBaseUrl) {
-    aiData = await extractWithOpenAI(
-      pageText,
-      customKey,
-      customBaseUrl,
-      process.env.CUSTOM_AI_MODEL || "llama-3.1-8b-instant"
-    );
+    if (!aiData && openaiKey) {
+      aiData = await extractWithOpenAI(
+        pageText,
+        openaiKey,
+        process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+        process.env.OPENAI_MODEL || "gpt-4o-mini"
+      );
+    }
+
+    if (!aiData && anthropicKey) {
+      aiData = await extractWithAnthropic(
+        pageText,
+        anthropicKey,
+        process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-20241022"
+      );
+    }
+
+    if (!aiData && customKey && customBaseUrl) {
+      aiData = await extractWithOpenAI(
+        pageText,
+        customKey,
+        customBaseUrl,
+        process.env.CUSTOM_AI_MODEL || "llama-3.1-8b-instant"
+      );
+    }
   }
 
   if (!aiData) return fallback;
@@ -249,4 +293,42 @@ export async function extractJobDetailsWithAI(
     jobDescription:
       aiData.jobDescription?.trim() || fallback.jobDescription || "",
   };
+}
+
+export async function testLlmConnection(
+  config: UserLlmConfig
+): Promise<{ success: boolean; message: string }> {
+  if (!config.apiKey?.trim()) {
+    return { success: false, message: "API key is required." };
+  }
+
+  const testContent = "Position: Backend Engineer. Company: CareerHub Corp.";
+  const fallbackTest: ExtractedJobData = {
+    jobTitle: "Test Role",
+    companyName: "CareerHub Corp",
+    jobUrl: "https://example.com/test",
+  };
+
+  try {
+    const res = await extractJobDetailsWithAI(
+      testContent,
+      fallbackTest,
+      config
+    );
+    if (res.companyName || res.jobTitle) {
+      return {
+        success: true,
+        message: "Successfully verified LLM provider and authentication!",
+      };
+    }
+    return { success: true, message: "Connected to provider successfully." };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to communicate with LLM provider.",
+    };
+  }
 }

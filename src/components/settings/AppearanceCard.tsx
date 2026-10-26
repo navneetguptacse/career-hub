@@ -68,11 +68,7 @@ export const AppearanceCard: React.FC = () => {
           </div>
           <p className="text-[11px] text-[#94A3B8] leading-relaxed">
             All code blocks, metrics, timestamps, and currency amounts use
-            Google Font{" "}
-            <code className="text-[#5499EB] font-mono font-semibold px-1 py-0.5 bg-[#12171F] border border-[#202937] rounded-xs">
-              Roboto_Mono
-            </code>{" "}
-            for high-legibility tabular alignment.
+            Google Font Roboto Mono for high-legibility tabular alignment.
           </p>
         </div>
       </div>

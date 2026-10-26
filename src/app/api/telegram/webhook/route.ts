@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { scrapeJobUrl } from "@/lib/scraper";
+import { decryptApiKey } from "@/lib/encryption";
+import type { UserLlmConfig } from "@/lib/ai-extractor";
 import {
   sendTelegramMessage,
   extractUrlFromTelegramMessage,
@@ -84,20 +86,29 @@ export async function POST(req: Request) {
     let locationType: "REMOTE" | "HYBRID" | "ONSITE" = "REMOTE";
     let employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" =
       "FULL_TIME";
-    let salaryMin: number | null = null;
-    let salaryMax: number | null = null;
     let currency = "USD";
 
+    let userConfig: UserLlmConfig | undefined;
+    if (user.llmApiKeyHash) {
+      const decrypted = decryptApiKey(user.llmApiKeyHash);
+      if (decrypted) {
+        userConfig = {
+          provider: user.llmProvider,
+          apiKey: decrypted,
+          endpoint: user.llmEndpoint,
+          model: user.llmModel,
+        };
+      }
+    }
+
     try {
-      const scraped = await scrapeJobUrl(jobUrl);
+      const scraped = await scrapeJobUrl(jobUrl, userConfig);
       jobTitle = scraped.jobTitle;
       companyName = scraped.companyName;
       jobDescription = scraped.jobDescription || "";
       location = scraped.location || null;
       if (scraped.locationType) locationType = scraped.locationType;
       if (scraped.employmentType) employmentType = scraped.employmentType;
-      if (typeof scraped.salaryMin === "number") salaryMin = scraped.salaryMin;
-      if (typeof scraped.salaryMax === "number") salaryMax = scraped.salaryMax;
       if (scraped.currency) currency = scraped.currency;
     } catch {
       const domain = new URL(jobUrl).hostname.replace(/^www\./, "");
@@ -116,8 +127,8 @@ export async function POST(req: Request) {
         location,
         locationType,
         employmentType,
-        salaryMin,
-        salaryMax,
+        salaryMin: null,
+        salaryMax: null,
         currency,
         source: "TELEGRAM",
         status: "WISHLIST",

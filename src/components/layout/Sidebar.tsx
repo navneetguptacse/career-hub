@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   BarChart3,
+  BookOpen,
   Briefcase,
   ChevronLeft,
   ChevronRight,
@@ -49,6 +50,12 @@ export const Sidebar: React.FC = () => {
       href: "/settings",
       icon: Settings,
       active: pathname.startsWith("/settings"),
+    },
+    {
+      name: "Usage",
+      href: "/usage",
+      icon: BookOpen,
+      active: pathname.startsWith("/usage"),
     },
     ...(isAdmin
       ? [
