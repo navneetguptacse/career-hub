@@ -58,7 +58,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      message: "Verification email sent successfully.",
+      message: emailResult.message || "Verification email sent successfully.",
+      devNotice: emailResult.devNotice,
+      devUrl:
+        process.env.NODE_ENV !== "production" ? emailResult.devUrl : undefined,
     });
   } catch (error) {
     console.error("Resend verification error:", error);

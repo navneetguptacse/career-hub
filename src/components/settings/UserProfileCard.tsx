@@ -35,7 +35,30 @@ export const UserProfileCard: React.FC = () => {
   const [resendMsg, setResendMsg] = useState<{
     type: "success" | "error";
     text: string;
+    devUrl?: string;
   } | null>(null);
+
+  const handleVerify = async () => {
+    setIsResending(true);
+    setResendMsg(null);
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: profile.email || session?.user?.email }),
+      });
+      const d = await res.json();
+      setResendMsg(
+        res.ok
+          ? { type: "success", text: d.message || "Link sent", devUrl: d.devUrl }
+          : { type: "error", text: d.error || "Failed to send link" }
+      );
+    } catch {
+      setResendMsg({ type: "error", text: "Unable to reach server" });
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -222,31 +245,7 @@ export const UserProfileCard: React.FC = () => {
               {!profile.emailVerified && (
                 <button
                   type="button"
-                  onClick={async () => {
-                    setIsResending(true);
-                    setResendMsg(null);
-                    try {
-                      const res = await fetch("/api/auth/resend-verification", {
-                        method: "POST",
-                      });
-                      const d = await res.json();
-                      if (res.ok) {
-                        setResendMsg({
-                          type: "success",
-                          text: "Verification link sent",
-                        });
-                      } else {
-                        setResendMsg({
-                          type: "error",
-                          text: d.error || "Failed to send link",
-                        });
-                      }
-                    } catch {
-                      setResendMsg({ type: "error", text: "Network error" });
-                    } finally {
-                      setIsResending(false);
-                    }
-                  }}
+                  onClick={handleVerify}
                   disabled={isResending}
                   className="text-[11px] text-[#3178C6] hover:text-[#5499EB] font-medium transition-colors disabled:opacity-50"
                 >
@@ -256,13 +255,21 @@ export const UserProfileCard: React.FC = () => {
             </div>
             {resendMsg && (
               <p
-                className={`text-[11px] font-medium ${
+                className={`text-[11px] font-medium flex flex-wrap items-center gap-1.5 ${
                   resendMsg.type === "success"
                     ? "text-[#10B981]"
                     : "text-[#EF4444]"
                 }`}
               >
-                {resendMsg.text}
+                <span>{resendMsg.text}</span>
+                {resendMsg.devUrl && (
+                  <a
+                    href={resendMsg.devUrl}
+                    className="px-1.5 py-0.5 bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs text-[10px] font-semibold tracking-wide transition-colors"
+                  >
+                    Verify Now (Local Dev)
+                  </a>
+                )}
               </p>
             )}
           </div>

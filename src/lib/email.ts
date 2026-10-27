@@ -63,10 +63,18 @@ function getEmailWrapper(title: string, contentHtml: string): string {
 </html>`;
 }
 
+export interface SendEmailResult {
+  success: boolean;
+  error?: string;
+  message?: string;
+  devNotice?: boolean;
+  devUrl?: string;
+}
+
 export async function sendVerificationEmail(
   email: string,
   token: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<SendEmailResult> {
   const baseUrl = getBaseUrl();
   const verifyUrl = `${baseUrl}/api/auth/verify?token=${encodeURIComponent(token)}`;
 
@@ -92,13 +100,21 @@ export async function sendVerificationEmail(
 
   const html = getEmailWrapper("Verify your CareerHub account", contentHtml);
 
-  if (!resend) {
+  if (process.env.NODE_ENV !== "production") {
     console.log(`\n================== [DEV EMAIL] ==================`);
     console.log(`To: ${email}`);
     console.log(`Subject: Verify your CareerHub account`);
     console.log(`Verify URL: ${verifyUrl}`);
     console.log(`=================================================\n`);
-    return { success: true };
+  }
+
+  if (!resend) {
+    return {
+      success: true,
+      devNotice: true,
+      devUrl: verifyUrl,
+      message: "Development mode: Verification link logged to console.",
+    };
   }
 
   try {
@@ -110,6 +126,24 @@ export async function sendVerificationEmail(
     });
 
     if (error) {
+      const isSandboxRestriction =
+        error.message.includes(
+          "only send testing emails to your own email address"
+        ) || error.message.includes("verify a domain");
+
+      if (isSandboxRestriction && process.env.NODE_ENV !== "production") {
+        console.warn(
+          `\n[RESEND SANDBOX RESTRICTION] Resend sandbox (${fromEmail}) only delivers to your Resend account email. For local development, click the Direct URL printed above in your terminal.\n`
+        );
+        return {
+          success: true,
+          devNotice: true,
+          devUrl: verifyUrl,
+          message:
+            "Resend sandbox test mode: verification link is ready in console.",
+        };
+      }
+
       console.error("Resend error sending verification email:", error);
       return { success: false, error: error.message };
     }
@@ -117,9 +151,18 @@ export async function sendVerificationEmail(
     return { success: true };
   } catch (err) {
     console.error("Network failure sending verification email:", err);
+    if (process.env.NODE_ENV !== "production") {
+      return {
+        success: true,
+        devNotice: true,
+        devUrl: verifyUrl,
+        message:
+          "Network could not reach email provider. Verification link is ready in console.",
+      };
+    }
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to send email",
+      error: "Unable to reach email delivery service. Please try again later.",
     };
   }
 }
@@ -127,7 +170,7 @@ export async function sendVerificationEmail(
 export async function sendPasswordResetEmail(
   email: string,
   token: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<SendEmailResult> {
   const baseUrl = getBaseUrl();
   const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
@@ -153,13 +196,21 @@ export async function sendPasswordResetEmail(
 
   const html = getEmailWrapper("Reset your CareerHub password", contentHtml);
 
-  if (!resend) {
+  if (process.env.NODE_ENV !== "production") {
     console.log(`\n================== [DEV EMAIL] ==================`);
     console.log(`To: ${email}`);
     console.log(`Subject: Reset your CareerHub password`);
     console.log(`Reset URL: ${resetUrl}`);
     console.log(`=================================================\n`);
-    return { success: true };
+  }
+
+  if (!resend) {
+    return {
+      success: true,
+      devNotice: true,
+      devUrl: resetUrl,
+      message: "Development mode: Reset link logged to console.",
+    };
   }
 
   try {
@@ -171,6 +222,24 @@ export async function sendPasswordResetEmail(
     });
 
     if (error) {
+      const isSandboxRestriction =
+        error.message.includes(
+          "only send testing emails to your own email address"
+        ) || error.message.includes("verify a domain");
+
+      if (isSandboxRestriction && process.env.NODE_ENV !== "production") {
+        console.warn(
+          `\n[RESEND SANDBOX RESTRICTION] Resend sandbox (${fromEmail}) only delivers to your Resend account email. For local development, click the Direct URL printed above in your terminal.\n`
+        );
+        return {
+          success: true,
+          devNotice: true,
+          devUrl: resetUrl,
+          message:
+            "Resend sandbox test mode: password reset link is ready in console.",
+        };
+      }
+
       console.error("Resend error sending password reset email:", error);
       return { success: false, error: error.message };
     }
@@ -178,9 +247,18 @@ export async function sendPasswordResetEmail(
     return { success: true };
   } catch (err) {
     console.error("Network failure sending password reset email:", err);
+    if (process.env.NODE_ENV !== "production") {
+      return {
+        success: true,
+        devNotice: true,
+        devUrl: resetUrl,
+        message:
+          "Network could not reach email provider. Password reset link is ready in console.",
+      };
+    }
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to send email",
+      error: "Unable to reach email delivery service. Please try again later.",
     };
   }
 }

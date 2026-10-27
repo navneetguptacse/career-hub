@@ -128,14 +128,18 @@ html.light .bg-\[\#12171f\]\/90 {
 }
 
 html.light .bg-\[\#18202C\],
-html.light .bg-\[\#18202c\] {
+html.light .bg-\[\#18202c\],
+html.light .bg-\[\#1E2736\],
+html.light .bg-\[\#1e2736\] {
   background-color: #f1f5f9 !important;
 }
 
 html.light .border-\[\#202937\],
 html.light .border-\[\#202937\]\/30,
 html.light .border-\[\#202937\]\/50,
-html.light .border-\[\#202937\]\/80 {
+html.light .border-\[\#202937\]\/80,
+html.light .border-\[\#2A374A\],
+html.light .border-\[\#2a374a\] {
   border-color: #e2e8f0 !important;
 }
 
