@@ -147,13 +147,13 @@ DATABASE_URL="postgresql://user:password@ep-sample-pooler.region.neon.tech/neond
 AUTH_SECRET="your-generated-secret-key-32-bytes"
 NEXTAUTH_URL="http://localhost:3000"
 
-# OAuth Providers (Optional)
+# OAuth Providers
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 GITHUB_CLIENT_ID=""
 GITHUB_CLIENT_SECRET=""
 
-# Telegram Bot Ingestion (Optional)
+# Telegram Bot Ingestion
 TELEGRAM_BOT_TOKEN=""
 TELEGRAM_BOT_USERNAME=""
 TELEGRAM_WEBHOOK_SECRET=""

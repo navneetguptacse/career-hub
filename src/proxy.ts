@@ -11,7 +11,9 @@ export default auth((req) => {
 
   const isAuthRoute =
     nextUrl.pathname.startsWith("/login") ||
-    nextUrl.pathname.startsWith("/register");
+    nextUrl.pathname.startsWith("/register") ||
+    nextUrl.pathname.startsWith("/forgot-password") ||
+    nextUrl.pathname.startsWith("/reset-password");
 
   const isProtectedRoute =
     nextUrl.pathname.startsWith("/dashboard") ||
@@ -55,5 +57,7 @@ export const config = {
     "/admin/:path*",
     "/login",
     "/register",
+    "/forgot-password",
+    "/reset-password",
   ],
 };

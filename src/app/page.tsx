@@ -142,13 +142,11 @@ export default async function HomePage() {
                 <span className="w-2 h-2 rounded-xs bg-[#EF4444]" />
                 <span className="w-2 h-2 rounded-xs bg-[#EAB308]" />
                 <span className="w-2 h-2 rounded-xs bg-[#10B981]" />
-                <span className="ml-2 font-medium text-[#94A3B8]">
-                  Pipeline Preview
-                </span>
+                <span className="ml-2 font-medium text-[#94A3B8]">Preview</span>
               </div>
             </div>
 
-            {/* Pipeline Preview Columns (clean background in both light and dark mode) */}
+            {/* Preview Columns (clean background in both light and dark mode) */}
             <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3 bg-[#0A0D12]">
               {/* Card 1 */}
               <div className="p-3.5 bg-[#12171F] border border-[#202937] rounded-xs space-y-2.5 shadow-xs">
@@ -161,8 +159,8 @@ export default async function HomePage() {
                   </div>
                   <Badge status="INTERVIEW" size="sm" />
                 </div>
-                <div className="space-y-1 text-[11px] text-[#64748B] font-mono">
-                  <div className="text-[#3178C6]">Remote · Worldwide</div>
+                <div className="space-y-1 text-[11px] text-[#64748B]">
+                  <div className="text-[#3178C6]">Remote · Global</div>
                   <div>$190,000 – $240,000 USD</div>
                 </div>
               </div>
@@ -178,7 +176,7 @@ export default async function HomePage() {
                   </div>
                   <Badge status="SCREENING" size="sm" />
                 </div>
-                <div className="space-y-1 text-[11px] text-[#64748B] font-mono">
+                <div className="space-y-1 text-[11px] text-[#64748B]">
                   <div className="text-[#EAB308]">Hybrid · Austin, TX</div>
                   <div>$175,000 – $210,000 USD</div>
                 </div>
@@ -195,7 +193,7 @@ export default async function HomePage() {
                   </div>
                   <Badge status="OFFER" size="sm" />
                 </div>
-                <div className="space-y-1 text-[11px] text-[#64748B] font-mono">
+                <div className="space-y-1 text-[11px] text-[#64748B]">
                   <div className="text-[#10B981]">Remote · United States</div>
                   <div>$185,000 – $225,000 USD</div>
                 </div>

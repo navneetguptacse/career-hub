@@ -49,6 +49,15 @@ function LoginForm() {
   };
 
   const isDeleted = searchParams.get("deleted") === "true";
+  const isVerified = searchParams.get("verified") === "true";
+  const isReset = searchParams.get("reset") === "true";
+  const queryError = searchParams.get("error");
+
+  const displayError =
+    error ||
+    (queryError && queryError !== "CredentialsSignin"
+      ? decodeURIComponent(queryError)
+      : null);
 
   return (
     <div className="w-full max-w-sm p-6 bg-[#12171F] border border-[#202937] rounded-xs shadow-2xl space-y-5">
@@ -70,9 +79,21 @@ function LoginForm() {
         </div>
       )}
 
-      {error && (
+      {isVerified && (
+        <div className="p-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs">
+          Your email has been verified successfully. Please sign in to continue.
+        </div>
+      )}
+
+      {isReset && (
+        <div className="p-2.5 text-xs text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs">
+          Your password has been reset. Please sign in with your new password.
+        </div>
+      )}
+
+      {displayError && (
         <div className="p-2.5 text-xs text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xs">
-          {error}
+          {displayError}
         </div>
       )}
 
@@ -119,16 +140,26 @@ function LoginForm() {
           autoComplete="email"
         />
 
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          autoComplete="current-password"
-        />
+        <div>
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
+          <div className="flex justify-end mt-1.5">
+            <Link
+              href="/forgot-password"
+              className="text-[11px] text-[#94A3B8] hover:text-[#3178C6] transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </div>
 
         <Button
           type="submit"

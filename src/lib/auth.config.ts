@@ -12,10 +12,16 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.role = user.role;
         token.telegramConnected = user.telegramConnected;
+        token.emailVerified = user.emailVerified;
       }
 
       if (trigger === "update" && session) {
-        token.telegramConnected = session.user?.telegramConnected;
+        if (session.user?.telegramConnected !== undefined) {
+          token.telegramConnected = session.user.telegramConnected;
+        }
+        if (session.user?.emailVerified !== undefined) {
+          token.emailVerified = session.user.emailVerified;
+        }
       }
 
       return token;
@@ -25,6 +31,9 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.role = (token.role as "USER" | "ADMIN") || "USER";
         session.user.telegramConnected = Boolean(token.telegramConnected);
+        session.user.emailVerified = token.emailVerified
+          ? new Date(token.emailVerified as unknown as string | number | Date)
+          : null;
       }
       return session;
     },

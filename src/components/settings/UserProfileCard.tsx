@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { CircleCheck, ShieldCheck } from "lucide-react";
+import { CircleCheck, ShieldCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -10,6 +10,7 @@ interface ProfileData {
   id?: string;
   name?: string | null;
   email?: string;
+  emailVerified?: string | Date | null;
   role?: string;
   targetRole?: string | null;
   bio?: string | null;
@@ -30,6 +31,11 @@ export const UserProfileCard: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,6 +51,7 @@ export const UserProfileCard: React.FC = () => {
               bio: data.user.bio || "",
               preferredCurrency: data.user.preferredCurrency || "USD",
               email: data.user.email,
+              emailVerified: data.user.emailVerified,
               role: data.user.role,
               createdAt: data.user.createdAt,
               totalApplications: data.user.totalApplications,
@@ -192,17 +199,72 @@ export const UserProfileCard: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-[#94A3B8] tracking-wide">
-              Registered Email (Primary)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-medium text-[#94A3B8] tracking-wide">
+                Registered Email (Primary)
+              </label>
+              {profile.emailVerified ? (
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#10B981] font-medium">
+                  <CircleCheck className="w-3 h-3" />
+                  Verified
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#F59E0B] font-medium">
+                  <AlertCircle className="w-3 h-3" />
+                  Unverified
+                </span>
+              )}
+            </div>
             <div className="h-9 px-3 flex items-center justify-between text-xs bg-[#0A0D12] text-[#94A3B8] border border-[#202937] rounded-xs">
               <span className="truncate">
                 {profile.email || session?.user?.email}
               </span>
-              <span className="text-[11px] text-[#10B981] shrink-0">
-                <CircleCheck className="w-3.5 h-3.5" />
-              </span>
+              {!profile.emailVerified && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsResending(true);
+                    setResendMsg(null);
+                    try {
+                      const res = await fetch("/api/auth/resend-verification", {
+                        method: "POST",
+                      });
+                      const d = await res.json();
+                      if (res.ok) {
+                        setResendMsg({
+                          type: "success",
+                          text: "Verification link sent",
+                        });
+                      } else {
+                        setResendMsg({
+                          type: "error",
+                          text: d.error || "Failed to send link",
+                        });
+                      }
+                    } catch {
+                      setResendMsg({ type: "error", text: "Network error" });
+                    } finally {
+                      setIsResending(false);
+                    }
+                  }}
+                  disabled={isResending}
+                  className="text-[11px] text-[#3178C6] hover:text-[#5499EB] font-medium transition-colors disabled:opacity-50"
+                >
+                  {isResending ? "Sending..." : "Verify"}
+                </button>
+              )}
             </div>
+            {resendMsg && (
+              <p
+                className={`text-[11px] font-medium ${
+                  resendMsg.type === "success"
+                    ? "text-[#10B981]"
+                    : "text-[#EF4444]"
+                }`}
+              >
+                {resendMsg.text}
+              </p>
+            )}
           </div>
         </div>
 

@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
 import { useApplications } from "@/lib/hooks/useApplications";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
+import { UnverifiedEmailBanner } from "@/components/auth/UnverifiedEmailBanner";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -36,6 +37,8 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
+      <UnverifiedEmailBanner />
+
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-[#12171F] border border-[#202937] rounded-xs">
         <div>

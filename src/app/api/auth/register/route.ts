@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -46,8 +48,22 @@ export async function POST(req: Request) {
       },
     });
 
+    try {
+      const token = await generateVerificationToken(user.email);
+      await sendVerificationEmail(user.email, token);
+    } catch (emailErr) {
+      console.error(
+        "Failed to generate or dispatch verification email:",
+        emailErr
+      );
+    }
+
     return NextResponse.json(
-      { message: "Account created successfully", user },
+      {
+        message:
+          "Account created successfully. A verification email has been sent.",
+        user,
+      },
       { status: 201 }
     );
   } catch (error) {

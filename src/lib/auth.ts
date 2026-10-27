@@ -65,6 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           image: user.image,
           role: user.role,
           telegramConnected: Boolean(user.telegramChatId),
+          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -76,21 +77,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.telegramConnected = user.telegramConnected;
+        token.emailVerified = user.emailVerified;
       }
 
       if (trigger === "update" && session) {
-        token.telegramConnected = session.user?.telegramConnected;
+        if (session.user?.telegramConnected !== undefined) {
+          token.telegramConnected = session.user.telegramConnected;
+        }
+        if (session.user?.emailVerified !== undefined) {
+          token.emailVerified = session.user.emailVerified;
+        }
       }
 
-      if (!token.role && token.email) {
+      if ((!token.role || token.emailVerified === undefined) && token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
-          select: { id: true, role: true, telegramChatId: true },
+          select: {
+            id: true,
+            role: true,
+            telegramChatId: true,
+            emailVerified: true,
+          },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.telegramConnected = Boolean(dbUser.telegramChatId);
+          token.emailVerified = dbUser.emailVerified;
         }
       }
 
