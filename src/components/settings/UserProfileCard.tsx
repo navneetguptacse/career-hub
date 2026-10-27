@@ -35,7 +35,6 @@ export const UserProfileCard: React.FC = () => {
   const [resendMsg, setResendMsg] = useState<{
     type: "success" | "error";
     text: string;
-    devUrl?: string;
   } | null>(null);
 
   const handleVerify = async () => {

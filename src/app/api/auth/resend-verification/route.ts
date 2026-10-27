@@ -61,9 +61,9 @@ export async function POST(req: Request) {
       message: emailResult.message || "Verification email sent to your inbox.",
     });
   } catch (error) {
-    console.error("Resend verification error:", error);
+    console.error("Verification email dispatch error:", error);
     return NextResponse.json(
-      { error: "Failed to resend verification email" },
+      { error: "Failed to send verification email" },
       { status: 500 }
     );
   }
