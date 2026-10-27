@@ -219,7 +219,7 @@ async function dispatchEmail(
     });
     return {
       success: true,
-      message: "Verification email sent to your inbox.",
+      message: "A verification email sent to your inbox.",
     };
   } catch (err: unknown) {
     console.error("Email dispatch failure:", err);
