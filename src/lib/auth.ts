@@ -89,7 +89,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      if ((!token.role || token.emailVerified === undefined) && token.email) {
+      if ((!token.role || !token.emailVerified) && token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: {

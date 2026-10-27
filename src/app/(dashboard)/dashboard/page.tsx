@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
@@ -37,7 +37,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <UnverifiedEmailBanner />
+      <Suspense fallback={null}>
+        <UnverifiedEmailBanner />
+      </Suspense>
 
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-[#12171F] border border-[#202937] rounded-xs">

@@ -1,13 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import useSWR from "swr";
 import { AlertCircle, CheckCircle2, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
+const profileFetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to load profile");
+  return res.json();
+};
+
 export function UnverifiedEmailBanner() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const searchParams = useSearchParams();
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isSuccessDismissed, setIsSuccessDismissed] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
@@ -16,7 +26,49 @@ export function UnverifiedEmailBanner() {
   } | null>(null);
   const [cooldown, setCooldown] = useState(0);
 
-  if (!session?.user || session.user.emailVerified || isDismissed) {
+  // Poll live emailVerified status from database via /api/user/profile on window focus
+  const { data: profileData } = useSWR(
+    session?.user?.id ? "/api/user/profile" : null,
+    profileFetcher,
+    { revalidateOnFocus: true, dedupingInterval: 2000 }
+  );
+
+  const isVerified = Boolean(
+    profileData?.user?.emailVerified ?? session?.user?.emailVerified
+  );
+
+  useEffect(() => {
+    if (profileData?.user?.emailVerified && !session?.user?.emailVerified) {
+      update({ user: { emailVerified: profileData.user.emailVerified } });
+    }
+  }, [profileData?.user?.emailVerified, session?.user?.emailVerified, update]);
+
+  const showVerifiedSuccess =
+    searchParams?.get("verified") === "true" && !isSuccessDismissed;
+
+  if (showVerifiedSuccess) {
+    return (
+      <div className="p-3 bg-[#10B981]/10 border border-[#10B981]/30 rounded-xs flex items-center justify-between text-xs text-[#10B981]">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span className="font-medium">
+            Your email address has been verified successfully. Full pipeline
+            features are now active.
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsSuccessDismissed(true)}
+          className="p-1 hover:opacity-75 transition-opacity"
+          aria-label="Dismiss banner"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    );
+  }
+
+  if (!session?.user || isVerified || isDismissed) {
     return null;
   }
 
@@ -60,7 +112,8 @@ export function UnverifiedEmailBanner() {
     } catch {
       setFeedback({
         type: "error",
-        message: "Unable to reach server. Please check your connection and try again.",
+        message:
+          "Unable to reach server. Please check your connection and try again.",
       });
     } finally {
       setIsSending(false);
@@ -100,7 +153,7 @@ export function UnverifiedEmailBanner() {
                   href={feedback.devUrl}
                   className="px-1.5 py-0.5 bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs text-[11px] font-semibold tracking-wide transition-colors"
                 >
-                  Verify Now (Local Dev)
+                  Verify Now
                 </a>
               )}
             </p>

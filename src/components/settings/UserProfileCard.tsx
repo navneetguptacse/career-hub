@@ -50,7 +50,11 @@ export const UserProfileCard: React.FC = () => {
       const d = await res.json();
       setResendMsg(
         res.ok
-          ? { type: "success", text: d.message || "Link sent", devUrl: d.devUrl }
+          ? {
+              type: "success",
+              text: d.message || "Link sent",
+              devUrl: d.devUrl,
+            }
           : { type: "error", text: d.error || "Failed to send link" }
       );
     } catch {
@@ -224,7 +228,7 @@ export const UserProfileCard: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-medium text-[#94A3B8] tracking-wide">
-                Registered Email (Primary)
+                Registered Email
               </label>
               {profile.emailVerified ? (
                 <span className="inline-flex items-center gap-1 text-[11px] text-[#10B981] font-medium">

@@ -18,5 +18,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${baseUrl}/login?error=${errorParam}`);
   }
 
-  return NextResponse.redirect(`${baseUrl}/login?verified=true`);
+  return NextResponse.redirect(`${baseUrl}/dashboard?verified=true`);
 }
