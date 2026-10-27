@@ -33,7 +33,6 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      // Return 200 with generic message to avoid email enumeration
       return NextResponse.json({
         message:
           "If an account exists with this email, a verification link has been sent.",
@@ -58,7 +57,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      message: emailResult.message || "Verification email sent to your inbox.",
+      message:
+        emailResult.message || "A verification email sent to your inbox.",
     });
   } catch (error) {
     console.error("Verification email dispatch error:", error);
