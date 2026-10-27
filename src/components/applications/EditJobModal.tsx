@@ -188,7 +188,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
-          label="Location (City, State, Country)"
+          label="Location"
           placeholder="Redmond, WA, US"
           value={formData.location}
           onChange={(e) =>
@@ -218,7 +218,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
 
       <div>
         <label className="block text-xs font-medium text-[#94A3B8] mb-1">
-          Personal Notes
+          Notes
         </label>
         <textarea
           rows={2}
