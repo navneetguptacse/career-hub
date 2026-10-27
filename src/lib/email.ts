@@ -7,14 +7,31 @@ function getBaseUrl(): string {
 }
 
 function getTransporter() {
-  const user = process.env.GMAIL_USER || process.env.SMTP_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASS;
+  const user =
+    process.env.SMTP_USERNAME ||
+    process.env.SMTP_USER ||
+    process.env.GMAIL_USER;
+  const pass =
+    process.env.SMTP_PASSWORD ||
+    process.env.SMTP_PASS ||
+    process.env.GMAIL_APP_PASSWORD;
 
   if (!user || !pass) return null;
 
-  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const host =
+    process.env.SMTP_HOST ||
+    (process.env.GMAIL_USER ? "smtp.gmail.com" : "smtp.gmail.com");
   const port = Number(process.env.SMTP_PORT) || 465;
-  const secure = port === 465;
+
+  const secure =
+    process.env.SMTP_SECURE !== undefined
+      ? process.env.SMTP_SECURE === "true"
+      : port === 465;
+
+  const sanitizedPass =
+    host.includes("gmail.com") && process.env.GMAIL_APP_PASSWORD
+      ? pass.replace(/\s+/g, "")
+      : pass;
 
   return nodemailer.createTransport({
     host,
@@ -22,7 +39,7 @@ function getTransporter() {
     secure,
     auth: {
       user,
-      pass: pass.replace(/\s+/g, ""),
+      pass: sanitizedPass,
     },
   });
 }
@@ -160,12 +177,18 @@ async function dispatchEmail(
     return {
       success: false,
       error:
-        "Email delivery is not configured. Please set GMAIL_USER and GMAIL_APP_PASSWORD in your environment variables.",
+        "Email delivery is not configured. Please set SMTP_USER and SMTP_PASS (or GMAIL_USER and GMAIL_APP_PASSWORD) in your environment variables.",
     };
   }
 
-  const senderUser = process.env.GMAIL_USER || process.env.SMTP_USER;
-  const fromAddress = process.env.EMAIL_FROM || `CareerHub <${senderUser}>`;
+  const fromName = process.env.SMTP_FROM_NAME || "CareerHub";
+  const fromEmailAddr =
+    process.env.SMTP_FROM_EMAIL ||
+    process.env.SMTP_USERNAME ||
+    process.env.SMTP_USER ||
+    process.env.GMAIL_USER;
+  const fromAddress =
+    process.env.EMAIL_FROM || `"${fromName}" <${fromEmailAddr}>`;
 
   try {
     await transporter.sendMail({

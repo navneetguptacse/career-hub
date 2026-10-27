@@ -157,6 +157,17 @@ GITHUB_CLIENT_SECRET=""
 TELEGRAM_BOT_TOKEN=""
 TELEGRAM_BOT_USERNAME=""
 TELEGRAM_WEBHOOK_SECRET=""
+
+# Mail / SMTP (Compatible with any Custom Domain or Gmail)
+SMTP_HOST="smtp.yourdomain.com"
+SMTP_PORT="465"
+SMTP_SECURE="true"
+SMTP_USER="noreply@yourdomain.com"
+SMTP_PASS="your-smtp-password"
+EMAIL_FROM="CareerHub <noreply@yourdomain.com>"
+# Alternatively for Gmail:
+# GMAIL_USER="your-email@gmail.com"
+# GMAIL_APP_PASSWORD="xxxx xxxx xxxx xxxx"
 ```
 
 ### Installation
