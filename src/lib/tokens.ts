@@ -139,7 +139,6 @@ export async function resetPasswordWithToken(
       where: { id: user.id },
       data: {
         passwordHash,
-        // Resetting password via email verification link implicitly verifies email ownership
         emailVerified: user.emailVerified || new Date(),
       },
     }),
