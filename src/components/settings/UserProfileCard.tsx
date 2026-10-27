@@ -50,11 +50,7 @@ export const UserProfileCard: React.FC = () => {
       const d = await res.json();
       setResendMsg(
         res.ok
-          ? {
-              type: "success",
-              text: d.message || "Link sent",
-              devUrl: d.devUrl,
-            }
+          ? { type: "success", text: d.message || "Link sent to inbox" }
           : { type: "error", text: d.error || "Failed to send link" }
       );
     } catch {
@@ -259,21 +255,13 @@ export const UserProfileCard: React.FC = () => {
             </div>
             {resendMsg && (
               <p
-                className={`text-[11px] font-medium flex flex-wrap items-center gap-1.5 ${
+                className={`text-[11px] font-medium ${
                   resendMsg.type === "success"
                     ? "text-[#10B981]"
                     : "text-[#EF4444]"
                 }`}
               >
-                <span>{resendMsg.text}</span>
-                {resendMsg.devUrl && (
-                  <a
-                    href={resendMsg.devUrl}
-                    className="px-1.5 py-0.5 bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs text-[10px] font-semibold tracking-wide transition-colors"
-                  >
-                    Verify Now (Local Dev)
-                  </a>
-                )}
+                {resendMsg.text}
               </p>
             )}
           </div>

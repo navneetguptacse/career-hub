@@ -22,11 +22,9 @@ export function UnverifiedEmailBanner() {
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
-    devUrl?: string;
   } | null>(null);
   const [cooldown, setCooldown] = useState(0);
 
-  // Poll live emailVerified status from database via /api/user/profile on window focus
   const { data: profileData } = useSWR(
     session?.user?.id ? "/api/user/profile" : null,
     profileFetcher,
@@ -95,8 +93,8 @@ export function UnverifiedEmailBanner() {
       } else {
         setFeedback({
           type: "success",
-          message: data.message || "Verification email dispatched",
-          devUrl: data.devUrl,
+          message:
+            data.message || "Verification email dispatched to your inbox.",
         });
         setCooldown(60);
         const timer = setInterval(() => {
@@ -138,7 +136,7 @@ export function UnverifiedEmailBanner() {
           </p>
           {feedback && (
             <p
-              className={`mt-1 font-medium flex flex-wrap items-center gap-1.5 ${
+              className={`mt-1 font-medium flex items-center gap-1.5 ${
                 feedback.type === "success"
                   ? "text-[#10B981]"
                   : "text-[#EF4444]"
@@ -148,14 +146,6 @@ export function UnverifiedEmailBanner() {
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
               )}
               <span>{feedback.message}</span>
-              {feedback.devUrl && (
-                <a
-                  href={feedback.devUrl}
-                  className="px-1.5 py-0.5 bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs text-[11px] font-semibold tracking-wide transition-colors"
-                >
-                  Verify Now
-                </a>
-              )}
             </p>
           )}
         </div>

@@ -2,6 +2,7 @@
   "name": "career-hub",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.19.1",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -42,5 +43,10 @@
     "prettier": "^3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.10.1": true,
+    "prisma@7.10.1": true,
+    "unrs-resolver@1.12.2": true
   }
 }

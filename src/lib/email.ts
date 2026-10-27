@@ -110,10 +110,9 @@ export async function sendVerificationEmail(
 
   if (!resend) {
     return {
-      success: true,
-      devNotice: true,
-      devUrl: verifyUrl,
-      message: "Development mode: Verification link logged to console.",
+      success: false,
+      error:
+        "Email provider is not configured. Please add RESEND_API_KEY to your environment.",
     };
   }
 
@@ -126,40 +125,13 @@ export async function sendVerificationEmail(
     });
 
     if (error) {
-      const isSandboxRestriction =
-        error.message.includes(
-          "only send testing emails to your own email address"
-        ) || error.message.includes("verify a domain");
-
-      if (isSandboxRestriction && process.env.NODE_ENV !== "production") {
-        console.warn(
-          `\n[RESEND SANDBOX RESTRICTION] Resend sandbox (${fromEmail}) only delivers to your Resend account email. For local development, click the Direct URL printed above in your terminal.\n`
-        );
-        return {
-          success: true,
-          devNotice: true,
-          devUrl: verifyUrl,
-          message:
-            "Resend sandbox test mode: verification link is ready in console.",
-        };
-      }
-
       console.error("Resend error sending verification email:", error);
       return { success: false, error: error.message };
     }
 
-    return { success: true };
+    return { success: true, message: "Verification email sent to your inbox." };
   } catch (err) {
     console.error("Network failure sending verification email:", err);
-    if (process.env.NODE_ENV !== "production") {
-      return {
-        success: true,
-        devNotice: true,
-        devUrl: verifyUrl,
-        message:
-          "Network could not reach email provider. Verification link is ready in console.",
-      };
-    }
     return {
       success: false,
       error: "Unable to reach email delivery service. Please try again later.",
@@ -206,10 +178,9 @@ export async function sendPasswordResetEmail(
 
   if (!resend) {
     return {
-      success: true,
-      devNotice: true,
-      devUrl: resetUrl,
-      message: "Development mode: Reset link logged to console.",
+      success: false,
+      error:
+        "Email provider is not configured. Please add RESEND_API_KEY to your environment.",
     };
   }
 
@@ -222,40 +193,16 @@ export async function sendPasswordResetEmail(
     });
 
     if (error) {
-      const isSandboxRestriction =
-        error.message.includes(
-          "only send testing emails to your own email address"
-        ) || error.message.includes("verify a domain");
-
-      if (isSandboxRestriction && process.env.NODE_ENV !== "production") {
-        console.warn(
-          `\n[RESEND SANDBOX RESTRICTION] Resend sandbox (${fromEmail}) only delivers to your Resend account email. For local development, click the Direct URL printed above in your terminal.\n`
-        );
-        return {
-          success: true,
-          devNotice: true,
-          devUrl: resetUrl,
-          message:
-            "Resend sandbox test mode: password reset link is ready in console.",
-        };
-      }
-
       console.error("Resend error sending password reset email:", error);
       return { success: false, error: error.message };
     }
 
-    return { success: true };
+    return {
+      success: true,
+      message: "Password reset email sent to your inbox.",
+    };
   } catch (err) {
     console.error("Network failure sending password reset email:", err);
-    if (process.env.NODE_ENV !== "production") {
-      return {
-        success: true,
-        devNotice: true,
-        devUrl: resetUrl,
-        message:
-          "Network could not reach email provider. Password reset link is ready in console.",
-      };
-    }
     return {
       success: false,
       error: "Unable to reach email delivery service. Please try again later.",
