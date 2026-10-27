@@ -135,12 +135,6 @@ export const JobCard: React.FC<JobCardProps> = ({
         )}
       </div>
 
-      {job.notes && (
-        <p className="text-[11px] text-[#94A3B8] line-clamp-2 bg-[#0A0D12] p-1.5 rounded-xs border border-[#202937]/60">
-          {job.notes}
-        </p>
-      )}
-
       <div className="pt-2 border-t border-[#202937] flex items-center justify-between">
         <div className="text-[10px] text-[#64748B] font-medium">
           {formatDate(job.appliedDate || job.createdAt)}
