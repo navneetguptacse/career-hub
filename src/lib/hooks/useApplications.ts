@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import useSWR, { mutate as globalMutate } from "swr";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
@@ -12,8 +13,8 @@ const fetcher = async (url: string): Promise<JobApplicationItem[]> => {
   if (!res.ok) {
     throw new Error("Failed to fetch applications");
   }
-  const data = await res.json();
-  return data.applications || [];
+  const data = (await res.json()) as { applications?: JobApplicationItem[] };
+  return data.applications ?? [];
 };
 
 export function useApplications(options: UseApplicationsOptions = {}) {
@@ -32,65 +33,69 @@ export function useApplications(options: UseApplicationsOptions = {}) {
     {
       revalidateOnFocus: true,
       dedupingInterval: 2000,
+      shouldRetryOnError: false,
     }
   );
 
-  const applications = data || [];
+  const applications = useMemo(() => data ?? [], [data]);
 
-  const updateStatus = async (
-    id: string,
-    newStatus: ApplicationStatusType
-  ): Promise<boolean> => {
-    // Optimistic UI update
-    await mutate(
-      applications.map((app) =>
-        app.id === id ? { ...app, status: newStatus } : app
-      ),
-      false
-    );
-
-    try {
-      const res = await fetch(`/api/applications/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) throw new Error("Failed to update status");
-      await mutate();
-      globalMutate(
-        (key: unknown) =>
-          typeof key === "string" && key.startsWith("/api/applications")
+  const updateStatus = useCallback(
+    async (id: string, newStatus: ApplicationStatusType): Promise<boolean> => {
+      // Optimistic UI update
+      await mutate(
+        applications.map((app) =>
+          app.id === id ? { ...app, status: newStatus } : app
+        ),
+        false
       );
-      return true;
-    } catch {
-      await mutate();
-      return false;
-    }
-  };
 
-  const deleteApplication = async (id: string): Promise<boolean> => {
-    // Optimistic UI update
-    await mutate(
-      applications.filter((app) => app.id !== id),
-      false
-    );
+      try {
+        const res = await fetch(`/api/applications/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        if (!res.ok) throw new Error("Failed to update status");
+        await mutate();
+        await globalMutate(
+          (key: unknown) =>
+            typeof key === "string" && key.startsWith("/api/applications")
+        );
+        return true;
+      } catch {
+        await mutate();
+        return false;
+      }
+    },
+    [applications, mutate]
+  );
 
-    try {
-      const res = await fetch(`/api/applications/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete application");
-      await mutate();
-      globalMutate(
-        (key: unknown) =>
-          typeof key === "string" && key.startsWith("/api/applications")
+  const deleteApplication = useCallback(
+    async (id: string): Promise<boolean> => {
+      // Optimistic UI update
+      await mutate(
+        applications.filter((app) => app.id !== id),
+        false
       );
-      return true;
-    } catch {
-      await mutate();
-      return false;
-    }
-  };
+
+      try {
+        const res = await fetch(`/api/applications/${id}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Failed to delete application");
+        await mutate();
+        await globalMutate(
+          (key: unknown) =>
+            typeof key === "string" && key.startsWith("/api/applications")
+        );
+        return true;
+      } catch {
+        await mutate();
+        return false;
+      }
+    },
+    [applications, mutate]
+  );
 
   return {
     applications,

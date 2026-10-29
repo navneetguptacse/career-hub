@@ -147,11 +147,11 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <div className="pt-3 border-t border-[#202937] text-center text-xs text-[#94A3B8]">
-          Already have an account?{" "}
+        <div className="pt-3.5 border-t border-[#202937] flex items-center justify-between text-xs">
+          <span className="text-[#94A3B8]">Already have an account?</span>
           <Link
             href="/login"
-            className="text-[#3178C6] hover:text-[#5499EB] font-medium"
+            className="text-[#3178C6] hover:text-[#5499EB] font-medium transition-colors"
           >
             Sign in
           </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Send,
   Copy,
@@ -16,39 +16,29 @@ import {
 import { Button } from "@/components/ui/Button";
 import { TelegramBotFatherTip } from "./TelegramBotFatherTip";
 import { TelegramCommandsTable } from "./TelegramCommandsTable";
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export const TelegramGuideCard: React.FC = () => {
-  const [pairToken, setPairToken] = useState<string | null>(null);
+  const { status, isLoading: isLoadingToken } = useTelegramStatus({
+    autoPollWhenUnpaired: true,
+  });
+  const pairToken = status?.pairToken ?? null;
   const [isCopied, setIsCopied] = useState(false);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
-  const [isLoadingToken, setIsLoadingToken] = useState(true);
 
-  useEffect(() => {
-    async function fetchPairToken() {
-      try {
-        const res = await fetch("/api/telegram/pair");
-        if (res.ok) {
-          const data = await res.json();
-          setPairToken(data.pairToken || null);
-        }
-      } catch (err) {
-        console.error("Failed to load pair token:", err);
-      } finally {
-        setIsLoadingToken(false);
-      }
-    }
-    fetchPairToken();
-  }, []);
+  const pairingCommandText = isLoadingToken
+    ? "Generating..."
+    : `/link ${pairToken ?? "<PAIR-CODE>"}`;
 
-  const handleCopyCommand = () => {
+  const handleCopyCommand = async () => {
     const textToCopy = pairToken ? `/link ${pairToken}` : "/link <YOUR_CODE>";
-    navigator.clipboard.writeText(textToCopy);
+    await navigator.clipboard.writeText(textToCopy);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://t.me/careerhub_tracker_bot");
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText("https://t.me/careerhub_tracker_bot");
     setIsCopiedLink(true);
     setTimeout(() => setIsCopiedLink(false), 2000);
   };
@@ -142,11 +132,7 @@ export const TelegramGuideCard: React.FC = () => {
               Send this exact command to the bot in a direct message or group to
               link your account:{" "}
               <span className="font-mono text-[10px] font-semibold text-[#5499EB]">
-                {isLoadingToken
-                  ? "Generating..."
-                  : pairToken
-                    ? `/link ${pairToken}`
-                    : "/link <PAIR-CODE>"}
+                {pairingCommandText}
               </span>
             </p>
           </div>

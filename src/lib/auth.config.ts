@@ -28,7 +28,7 @@ export const authConfig: NextAuthConfig = {
     },
     session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
+        session.user.id = (token.id as string) || (token.sub as string);
         session.user.role = (token.role as "USER" | "ADMIN") || "USER";
         session.user.telegramConnected = Boolean(token.telegramConnected);
         session.user.emailVerified = token.emailVerified
