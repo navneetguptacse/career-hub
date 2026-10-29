@@ -45,13 +45,17 @@ interface HtmlMetadata {
 export function capitalizeCompanyName(name?: string | null): string {
   if (!name) return "";
   let clean = name.replace(/\s+/g, " ").trim();
-  clean = clean.replace(/[-|–—]\s*(?:Careers|Jobs|Hiring|Apply|Work).*$/i, "").trim();
+  clean = clean
+    .replace(/[-|–—]\s*(?:Careers|Jobs|Hiring|Apply|Work).*$/i, "")
+    .trim();
   clean = clean.replace(/\s+(?:Careers|Jobs|Hiring)\b/i, "").trim();
   if (!clean) return "";
 
   return clean
     .split(" ")
-    .map((w) => (!w ? "" : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
+    .map((w) =>
+      !w ? "" : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+    )
     .join(" ");
 }
 
@@ -68,7 +72,9 @@ function parseHtmlMetadata(html: string): HtmlMetadata {
         const item = Array.isArray(json)
           ? json.find((i) => i?.["@type"] === "JobPosting") || json[0]
           : json?.["@graph"]
-            ? json["@graph"].find((i: { ["@type"]?: string }) => i?.["@type"] === "JobPosting")
+            ? json["@graph"].find(
+                (i: { ["@type"]?: string }) => i?.["@type"] === "JobPosting"
+              )
             : json;
 
         if (item?.["@type"] === "JobPosting" || item?.title) {
@@ -79,7 +85,11 @@ function parseHtmlMetadata(html: string): HtmlMetadata {
           const loc = item.jobLocation?.address;
           if (typeof loc === "string") jsonLdLocation = loc.trim();
           else if (loc && typeof loc === "object") {
-            const parts = [loc.addressLocality, loc.addressRegion, loc.addressCountry].filter(Boolean);
+            const parts = [
+              loc.addressLocality,
+              loc.addressRegion,
+              loc.addressCountry,
+            ].filter(Boolean);
             if (parts.length) jsonLdLocation = parts.join(", ");
           }
         }
@@ -88,14 +98,24 @@ function parseHtmlMetadata(html: string): HtmlMetadata {
       }
     });
 
-    const ogTitle = $('meta[property="og:title"]').attr("content") || $('meta[name="twitter:title"]').attr("content");
+    const ogTitle =
+      $('meta[property="og:title"]').attr("content") ||
+      $('meta[name="twitter:title"]').attr("content");
     const ogSiteName = $('meta[property="og:site_name"]').attr("content");
-    const ogDescription = $('meta[property="og:description"]').attr("content") || $('meta[name="description"]').attr("content");
+    const ogDescription =
+      $('meta[property="og:description"]').attr("content") ||
+      $('meta[name="description"]').attr("content");
     const keywords = $('meta[name="keywords"]').attr("content");
     const title = $("title").text().replace(/\s+/g, " ").trim();
 
-    $("script, style, noscript, svg, nav, footer, header, iframe, form, button").remove();
-    const bodySnippet = $("body").text().replace(/\s+/g, " ").trim().slice(0, 3500);
+    $(
+      "script, style, noscript, svg, nav, footer, header, iframe, form, button"
+    ).remove();
+    const bodySnippet = $("body")
+      .text()
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 3500);
 
     return {
       title,
@@ -113,7 +133,10 @@ function parseHtmlMetadata(html: string): HtmlMetadata {
   }
 }
 
-function inferFallback(url: string, meta?: HtmlMetadata): { company: string; role: string; location?: string | null } {
+function inferFallback(
+  url: string,
+  meta?: HtmlMetadata
+): { company: string; role: string; location?: string | null } {
   try {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
@@ -126,12 +149,27 @@ function inferFallback(url: string, meta?: HtmlMetadata): { company: string; rol
     if (!rawCompany) {
       if (host.includes("smartrecruiters.com") && pathParts.length > 0) {
         rawCompany = pathParts[0];
-      } else if (pathParts.length > 0 && ["greenhouse.io", "lever.co", "ashbyhq.com", "workable.com"].some((ats) => host.includes(ats))) {
+      } else if (
+        pathParts.length > 0 &&
+        ["greenhouse.io", "lever.co", "ashbyhq.com", "workable.com"].some(
+          (ats) => host.includes(ats)
+        )
+      ) {
         const seg = pathParts[0];
-        if (!["jobs", "job", "view", "apply", "careers"].includes(seg.toLowerCase())) rawCompany = seg;
+        if (
+          !["jobs", "job", "view", "apply", "careers"].includes(
+            seg.toLowerCase()
+          )
+        )
+          rawCompany = seg;
       } else {
         const sub = parts[0];
-        if (sub && !["jobs", "job", "careers", "boards", "apply"].includes(sub.toLowerCase())) {
+        if (
+          sub &&
+          !["jobs", "job", "careers", "boards", "apply"].includes(
+            sub.toLowerCase()
+          )
+        ) {
           rawCompany = sub;
         } else if (parts[1]) {
           rawCompany = parts[1];
@@ -141,13 +179,25 @@ function inferFallback(url: string, meta?: HtmlMetadata): { company: string; rol
 
     if (!rawRole) {
       const lastSeg = pathParts[pathParts.length - 1] || "";
-      rawRole = lastSeg.replace(/^\d+[-_]*/, "").replace(/[-_]+/g, " ").trim();
+      rawRole = lastSeg
+        .replace(/^\d+[-_]*/, "")
+        .replace(/[-_]+/g, " ")
+        .trim();
     }
 
     const company = capitalizeCompanyName(rawCompany || "Company");
-    const role = rawRole ? rawRole.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).trim() : "Job Position";
+    const role = rawRole
+      ? rawRole
+          .replace(/[-_]+/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase())
+          .trim()
+      : "Job Position";
 
-    return { company: company || "Company", role: role || "Job Position", location: meta?.jsonLdLocation || null };
+    return {
+      company: company || "Company",
+      role: role || "Job Position",
+      location: meta?.jsonLdLocation || null,
+    };
   } catch {
     return { company: "Company", role: "Job Position" };
   }
@@ -207,13 +257,18 @@ Return ONLY a JSON object:
   return null;
 }
 
-export async function scrapeJobUrl(url: string, userConfig?: UserLlmConfig): Promise<ScrapedJobData> {
+export async function scrapeJobUrl(
+  url: string,
+  userConfig?: UserLlmConfig
+): Promise<ScrapedJobData> {
   let rawHtml = "";
   try {
     const res = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
       },
       signal: AbortSignal.timeout(10000),
@@ -225,12 +280,21 @@ export async function scrapeJobUrl(url: string, userConfig?: UserLlmConfig): Pro
 
   const meta = parseHtmlMetadata(rawHtml);
   const fallback = inferFallback(url, meta);
-  const llmData = rawHtml ? await extractJobWithLlm(meta, url, fallback.company, userConfig) : null;
+  const llmData = rawHtml
+    ? await extractJobWithLlm(meta, url, fallback.company, userConfig)
+    : null;
 
   const validLocTypes = ["REMOTE", "HYBRID", "ONSITE"] as const;
-  const validEmpTypes = ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERNSHIP"] as const;
+  const validEmpTypes = [
+    "FULL_TIME",
+    "PART_TIME",
+    "CONTRACT",
+    "INTERNSHIP",
+  ] as const;
 
-  const companyName = capitalizeCompanyName(llmData?.companyName || fallback.company);
+  const companyName = capitalizeCompanyName(
+    llmData?.companyName || fallback.company
+  );
   const jobTitle = llmData?.jobTitle?.trim() || fallback.role;
   const location = llmData?.location?.trim() || fallback.location || null;
   const locationType =
@@ -240,7 +304,9 @@ export async function scrapeJobUrl(url: string, userConfig?: UserLlmConfig): Pro
         ? "REMOTE"
         : "ONSITE";
   const employmentType =
-    llmData?.employmentType && validEmpTypes.includes(llmData.employmentType) ? llmData.employmentType : "FULL_TIME";
+    llmData?.employmentType && validEmpTypes.includes(llmData.employmentType)
+      ? llmData.employmentType
+      : "FULL_TIME";
 
   return {
     jobTitle,

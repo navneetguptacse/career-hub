@@ -28,7 +28,11 @@ export function UnverifiedEmailBanner() {
   const { data: profileData } = useSWR(
     session?.user?.id ? "/api/user/profile" : null,
     profileFetcher,
-    { revalidateOnFocus: true, dedupingInterval: 2000 }
+    {
+      revalidateOnFocus: true,
+      dedupingInterval: 2000,
+      shouldRetryOnError: false,
+    }
   );
 
   const isVerified = Boolean(
@@ -37,7 +41,7 @@ export function UnverifiedEmailBanner() {
 
   useEffect(() => {
     if (profileData?.user?.emailVerified && !session?.user?.emailVerified) {
-      update({ user: { emailVerified: profileData.user.emailVerified } });
+      void update({ user: { emailVerified: profileData.user.emailVerified } });
     }
   }, [profileData?.user?.emailVerified, session?.user?.emailVerified, update]);
 

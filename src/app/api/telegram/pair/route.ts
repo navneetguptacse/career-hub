@@ -13,10 +13,22 @@ export async function GET() {
     let user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
+        id: true,
         telegramChatId: true,
         telegramPairToken: true,
       },
     });
+
+    if (!user && session.user.email) {
+      user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: {
+          id: true,
+          telegramChatId: true,
+          telegramPairToken: true,
+        },
+      });
+    }
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -25,9 +37,10 @@ export async function GET() {
     if (!user.telegramPairToken) {
       const newToken = generatePairingToken();
       user = await prisma.user.update({
-        where: { id: session.user.id },
+        where: { id: user.id },
         data: { telegramPairToken: newToken },
         select: {
+          id: true,
           telegramChatId: true,
           telegramPairToken: true,
         },
@@ -56,8 +69,24 @@ export async function DELETE() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.user.update({
+    let user = await prisma.user.findUnique({
       where: { id: session.user.id },
+      select: { id: true },
+    });
+
+    if (!user && session.user.email) {
+      user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true },
+      });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
       data: {
         telegramChatId: null,
       },

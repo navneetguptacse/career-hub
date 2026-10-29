@@ -1,67 +1,49 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { mutate } from "swr";
-import { Check, CircleCheck, Copy, Send, Unlink } from "lucide-react";
+import {
+  Check,
+  CircleCheck,
+  Copy,
+  RefreshCw,
+  Send,
+  Unlink,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
-
-interface TelegramStatus {
-  connected: boolean;
-  chatId?: string | null;
-  pairToken?: string | null;
-  botUsername?: string | null;
-}
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export const TelegramCard: React.FC = () => {
   const { update } = useSession();
-  const [telegramStatus, setTelegramStatus] = useState<TelegramStatus | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    isPaired,
+    status: telegramStatus,
+    isLoading,
+    mutate,
+    verifyConnection,
+  } = useTelegramStatus({
+    autoPollWhenUnpaired: true,
+    pollInterval: 3000,
+  });
+
   const [isCopied, setIsCopied] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const fetchTelegramStatus = useCallback(async () => {
-    try {
-      const res = await fetch("/api/telegram/pair");
-      if (res.ok) {
-        const data = await res.json();
-        setTelegramStatus(data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch Telegram status:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    let isCancelled = false;
-    async function load() {
-      try {
-        const res = await fetch("/api/telegram/pair");
-        if (res.ok && !isCancelled) {
-          const data = await res.json();
-          setTelegramStatus(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch Telegram status:", err);
-      } finally {
-        if (!isCancelled) setIsLoading(false);
-      }
-    }
-    load();
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
-
-  const handleCopyToken = () => {
+  const handleCopyToken = async () => {
     if (!telegramStatus?.pairToken) return;
-    navigator.clipboard.writeText(`/link ${telegramStatus.pairToken}`);
+    await navigator.clipboard.writeText(`/link ${telegramStatus.pairToken}`);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleManualVerify = async () => {
+    setIsVerifying(true);
+    try {
+      await verifyConnection();
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleDisconnect = async () => {
@@ -70,8 +52,7 @@ export const TelegramCard: React.FC = () => {
     try {
       const res = await fetch("/api/telegram/pair", { method: "DELETE" });
       if (res.ok) {
-        await fetchTelegramStatus();
-        await mutate("/api/telegram/pair");
+        await mutate();
         await update({ user: { telegramConnected: false } });
       }
     } catch (err) {
@@ -100,7 +81,7 @@ export const TelegramCard: React.FC = () => {
         </div>
 
         <div>
-          {telegramStatus?.connected ? (
+          {isPaired ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 rounded-xs">
               <CircleCheck className="w-3.5 h-3.5" />
               Paired
@@ -113,14 +94,14 @@ export const TelegramCard: React.FC = () => {
         </div>
       </div>
 
-      {telegramStatus?.connected ? (
+      {isPaired ? (
         <div className="space-y-3">
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs text-xs space-y-1">
             <div className="text-[#F1F5F9] font-medium">Telegram Connected</div>
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-[#F1F5F9]">Chat ID</span>
+              <span className="text-[#94A3B8]">Chat ID:</span>
               <span className="font-mono text-[#F1F5F9]">
-                {telegramStatus.chatId}
+                {telegramStatus?.chatId ?? "Linked"}
               </span>
             </div>
           </div>
@@ -137,15 +118,22 @@ export const TelegramCard: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
-            <span className="text-xs font-medium text-[#94A3B8] block">
-              Secure Pairing Command
-            </span>
+          <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-[#94A3B8]">
+                Secure Pairing Command
+              </span>
+              <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
+                <span className="w-1.5 h-1.5 rounded-xs bg-[#3178C6] animate-pulse" />
+                <span>Auto-detecting link...</span>
+              </div>
+            </div>
+
             <div className="flex items-center gap-2">
               <code className="flex-1 h-9 px-3 flex items-center bg-[#12171F] border border-[#202937] rounded-xs font-mono font-semibold text-xs text-[#5499EB] truncate">
                 {isLoading
                   ? "Generating..."
-                  : `/link ${telegramStatus?.pairToken || "PAIR-XXXXXX"}`}
+                  : `/link ${telegramStatus?.pairToken ?? "PAIR-XXXXXX"}`}
               </code>
               <Button
                 variant="secondary"
@@ -160,6 +148,17 @@ export const TelegramCard: React.FC = () => {
                 )}
                 <span>{isCopied ? "Copied" : "Copy"}</span>
               </Button>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleManualVerify}
+                isLoading={isVerifying}
+                title="Verify connection immediately"
+                className="gap-1.5 shrink-0 border-[#202937] hover:border-[#3178C6]"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-[#5499EB]" />
+                <span className="hidden sm:inline">Verify</span>
+              </Button>
             </div>
           </div>
 
@@ -171,8 +170,8 @@ export const TelegramCard: React.FC = () => {
               <li>Open your Telegram bot client or add your bot to a group.</li>
               <li>Send the pairing command copied above.</li>
               <li>
-                Once confirmed, drop any job posting URL to immediately populate
-                your Kanban board.
+                Connection will automatically reflect above once confirmed by
+                the bot.
               </li>
             </ol>
           </div>

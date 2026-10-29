@@ -16,6 +16,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       isLoading = false,
       disabled,
+      type = "button",
       ...props
     },
     ref
@@ -47,6 +48,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        type={type}
         disabled={disabled || isLoading}
         className={cn(
           baseStyles,
@@ -56,8 +58,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {isLoading ? (
+        {isLoading && (
           <svg
+            aria-hidden="true"
             className={cn(
               "animate-spin shrink-0",
               variant === "primary" ? "text-white" : "text-[#3178C6]",
@@ -80,8 +83,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               d="M4 12a8 8 0 018-8v8z"
             />
           </svg>
-        ) : null}
-        {!isIconOnly ? children : !isLoading ? children : null}
+        )}
+        {(!isIconOnly || !isLoading) && children}
       </button>
     );
   }
