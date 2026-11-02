@@ -10,10 +10,16 @@ if (!fs.existsSync(tsconfigPath)) {
   } catch {}
 }
 
+const isVercel = Boolean(process.env.VERCEL || process.env.NEXT_DEPLOYMENT_ID);
+
 const nextConfig: NextConfig = {
-  experimental: {
-    turbopackPluginRuntimeStrategy: "forceWorkerThreads",
-  },
+  ...(isVercel
+    ? {}
+    : {
+        experimental: {
+          turbopackPluginRuntimeStrategy: "forceWorkerThreads",
+        },
+      }),
 };
 
 export default nextConfig;
