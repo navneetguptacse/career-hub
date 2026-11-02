@@ -11,10 +11,16 @@ export interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+export interface PlatformInfo {
+  isIos: boolean;
+  isAndroid: boolean;
+  isInAppBrowser: boolean;
+  isMobileOrTablet: boolean;
+}
+
 const DISMISS_KEY = "careerhub_pwa_dismissed_at";
 const DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-// --- Prompt Store ---
 let globalDeferredPrompt: BeforeInstallPromptEvent | null = null;
 const promptListeners = new Set<() => void>();
 
@@ -38,7 +44,6 @@ function setGlobalPrompt(prompt: BeforeInstallPromptEvent | null) {
   promptListeners.forEach((listener) => listener());
 }
 
-// Global browser listeners for PWA install events (attached once)
 if (typeof window !== "undefined") {
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
@@ -51,7 +56,6 @@ if (typeof window !== "undefined") {
   });
 }
 
-// --- Standalone Store ---
 function subscribeStandalone(callback: () => void) {
   if (typeof window === "undefined") return () => {};
   const mql = window.matchMedia("(display-mode: standalone)");
@@ -72,7 +76,6 @@ function getStandaloneSnapshot(): boolean {
   );
 }
 
-// --- Dismissed Store ---
 const dismissListeners = new Set<() => void>();
 
 function subscribeDismiss(callback: () => void) {
@@ -94,21 +97,48 @@ function getDismissSnapshot(): boolean {
   }
 }
 
-// --- iOS Snapshot ---
-function getIosSnapshot(): boolean {
-  if (typeof window === "undefined") return false;
-  const isStandalone = getStandaloneSnapshot();
-  if (isStandalone) return false;
+const SERVER_PLATFORM: PlatformInfo = Object.freeze({
+  isIos: false,
+  isAndroid: false,
+  isInAppBrowser: false,
+  isMobileOrTablet: false,
+});
 
-  const ua = window.navigator.userAgent;
-  const isIosDevice =
-    /iPad|iPhone|iPod/.test(ua) ||
-    (window.navigator.platform === "MacIntel" &&
-      window.navigator.maxTouchPoints > 1);
+let cachedPlatform: PlatformInfo | null = null;
 
-  const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
+function getPlatformSnapshot(): PlatformInfo {
+  if (typeof window === "undefined") return SERVER_PLATFORM;
+  if (!cachedPlatform) {
+    const ua = window.navigator.userAgent || "";
+    const isIos =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (window.navigator.platform === "MacIntel" &&
+        window.navigator.maxTouchPoints > 1);
 
-  return isIosDevice && isSafari;
+    const isAndroid = /Android/i.test(ua);
+    const isInAppBrowser =
+      /Telegram|FBAN|FBAV|Instagram|Line|Twitter|MicroMessenger/i.test(ua);
+
+    const isMobileOrTablet =
+      isIos ||
+      isAndroid ||
+      /Mobi|Tablet|iPad|iPhone|Android/i.test(ua) ||
+      (window.navigator.platform === "MacIntel" &&
+        window.navigator.maxTouchPoints > 1);
+
+    cachedPlatform = Object.freeze({
+      isIos,
+      isAndroid,
+      isInAppBrowser,
+      isMobileOrTablet,
+    });
+  }
+
+  return cachedPlatform;
+}
+
+function getServerPlatformSnapshot(): PlatformInfo {
+  return SERVER_PLATFORM;
 }
 
 export function usePwaInstall() {
@@ -130,37 +160,41 @@ export function usePwaInstall() {
     () => true
   );
 
-  const isIos = useSyncExternalStore(
+  const platform = useSyncExternalStore(
     subscribeStandalone,
-    getIosSnapshot,
-    () => false
+    getPlatformSnapshot,
+    getServerPlatformSnapshot
   );
 
-  const [showIosGuide, setShowIosGuide] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   const install = useCallback(async (): Promise<boolean> => {
-    if (isIos) {
-      setShowIosGuide(true);
+    if (platform.isInAppBrowser) {
+      setShowGuide(true);
       return false;
     }
 
-    if (!deferredPrompt) {
-      return false;
-    }
-
-    try {
-      await deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      if (choice.outcome === "accepted") {
-        setGlobalPrompt(null);
-        return true;
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          setGlobalPrompt(null);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.warn("Failed to execute PWA install prompt:", error);
       }
-      return false;
-    } catch (error) {
-      console.warn("Failed to execute PWA install prompt:", error);
+    }
+
+    if (platform.isMobileOrTablet || platform.isIos) {
+      setShowGuide(true);
       return false;
     }
-  }, [deferredPrompt, isIos]);
+
+    return false;
+  }, [deferredPrompt, platform]);
 
   const dismissBanner = useCallback(() => {
     try {
@@ -169,14 +203,21 @@ export function usePwaInstall() {
     dismissListeners.forEach((l) => l());
   }, []);
 
-  const isInstallable = (!isInstalled && Boolean(deferredPrompt)) || isIos;
+  const isInstallable =
+    !isInstalled &&
+    (Boolean(deferredPrompt) ||
+      platform.isMobileOrTablet ||
+      platform.isInAppBrowser);
 
   return {
     isInstallable,
     isInstalled,
-    isIos,
-    showIosGuide,
-    setShowIosGuide,
+    platform,
+    isIos: platform.isIos,
+    showIosGuide: showGuide,
+    setShowIosGuide: setShowGuide,
+    showGuide,
+    setShowGuide,
     install,
     dismissBanner,
     isBannerDismissed,

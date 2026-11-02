@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
+import { TelegramWebhookSync } from "./TelegramWebhookSync";
 
 export const TelegramCard: React.FC = () => {
   const { update } = useSession();
@@ -178,6 +179,8 @@ export const TelegramCard: React.FC = () => {
           </div>
         </div>
       )}
+
+      <TelegramWebhookSync />
 
       <ConfirmModal
         isOpen={showDisconnectModal}

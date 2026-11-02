@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import { AppWindow, CheckCircle2, Download, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
-import { PwaIosModal } from "@/components/pwa/PwaIosModal";
+import { PwaGuideModal } from "@/components/pwa/PwaGuideModal";
 
 export const PwaSettingsCard: React.FC = () => {
   const {
     isInstallable,
     isInstalled,
-    isIos,
-    showIosGuide,
-    setShowIosGuide,
+    showGuide,
+    setShowGuide,
+    platform,
     install,
   } = usePwaInstall();
 
@@ -59,7 +59,7 @@ export const PwaSettingsCard: React.FC = () => {
               size="sm"
               isLoading={isInstalling}
               icon={
-                isIos ? (
+                platform.isMobileOrTablet ? (
                   <Smartphone className="w-3.5 h-3.5" />
                 ) : (
                   <Download className="w-3.5 h-3.5" />
@@ -68,7 +68,9 @@ export const PwaSettingsCard: React.FC = () => {
               onClick={handleInstall}
               className="shrink-0"
             >
-              <span>{isIos ? "Add to Home Screen" : "Install App"}</span>
+              <span>
+                {platform.isIos ? "Add to Home Screen" : "Install App"}
+              </span>
             </Button>
           ) : null}
         </div>
@@ -77,11 +79,6 @@ export const PwaSettingsCard: React.FC = () => {
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1">
             <div className="text-[#64748B]">Application Mode</div>
             <div className="text-[#F1F5F9] font-medium flex items-center gap-1.5">
-              <span
-                className={`w-2 h-2 rounded-xs ${
-                  isInstalled ? "bg-[#10B981]" : "bg-[#3178C6]"
-                }`}
-              />
               <span>
                 {isInstalled
                   ? "Standalone Window (PWA)"
@@ -93,7 +90,6 @@ export const PwaSettingsCard: React.FC = () => {
           <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1">
             <div className="text-[#64748B]">Service Worker & Offline Cache</div>
             <div className="text-[#F1F5F9] font-medium flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-xs bg-[#10B981]" />
               <span>Active (Cache v1)</span>
             </div>
           </div>
@@ -106,9 +102,10 @@ export const PwaSettingsCard: React.FC = () => {
         </p>
       </div>
 
-      <PwaIosModal
-        isOpen={showIosGuide}
-        onClose={() => setShowIosGuide(false)}
+      <PwaGuideModal
+        isOpen={showGuide}
+        onClose={() => setShowGuide(false)}
+        platform={platform}
       />
     </>
   );

@@ -4,14 +4,15 @@ import React, { useState } from "react";
 import { Download, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
-import { PwaIosModal } from "./PwaIosModal";
+import { PwaGuideModal } from "./PwaGuideModal";
 
 export const PwaInstallPrompt: React.FC = () => {
   const {
     isInstallable,
     isInstalled,
-    showIosGuide,
-    setShowIosGuide,
+    showGuide,
+    setShowGuide,
+    platform,
     install,
     dismissBanner,
     isBannerDismissed,
@@ -21,9 +22,10 @@ export const PwaInstallPrompt: React.FC = () => {
 
   if (!isInstallable || isInstalled || isBannerDismissed) {
     return (
-      <PwaIosModal
-        isOpen={showIosGuide}
-        onClose={() => setShowIosGuide(false)}
+      <PwaGuideModal
+        isOpen={showGuide}
+        onClose={() => setShowGuide(false)}
+        platform={platform}
       />
     );
   }
@@ -38,7 +40,7 @@ export const PwaInstallPrompt: React.FC = () => {
     <>
       <aside
         aria-label="Install CareerHub Application"
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm z-50 p-4 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-bottom-3"
+        className="fixed bottom-3 left-3 right-3 sm:bottom-4 sm:left-auto sm:right-5 sm:max-w-sm z-50 p-4 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-bottom-3"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -95,9 +97,10 @@ export const PwaInstallPrompt: React.FC = () => {
         </div>
       </aside>
 
-      <PwaIosModal
-        isOpen={showIosGuide}
-        onClose={() => setShowIosGuide(false)}
+      <PwaGuideModal
+        isOpen={showGuide}
+        onClose={() => setShowGuide(false)}
+        platform={platform}
       />
     </>
   );

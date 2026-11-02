@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Roboto_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -78,10 +79,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${robotoMono.variable} dark`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body className="min-h-screen font-sans antialiased selection:bg-[#3178C6] selection:text-white transition-colors duration-150">
+        <Script
+          id="careerhub-theme"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
         <SessionProvider>
           <ThemeProvider>
             {children}

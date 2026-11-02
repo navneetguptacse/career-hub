@@ -13,7 +13,8 @@
     "prelint": "node scripts/ensure-tsconfig.js",
     "lint": "eslint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "telegram:sync": "node scripts/sync-telegram-webhook.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
