@@ -13,8 +13,6 @@ if (!fs.existsSync(tsconfigPath)) {
       skipLibCheck: true,
       strict: false,
       noEmit: true,
-      noUnusedLocals: true,
-      noUnusedParameters: true,
       incremental: true,
       module: "esnext",
       esModuleInterop: true,
