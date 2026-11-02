@@ -1,4 +1,5 @@
-export type ProviderType = "GEMINI" | "OPENAI" | "ANTHROPIC" | "CUSTOM";
+export type ProviderType =
+  "GEMINI" | "OPENAI" | "ANTHROPIC" | "DEEPSEEK" | "CUSTOM";
 
 export interface ProviderOption {
   id: ProviderType;
@@ -6,9 +7,10 @@ export interface ProviderOption {
   defaultModel: string;
   models: string[];
   placeholderKey: string;
+  defaultEndpoint?: string;
 }
 
-export const PROVIDER_OPTIONS: ProviderOption[] = [
+export const PRESET_PROVIDERS: ProviderOption[] = [
   {
     id: "GEMINI",
     name: "Google Gemini",
@@ -31,14 +33,25 @@ export const PROVIDER_OPTIONS: ProviderOption[] = [
     placeholderKey: "sk-ant-...",
   },
   {
-    id: "CUSTOM",
-    name: "Custom (Groq / Ollama / DeepSeek)",
-    defaultModel: "llama-3.3-70b-versatile",
-    models: [
-      "llama-3.3-70b-versatile",
-      "deepseek-chat",
-      "mistral-small-latest",
-    ],
-    placeholderKey: "gsk_... or custom key",
+    id: "DEEPSEEK",
+    name: "DeepSeek",
+    defaultModel: "deepseek-v4-flash",
+    models: ["deepseek-v4-flash", "deepseek-chat", "deepseek-reasoner"],
+    placeholderKey: "sk-...",
+    defaultEndpoint: "https://api.deepseek.com",
   },
+];
+
+export const CUSTOM_PROVIDER_OPTION: ProviderOption = {
+  id: "CUSTOM",
+  name: "Custom Provider",
+  defaultModel: "llama-3.3-70b-versatile",
+  models: ["llama-3.3-70b-versatile", "mistral-small-latest", "qwen-2.5-72b"],
+  placeholderKey: "gsk_... or custom API key",
+  defaultEndpoint: "https://api.groq.com/openai/v1",
+};
+
+export const PROVIDER_OPTIONS: ProviderOption[] = [
+  ...PRESET_PROVIDERS,
+  CUSTOM_PROVIDER_OPTION,
 ];

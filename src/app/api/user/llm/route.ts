@@ -7,7 +7,7 @@ import { testLlmProvider } from "@/lib/llm-provider";
 
 const llmConfigSchema = z.object({
   provider: z
-    .enum(["GEMINI", "OPENAI", "ANTHROPIC", "CUSTOM"])
+    .enum(["GEMINI", "OPENAI", "ANTHROPIC", "DEEPSEEK", "CUSTOM"])
     .default("GEMINI"),
   apiKey: z.string().trim().optional().nullable(),
   endpoint: z.string().trim().optional().nullable(),

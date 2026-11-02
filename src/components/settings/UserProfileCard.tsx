@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { CircleCheck, ShieldCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { CardSkeleton } from "@/components/ui/Skeleton";
 
 interface ProfileData {
   id?: string;
@@ -137,6 +138,8 @@ export const UserProfileCard: React.FC = () => {
     }
     return email ? email.slice(0, 2).toUpperCase() : "CH";
   };
+
+  if (isLoading) return <CardSkeleton />;
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-5">
@@ -322,15 +325,7 @@ export const UserProfileCard: React.FC = () => {
             isLoading={isSaving}
             className="gap-2 shadow-xs"
           >
-            {isSuccess ? (
-              <>
-                <span>Saved</span>
-              </>
-            ) : (
-              <>
-                <span>Save</span>
-              </>
-            )}
+            {isSuccess ? <span>Saved</span> : <span>Save</span>}
           </Button>
         </div>
       </form>

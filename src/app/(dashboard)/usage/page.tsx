@@ -7,7 +7,6 @@ import { TelegramGuideCard } from "@/components/usage/TelegramGuideCard";
 export default function UsagePage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      {/* Page Header */}
       <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -25,7 +24,6 @@ export default function UsagePage() {
         </div>
       </div>
 
-      {/* Telegram Bot Integration Guide */}
       <TelegramGuideCard />
     </div>
   );

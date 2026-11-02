@@ -11,6 +11,8 @@ import {
   Unlink,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export const TelegramCard: React.FC = () => {
@@ -28,6 +30,7 @@ export const TelegramCard: React.FC = () => {
 
   const [isCopied, setIsCopied] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
   const handleCopyToken = async () => {
@@ -46,14 +49,14 @@ export const TelegramCard: React.FC = () => {
     }
   };
 
-  const handleDisconnect = async () => {
-    if (!confirm("Are you sure you want to unlink your Telegram bot?")) return;
+  const handleConfirmDisconnect = async () => {
     setIsDisconnecting(true);
     try {
       const res = await fetch("/api/telegram/pair", { method: "DELETE" });
       if (res.ok) {
         await mutate();
         await update({ user: { telegramConnected: false } });
+        setShowDisconnectModal(false);
       }
     } catch (err) {
       console.error("Disconnect error:", err);
@@ -108,7 +111,7 @@ export const TelegramCard: React.FC = () => {
           <Button
             variant="outline"
             size="md"
-            onClick={handleDisconnect}
+            onClick={() => setShowDisconnectModal(true)}
             isLoading={isDisconnecting}
             className="text-[#EF4444] hover:border-[#EF4444] gap-1.5"
           >
@@ -131,9 +134,11 @@ export const TelegramCard: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <code className="flex-1 h-9 px-3 flex items-center bg-[#12171F] border border-[#202937] rounded-xs font-mono font-semibold text-xs text-[#5499EB] truncate">
-                {isLoading
-                  ? "Generating..."
-                  : `/link ${telegramStatus?.pairToken ?? "PAIR-XXXXXX"}`}
+                {isLoading ? (
+                  <Skeleton className="h-4 w-36" />
+                ) : (
+                  `/link ${telegramStatus?.pairToken ?? "PAIR-XXXXXX"}`
+                )}
               </code>
               <Button
                 variant="secondary"
@@ -177,6 +182,16 @@ export const TelegramCard: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showDisconnectModal}
+        onClose={() => setShowDisconnectModal(false)}
+        onConfirm={handleConfirmDisconnect}
+        title="Disconnect Telegram Bot"
+        description="Are you sure you want to unlink your Telegram bot? You will no longer receive automated job ingestion or status alerts."
+        confirmText="Disconnect Bot"
+        isConfirming={isDisconnecting}
+      />
     </div>
   );
 };

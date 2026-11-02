@@ -9,6 +9,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface AdminUser {
   id: string;
@@ -75,7 +76,11 @@ export default function AdminPage() {
                 Registered Users
               </span>
               <div className="text-2xl font-bold font-mono text-[#F1F5F9]">
-                {isLoading ? "..." : stats?.totalUsers}
+                {isLoading ? (
+                  <Skeleton className="h-7 w-12 my-0.5" />
+                ) : (
+                  stats?.totalUsers
+                )}
               </div>
             </div>
 
@@ -85,7 +90,11 @@ export default function AdminPage() {
                 Total System Applications
               </span>
               <div className="text-2xl font-bold font-mono text-[#34D399]">
-                {isLoading ? "..." : stats?.totalApplications}
+                {isLoading ? (
+                  <Skeleton className="h-7 w-12 my-0.5" />
+                ) : (
+                  stats?.totalApplications
+                )}
               </div>
             </div>
 
@@ -118,31 +127,51 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#202937]">
-                  {users.map((u) => (
-                    <tr key={u.id} className="hover:bg-[#18202C]">
-                      <td className="px-3 py-2.5 font-medium text-[#F1F5F9]">
-                        {u.email}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <span className="px-1.5 py-0.5 font-mono text-[10px] bg-[#0A0D12] border border-[#202937] rounded-xs text-[#FACC15]">
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2.5 font-mono text-[#5499EB]">
-                        {u._count.applications}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        {u.telegramChatId ? (
-                          <span className="text-[#10B981]">Yes</span>
-                        ) : (
-                          <span className="text-[#64748B]">No</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-2.5 font-mono text-[#64748B]">
-                        {formatDate(u.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
+                  {isLoading
+                    ? [1, 2, 3].map((i) => (
+                        <tr key={i}>
+                          <td className="px-3 py-3">
+                            <Skeleton className="h-4 w-40" />
+                          </td>
+                          <td className="px-3 py-3">
+                            <Skeleton className="h-4 w-12 rounded-xs" />
+                          </td>
+                          <td className="px-3 py-3">
+                            <Skeleton className="h-4 w-8" />
+                          </td>
+                          <td className="px-3 py-3">
+                            <Skeleton className="h-4 w-10" />
+                          </td>
+                          <td className="px-3 py-3">
+                            <Skeleton className="h-4 w-20" />
+                          </td>
+                        </tr>
+                      ))
+                    : users.map((u) => (
+                        <tr key={u.id} className="hover:bg-[#18202C]">
+                          <td className="px-3 py-2.5 font-medium text-[#F1F5F9]">
+                            {u.email}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <span className="px-1.5 py-0.5 font-mono text-[10px] bg-[#0A0D12] border border-[#202937] rounded-xs text-[#FACC15]">
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2.5 font-mono text-[#5499EB]">
+                            {u._count.applications}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            {u.telegramChatId ? (
+                              <span className="text-[#10B981]">Yes</span>
+                            ) : (
+                              <span className="text-[#64748B]">No</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 font-mono text-[#64748B]">
+                            {formatDate(u.createdAt)}
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
             </div>

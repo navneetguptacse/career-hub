@@ -41,7 +41,6 @@ export function useApplications(options: UseApplicationsOptions = {}) {
 
   const updateStatus = useCallback(
     async (id: string, newStatus: ApplicationStatusType): Promise<boolean> => {
-      // Optimistic UI update
       await mutate(
         applications.map((app) =>
           app.id === id ? { ...app, status: newStatus } : app
@@ -72,7 +71,6 @@ export function useApplications(options: UseApplicationsOptions = {}) {
 
   const deleteApplication = useCallback(
     async (id: string): Promise<boolean> => {
-      // Optimistic UI update
       await mutate(
         applications.filter((app) => app.id !== id),
         false

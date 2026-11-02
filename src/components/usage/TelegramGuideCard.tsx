@@ -14,6 +14,7 @@ import {
   Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { TelegramBotFatherTip } from "./TelegramBotFatherTip";
 import { TelegramCommandsTable } from "./TelegramCommandsTable";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
@@ -45,7 +46,6 @@ export const TelegramGuideCard: React.FC = () => {
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#202937] pb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#3178C6]/20 border border-[#3178C6]/40 rounded-xs flex items-center justify-center text-[#5499EB] shrink-0">
@@ -76,7 +76,6 @@ export const TelegramGuideCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Primary Availability Announcement Banner */}
       <div className="p-4 bg-[#0A0D12] border border-[#3178C6]/40 rounded-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -120,7 +119,6 @@ export const TelegramGuideCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Pairing Token Card */}
       <div className="p-4 bg-[#0A0D12] border border-[#3178C6]/40 rounded-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -132,7 +130,11 @@ export const TelegramGuideCard: React.FC = () => {
               Send this exact command to the bot in a direct message or group to
               link your account:{" "}
               <span className="font-mono text-[10px] font-semibold text-[#5499EB]">
-                {pairingCommandText}
+                {isLoadingToken ? (
+                  <Skeleton className="h-3 w-28 inline-block align-middle" />
+                ) : (
+                  pairingCommandText
+                )}
               </span>
             </p>
           </div>
@@ -157,14 +159,12 @@ export const TelegramGuideCard: React.FC = () => {
         </div>
       </div>
 
-      {/* How It Works Section */}
       <div className="space-y-4">
         <h3 className="text-xs font-semibold text-[#F1F5F9] uppercase font-mono tracking-wider border-b border-[#202937] pb-2">
           How It Works for Any User:
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Card 1: 1-on-1 */}
           <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-3">
             <div className="flex items-center gap-2.5 text-sm font-semibold text-[#F1F5F9]">
               <div className="w-6 h-6 rounded-xs bg-[#3178C6]/20 border border-[#3178C6]/40 flex items-center justify-center text-[#5499EB]">
@@ -211,7 +211,6 @@ export const TelegramGuideCard: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 2: Groups */}
           <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-3">
             <div className="flex items-center gap-2.5 text-sm font-semibold text-[#F1F5F9]">
               <div className="w-6 h-6 rounded-xs bg-[#3178C6]/20 border border-[#3178C6]/40 flex items-center justify-center text-[#5499EB]">
@@ -244,7 +243,6 @@ export const TelegramGuideCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 3: Security & Privacy */}
         <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2.5">
           <div className="flex items-center gap-2.5 text-sm font-semibold text-[#F1F5F9]">
             <div className="w-6 h-6 rounded-xs bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-[#10B981]">
@@ -281,10 +279,8 @@ export const TelegramGuideCard: React.FC = () => {
         </div>
       </div>
 
-      {/* BotFather Tip Notice */}
       <TelegramBotFatherTip />
 
-      {/* Command Reference Table */}
       <TelegramCommandsTable />
     </div>
   );

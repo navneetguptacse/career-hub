@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import {
+  Keyboard,
   LogOut,
   PanelLeft,
   Plus,
@@ -19,9 +20,13 @@ import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 interface NavbarProps {
   onOpenAddModal: () => void;
+  onOpenShortcuts?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onOpenAddModal,
+  onOpenShortcuts,
+}) => {
   const { data: session } = useSession();
   const { toggleMobileSidebar } = useSidebar();
   const { isPaired } = useTelegramStatus();
@@ -39,7 +44,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
   return (
     <header className="h-14 border-b border-[#202937] bg-[#12171F] px-3 md:px-5 flex items-center justify-between sticky top-0 z-30 select-none">
       <div className="flex items-center gap-2 md:gap-3">
-        {/* Mobile menu trigger */}
         <button
           type="button"
           onClick={toggleMobileSidebar}
@@ -61,7 +65,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-2.5">
-        {/* Telegram status link */}
         {telegramConnected ? (
           <Link
             href="/settings"
@@ -80,13 +83,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           </Link>
         )}
 
-        {/* Theme Toggle */}
         <ThemeToggle size="sm" />
 
-        {/* Add Quick Action */}
+        <button
+          type="button"
+          onClick={
+            onOpenShortcuts ||
+            (() => window.dispatchEvent(new Event("careerhub:open-shortcuts")))
+          }
+          title="Keyboard Shortcuts (?)"
+          aria-label="Keyboard shortcuts"
+          className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shadow-xs"
+        >
+          <Keyboard className="w-3.5 h-3.5" />
+        </button>
+
         <Button
           onClick={onOpenAddModal}
           size="sm"
+          title="Add Application (A)"
           className="gap-1.5 shadow-xs"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -95,7 +110,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
 
         <div className="h-4 w-px bg-[#202937] hidden sm:block" />
 
-        {/* Profile Button with explicit crisp border */}
         <Link
           href="/settings"
           title="Account & Profile Settings"
@@ -113,7 +127,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           )}
         </Link>
 
-        {/* Sign Out Action with standardized h-8 button height */}
         <button
           type="button"
           onClick={() => setShowLogoutConfirm(true)}
@@ -125,7 +138,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
         </button>
       </div>
 
-      {/* Logout Confirmation Modal */}
       <Modal
         isOpen={showLogoutConfirm}
         onClose={() => !isLoggingOut && setShowLogoutConfirm(false)}

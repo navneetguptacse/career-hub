@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { GoogleIcon, GitHubIcon } from "@/components/ui/Icons";
 
 function LoginForm() {
@@ -97,7 +98,6 @@ function LoginForm() {
         </div>
       )}
 
-      {/* OAuth Providers */}
       <div className="space-y-2">
         <Button
           type="button"
@@ -127,7 +127,6 @@ function LoginForm() {
         </span>
       </div>
 
-      {/* Email + Password Form */}
       <form onSubmit={handleCredentialsSubmit} className="space-y-3">
         <Input
           id="email"
@@ -189,7 +188,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0A0D12] flex items-center justify-center p-4">
       <Suspense
-        fallback={<div className="text-xs text-[#94A3B8]">Loading...</div>}
+        fallback={
+          <div className="w-full max-w-md bg-[#12171F] border border-[#202937] rounded-xs p-6 space-y-4">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-10 w-full rounded-xs" />
+            <Skeleton className="h-10 w-full rounded-xs" />
+          </div>
+        }
       >
         <LoginForm />
       </Suspense>

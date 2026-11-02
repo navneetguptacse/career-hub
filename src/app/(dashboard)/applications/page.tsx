@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Kanban, Table as TableIcon, Search, Filter } from "lucide-react";
 import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
+import { ApplicationsSkeleton } from "@/components/applications/ApplicationsSkeleton";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -14,6 +15,13 @@ export default function ApplicationsPage() {
   const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+
+  useEffect(() => {
+    const handleSetKanban = () => setViewMode("kanban");
+    window.addEventListener("careerhub:view-kanban", handleSetKanban);
+    return () =>
+      window.removeEventListener("careerhub:view-kanban", handleSetKanban);
+  }, []);
 
   const [jobToDelete, setJobToDelete] = useState<JobApplicationItem | null>(
     null
@@ -44,9 +52,7 @@ export default function ApplicationsPage() {
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto">
-      {/* Action and Control Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#12171F] border border-[#202937] rounded-xs">
-        {/* Search */}
         <div className="flex-1 flex items-center gap-2 max-w-md">
           <div className="relative w-full">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
@@ -60,7 +66,6 @@ export default function ApplicationsPage() {
           </div>
         </div>
 
-        {/* Filters and View Mode */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
             <div
@@ -86,11 +91,10 @@ export default function ApplicationsPage() {
 
           <div className="h-4 w-px bg-[#202937]" />
 
-          {/* Toggle View */}
           <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs h-8">
             <button
               onClick={() => setViewMode("kanban")}
-              title="Kanban"
+              title="Kanban (K)"
               className={`h-7 px-2 inline-flex items-center justify-center rounded-xs transition-colors ${
                 viewMode === "kanban"
                   ? "bg-[#3178C6] text-white"
@@ -114,11 +118,8 @@ export default function ApplicationsPage() {
         </div>
       </div>
 
-      {/* Main View Area */}
       {isLoading ? (
-        <div className="p-16 text-center text-xs text-[#94A3B8]">
-          Loading pipeline applications...
-        </div>
+        <ApplicationsSkeleton viewMode={viewMode} />
       ) : viewMode === "kanban" ? (
         <KanbanBoard
           applications={applications}
@@ -135,7 +136,6 @@ export default function ApplicationsPage() {
         />
       )}
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={!!jobToDelete}
         onClose={() => setJobToDelete(null)}
@@ -150,7 +150,6 @@ export default function ApplicationsPage() {
         isConfirming={isDeleting}
       />
 
-      {/* Edit Job Modal */}
       <EditJobModal
         job={jobToEdit}
         isOpen={!!jobToEdit}

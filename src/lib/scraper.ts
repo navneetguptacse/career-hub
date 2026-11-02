@@ -93,9 +93,7 @@ function parseHtmlMetadata(html: string): HtmlMetadata {
             if (parts.length) jsonLdLocation = parts.join(", ");
           }
         }
-      } catch {
-        // Ignore JSON-LD parse errors
-      }
+      } catch {}
     });
 
     const ogTitle =

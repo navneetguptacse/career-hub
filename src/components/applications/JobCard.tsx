@@ -106,7 +106,6 @@ export const JobCard: React.FC<JobCardProps> = ({
               </h4>
             </div>
 
-            {/* WorkType on line 1, Location on line 2 (separate lines, not flexed) */}
             <div className="space-y-1 pt-0.5">
               <div>
                 <Badge status={job.locationType} size="sm" />

@@ -10,6 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { JobApplicationItem } from "@/components/applications/JobCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function AnalyticsPage() {
   const [applications, setApplications] = useState<JobApplicationItem[]>([]);
@@ -86,7 +87,6 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
-      {/* Summary conversion metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <span className="text-xs text-[#94A3B8] flex items-center gap-1.5">
@@ -94,7 +94,11 @@ export default function AnalyticsPage() {
             Interview Conversion Rate
           </span>
           <div className="text-2xl font-bold font-mono text-[#5499EB]">
-            {isLoading ? "..." : `${interviewRate}%`}
+            {isLoading ? (
+              <Skeleton className="h-7 w-16 my-0.5" />
+            ) : (
+              `${interviewRate}%`
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">
             From submitted to interview stage
@@ -107,7 +111,11 @@ export default function AnalyticsPage() {
             Offer Conversion Rate
           </span>
           <div className="text-2xl font-bold font-mono text-[#34D399]">
-            {isLoading ? "..." : `${offerRate}%`}
+            {isLoading ? (
+              <Skeleton className="h-7 w-16 my-0.5" />
+            ) : (
+              `${offerRate}%`
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">
             Final placements / total applications
@@ -120,7 +128,7 @@ export default function AnalyticsPage() {
             Active Pipeline Roles
           </span>
           <div className="text-2xl font-bold font-mono text-[#FACC15]">
-            {isLoading ? "..." : activeCount}
+            {isLoading ? <Skeleton className="h-7 w-14 my-0.5" /> : activeCount}
           </div>
           <p className="text-[11px] text-[#64748B]">
             In-flight applications currently open
@@ -128,9 +136,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Breakdown sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Status Pipeline Funnel */}
         <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
           <div className="flex items-center justify-between border-b border-[#202937] pb-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2">
@@ -163,9 +169,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Ingestion & Workplace Distribution */}
         <div className="space-y-4">
-          {/* Ingestion Source */}
           <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2 border-b border-[#202937] pb-3">
               <Send className="w-4 h-4 text-[#3178C6]" />
@@ -193,7 +197,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Workplace Distribution */}
           <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2 border-b border-[#202937] pb-3">
               <PieChart className="w-4 h-4 text-[#10B981]" />

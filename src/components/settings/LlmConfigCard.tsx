@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, AlertCircle, Eye, EyeOff, Bot } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { LlmConfigSkeleton } from "@/components/ui/Skeleton";
 import { PROVIDER_OPTIONS, type ProviderType } from "./LlmPresets";
 import { LlmProviderGrid } from "./LlmProviderGrid";
 
@@ -18,6 +20,7 @@ export const LlmConfigCard: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
     type: "success" | "error" | "info";
@@ -51,8 +54,10 @@ export const LlmConfigCard: React.FC = () => {
     const meta = PROVIDER_OPTIONS.find((p) => p.id === newProvider);
     if (meta) {
       setModel(meta.defaultModel);
-      if (newProvider === "CUSTOM" && !endpoint) {
-        setEndpoint("https://api.groq.com/openai/v1");
+      if (newProvider === "CUSTOM") {
+        if (!endpoint) setEndpoint("https://api.groq.com/openai/v1");
+      } else if (newProvider === "DEEPSEEK") {
+        setEndpoint("https://api.deepseek.com");
       }
     }
   };
@@ -134,11 +139,9 @@ export const LlmConfigCard: React.FC = () => {
     }
   };
 
-  const handleResetDefaults = async () => {
-    if (!confirm("Reset to default system provider (Gemini)?")) return;
+  const handleConfirmReset = async () => {
     setIsSaving(true);
     setStatusMessage(null);
-
     try {
       const res = await fetch("/api/user/llm", { method: "DELETE" });
       if (res.ok) {
@@ -152,6 +155,7 @@ export const LlmConfigCard: React.FC = () => {
           type: "info",
           text: "Reset to default system Gemini provider.",
         });
+        setShowResetModal(false);
       }
     } finally {
       setIsSaving(false);
@@ -160,21 +164,14 @@ export const LlmConfigCard: React.FC = () => {
 
   const currentOption = PROVIDER_OPTIONS.find((p) => p.id === provider);
 
-  if (isLoading) {
-    return (
-      <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs animate-pulse text-xs text-[#94A3B8]">
-        Loading AI provider settings...
-      </div>
-    );
-  }
+  if (isLoading) return <LlmConfigSkeleton />;
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-5">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4 border-b border-[#202937] pb-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-[#3178C6]/20 border border-[#3178C6]/40 rounded-xs flex items-center justify-center text-[#5499EB] shrink-0">
-            <Sparkles className="w-4 h-4" />
+            <Bot className="w-4 h-4" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-[#F1F5F9]">
@@ -188,14 +185,12 @@ export const LlmConfigCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Provider Selector Grid */}
       <LlmProviderGrid
         selectedProvider={provider}
         onSelectProvider={handleProviderSelect}
       />
 
       <form onSubmit={handleSave} className="space-y-4">
-        {/* API Key */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
@@ -236,7 +231,6 @@ export const LlmConfigCard: React.FC = () => {
           </p>
         </div>
 
-        {/* Model Selection */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
             <span>Language Model</span>
@@ -270,7 +264,6 @@ export const LlmConfigCard: React.FC = () => {
           )}
         </div>
 
-        {/* Custom Endpoint */}
         {provider === "CUSTOM" && (
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
@@ -284,7 +277,6 @@ export const LlmConfigCard: React.FC = () => {
           </div>
         )}
 
-        {/* Status Message */}
         {statusMessage && (
           <div
             className={`p-3 text-xs border rounded-xs flex items-center gap-2 ${
@@ -304,13 +296,12 @@ export const LlmConfigCard: React.FC = () => {
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#202937]">
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={handleResetDefaults}
+            onClick={() => setShowResetModal(true)}
             disabled={isSaving || isTesting}
             title="Reset to system defaults"
           >
@@ -330,6 +321,16 @@ export const LlmConfigCard: React.FC = () => {
           </Button>
         </div>
       </form>
+
+      <ConfirmModal
+        isOpen={showResetModal}
+        onClose={() => setShowResetModal(false)}
+        onConfirm={handleConfirmReset}
+        title="Reset AI Provider Settings"
+        description="Are you sure you want to reset your AI provider configuration to system defaults (Google Gemini)? Any custom API key and endpoint will be removed."
+        confirmText="Reset Settings"
+        isConfirming={isSaving}
+      />
     </div>
   );
 };

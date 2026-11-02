@@ -4,10 +4,13 @@
   "private": true,
   "packageManager": "npm@11.19.1",
   "scripts": {
+    "predev": "node scripts/ensure-tsconfig.js",
     "dev": "next dev",
+    "prebuild": "node scripts/ensure-tsconfig.js",
     "build": "prisma generate && next build",
-    "postinstall": "prisma generate",
+    "generate": "prisma generate",
     "start": "next start",
+    "prelint": "node scripts/ensure-tsconfig.js",
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

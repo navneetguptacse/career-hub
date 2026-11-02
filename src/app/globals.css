@@ -73,7 +73,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Roboto Mono for all console-like and monospaced typography */
   .font-mono,
   code,
   kbd,
@@ -84,7 +83,6 @@
       Consolas, "Liberation Mono", "Courier New", monospace !important;
   }
 
-  /* Universal select appearance & dropdown icon styling */
   select {
     appearance: none;
     -webkit-appearance: none;
@@ -102,208 +100,8 @@
   }
 }
 
-/* Precision Light Mode Overrides for High Contrast */
-html.light .bg-\[\#0A0D12\],
-html.light .bg-\[\#0a0d12\],
-html.light .bg-\[\#0A0D12\]\/60,
-html.light .bg-\[\#0a0d12\]\/60 {
-  background-color: #f8fafc !important;
-}
+@import "./light-theme.css";
 
-html.light .bg-\[\#0E131A\],
-html.light .bg-\[\#0e131a\] {
-  background-color: #f1f5f9 !important;
-}
-
-html.light .bg-\[\#12171F\],
-html.light .bg-\[\#12171f\] {
-  background-color: #ffffff !important;
-}
-
-html.light .bg-\[\#12171F\]\/80,
-html.light .bg-\[\#12171f\]\/80,
-html.light .bg-\[\#12171F\]\/90,
-html.light .bg-\[\#12171f\]\/90 {
-  background-color: rgba(255, 255, 255, 0.88) !important;
-}
-
-html.light .bg-\[\#18202C\],
-html.light .bg-\[\#18202c\],
-html.light .bg-\[\#1E2736\],
-html.light .bg-\[\#1e2736\] {
-  background-color: #f1f5f9 !important;
-}
-
-html.light .border-\[\#202937\],
-html.light .border-\[\#202937\]\/30,
-html.light .border-\[\#202937\]\/50,
-html.light .border-\[\#202937\]\/80,
-html.light .border-\[\#2A374A\],
-html.light .border-\[\#2a374a\] {
-  border-color: #e2e8f0 !important;
-}
-
-html.light .divide-\[\#202937\] > *,
-html.light .divide-\[\#202937\] > :not([hidden]) ~ :not([hidden]),
-html.light :where(.divide-\[\#202937\] > :not(:last-child)),
-html.light :where(.divide-y > :not(:last-child)),
-html.light .divide-y > *,
-html.light .divide-y > :not([hidden]) ~ :not([hidden]),
-html.light .divide-\[\#202937\]\/30 > *,
-html.light .divide-\[\#202937\]\/50 > * {
-  border-color: #e2e8f0 !important;
-}
-
-html.light .border-\[\#2D3B4E\],
-html.light .border-\[\#2d3b4e\] {
-  border-color: #cbd5e1 !important;
-}
-
-html.light .text-\[\#F1F5F9\],
-html.light .text-\[\#f1f5f9\] {
-  color: #0f172a !important;
-}
-
-html.light .text-\[\#E2E8F0\],
-html.light .text-\[\#e2e8f0\] {
-  color: #0f172a !important;
-}
-
-html.light .text-\[\#CBD5E1\],
-html.light .text-\[\#cbd5e1\] {
-  color: #334155 !important;
-}
-
-html.light .bg-\[\#16263D\]\/40,
-html.light .bg-\[\#16263d\]\/40 {
-  background-color: #f8fafc !important;
-}
-
-html.light .text-\[\#94A3B8\],
-html.light .text-\[\#94a3b8\] {
-  color: #475569 !important;
-}
-
-html.light .text-\[\#64748B\],
-html.light .text-\[\#64748b\] {
-  color: #64748b !important;
-}
-
-html.light .text-\[\#5499EB\],
-html.light .text-\[\#5499eb\] {
-  color: #235a97 !important;
-}
-
-html.light .text-\[\#34D399\],
-html.light .text-\[\#34d399\] {
-  color: #059669 !important;
-}
-
-html.light .text-\[\#FACC15\],
-html.light .text-\[\#facc15\] {
-  color: #d97706 !important;
-}
-
-html.light .text-\[\#818CF8\],
-html.light .text-\[\#818cf8\] {
-  color: #4f46e5 !important;
-}
-
-html.light .text-\[\#F87171\],
-html.light .text-\[\#f87171\] {
-  color: #dc2626 !important;
-}
-
-html.light .bg-\[\#3178C6\]\/15,
-html.light .bg-\[\#3178C6\]\/20 {
-  background-color: rgba(49, 120, 198, 0.12) !important;
-}
-
-html.light .border-\[\#3178C6\]\/30,
-html.light .border-\[\#3178C6\]\/40 {
-  border-color: rgba(49, 120, 198, 0.35) !important;
-}
-
-html.light .bg-\[\#10B981\]\/20 {
-  background-color: rgba(16, 185, 129, 0.12) !important;
-}
-
-html.light .border-\[\#10B981\]\/40 {
-  border-color: rgba(16, 185, 129, 0.35) !important;
-}
-
-html.light .bg-\[\#EAB308\]\/20 {
-  background-color: rgba(234, 179, 8, 0.12) !important;
-}
-
-html.light .border-\[\#EAB308\]\/40 {
-  border-color: rgba(234, 179, 8, 0.35) !important;
-}
-
-/* Light mode hover state overrides - replaces dark hover with crisp subtle light hover */
-html.light .hover\:bg-\[\#18202C\]:hover,
-html.light .hover\:bg-\[\#18202c\]:hover,
-html.light .hover\:bg-\[\#18202C\]\/60:hover,
-html.light .hover\:bg-\[\#18202c\]\/60:hover {
-  background-color: #f1f5f9 !important;
-}
-
-html.light tr.hover\:bg-\[\#18202C\]:hover td,
-html.light tr.hover\:bg-\[\#18202c\]:hover td,
-html.light tr.hover\:bg-\[\#18202C\]\/60:hover td,
-html.light tr.hover\:bg-\[\#18202c\]\/60:hover td {
-  color: #0f172a !important;
-}
-
-html.light tr.hover\:bg-\[\#18202C\]:hover td span,
-html.light tr.hover\:bg-\[\#18202c\]:hover td span,
-html.light tr.hover\:bg-\[\#18202C\]\/60:hover td span,
-html.light tr.hover\:bg-\[\#18202c\]\/60:hover td span {
-  color: #0f172a !important;
-}
-
-html.light tr.hover\:bg-\[\#18202C\]:hover td .text-\[\#5499EB\],
-html.light tr.hover\:bg-\[\#18202c\]:hover td .text-\[\#5499eb\],
-html.light tr.hover\:bg-\[\#18202C\]\/60:hover td .text-\[\#5499EB\],
-html.light tr.hover\:bg-\[\#18202c\]\/60:hover td .text-\[\#5499eb\] {
-  color: #235a97 !important;
-}
-
-html.dark tr.hover\:bg-\[\#18202C\]:hover td,
-html.dark tr.hover\:bg-\[\#18202c\]:hover td,
-html.dark tr.hover\:bg-\[\#18202C\]\/60:hover td,
-html.dark tr.hover\:bg-\[\#18202c\]\/60:hover td {
-  color: #f1f5f9 !important;
-}
-
-html.light .hover\:bg-\[\#202937\]:hover,
-html.light .hover\:bg-\[\#202937\]:hover {
-  background-color: #e2e8f0 !important;
-  color: #0f172a !important;
-}
-
-html.light .hover\:bg-\[\#12171F\]:hover,
-html.light .hover\:bg-\[\#12171f\]:hover {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-html.light .hover\:text-\[\#F1F5F9\]:hover,
-html.light .hover\:text-\[\#f1f5f9\]:hover {
-  color: #0f172a !important;
-}
-
-html.light .hover\:border-\[\#3178C6\]:hover,
-html.light .hover\:border-\[\#3178C6\]\/50:hover,
-html.light .hover\:border-\[\#3178C6\]\/60:hover {
-  border-color: #3178c6 !important;
-}
-
-html.light .hover\:text-\[\#5499EB\]:hover {
-  color: #235a97 !important;
-}
-
-/* Custom sharp scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -322,7 +120,6 @@ html.light .hover\:text-\[\#5499EB\]:hover {
   background: var(--primary);
 }
 
-/* Job title high-contrast styling across light and dark themes */
 .job-title-heading {
   color: #cbd5e1;
 }
@@ -334,4 +131,53 @@ html.light .job-title-heading {
 
 html.dark .job-title-heading {
   color: #e2e8f0 !important;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #18202c;
+}
+
+.shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 35%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 65%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer-sweep 1.8s infinite ease-in-out;
+  content: "";
+}
+
+html.light .shimmer {
+  background-color: #e2e8f0 !important;
+}
+
+html.light .shimmer::after {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 35%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.4) 65%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
 }

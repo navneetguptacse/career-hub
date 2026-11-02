@@ -26,7 +26,7 @@ export const DangerZoneCard: React.FC = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (confirmInput.trim() !== "DELETE") return;
+    if (confirmInput.trim() !== "Delete") return;
 
     setIsDeleting(true);
     setError(null);
@@ -109,7 +109,7 @@ export const DangerZoneCard: React.FC = () => {
           <div className="p-3 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xs space-y-1.5">
             <div className="text-xs font-semibold text-[#EF4444] flex items-center gap-1.5">
               <AlertTriangle className="w-4 h-4 shrink-0" />
-              <span>Permanent &amp; Non-Revertible</span>
+              <span>Permanent and Irreversible</span>
             </div>
             <p className="text-[11px] text-[#94A3B8] leading-relaxed">
               Once you proceed, your user profile, job applications, interview
@@ -121,14 +121,14 @@ export const DangerZoneCard: React.FC = () => {
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-[#F1F5F9]">
               To confirm, please type{" "}
-              <span className="font-mono text-[#EF4444] font-bold">DELETE</span>{" "}
+              <span className="font-mono text-[#EF4444] font-bold">Delete</span>{" "}
               below:
             </label>
             <input
               type="text"
               value={confirmInput}
               onChange={(e) => setConfirmInput(e.target.value)}
-              placeholder="DELETE"
+              placeholder="Delete"
               disabled={isDeleting}
               className="w-full h-9 px-3 text-xs bg-[#0A0D12] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#EF4444] font-mono"
             />
@@ -149,7 +149,7 @@ export const DangerZoneCard: React.FC = () => {
               variant="danger"
               size="sm"
               isLoading={isDeleting}
-              disabled={confirmInput.trim() !== "DELETE" || isDeleting}
+              disabled={confirmInput.trim() !== "Delete" || isDeleting}
               onClick={handleDeleteAccount}
             >
               <Trash2 className="w-3.5 h-3.5" />

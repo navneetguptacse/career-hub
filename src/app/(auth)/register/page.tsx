@@ -76,7 +76,6 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* OAuth Providers */}
         <div className="space-y-2">
           <Button
             type="button"

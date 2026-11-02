@@ -171,7 +171,8 @@ flowchart TD
         P1["Google Gemini (gemini-2.5-flash / gemini-flash-lite)"]
         P2["OpenAI (gpt-4o / gpt-4o-mini)"]
         P3["Anthropic Claude (claude-3-5-sonnet / haiku)"]
-        P4["Custom Endpoint (Groq / Ollama / DeepSeek compatible)"]
+        P4["DeepSeek (deepseek-chat / deepseek-reasoner/deepseek-v4-flash)"]
+        P5["Custom Endpoint (Groq / Ollama / OpenAI-compatible)"]
     end
 
     StoreDB --> ProviderAdapters
