@@ -93,7 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           }
           title="Keyboard Shortcuts (?)"
           aria-label="Keyboard shortcuts"
-          className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shadow-xs"
+          className="hidden lg:inline-flex h-8 w-8 items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shadow-xs"
         >
           <Keyboard className="w-3.5 h-3.5" />
         </button>
@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <Button
           onClick={onOpenAddModal}
           size="sm"
-          title="Add Application (A)"
+          title="Add Application"
           className="gap-1.5 shadow-xs"
         >
           <Plus className="w-3.5 h-3.5" />

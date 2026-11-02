@@ -23,7 +23,7 @@ function getShortcutIcon(id: string) {
 
 export const KeyboardShortcutsCard: React.FC = () => {
   return (
-    <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
+    <div className="hidden lg:block p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#202937] pb-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-[#3178C6]/20 border border-[#3178C6]/40 rounded-xs flex items-center justify-center text-[#5499EB] shrink-0">

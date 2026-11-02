@@ -77,7 +77,7 @@ export const Sidebar: React.FC = () => {
             <button
               type="button"
               onClick={toggleSidebar}
-              title="Collapse Sidebar ([ or ⌘ + B)"
+              title="Collapse Sidebar"
               aria-label="Collapse sidebar"
               className="hidden md:flex items-center justify-center h-8 w-8 text-[#94A3B8] hover:text-[#5499EB] bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs cursor-pointer shrink-0"
             >
@@ -141,7 +141,7 @@ export const Sidebar: React.FC = () => {
         <button
           type="button"
           onClick={toggleSidebar}
-          title="Expand Sidebar ([ or ⌘ + B)"
+          title="Expand Sidebar"
           aria-label="Expand sidebar"
           className="hidden md:flex absolute top-6 left-4 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
         >

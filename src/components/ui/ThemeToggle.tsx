@@ -49,7 +49,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     <button
       type="button"
       onClick={toggleTheme}
-      title={isDark ? "Switch to light mode (T)" : "Switch to dark mode (T)"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
       aria-label="Toggle theme"
       className={cn(
         "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6]",

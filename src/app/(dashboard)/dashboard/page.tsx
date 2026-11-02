@@ -60,7 +60,7 @@ export default function DashboardPage() {
             <Button
               variant="secondary"
               size="sm"
-              title="Kanban (K)"
+              title="Kanban"
               className="gap-1.5"
             >
               <SquareKanban className="w-3.5 h-3.5" />
