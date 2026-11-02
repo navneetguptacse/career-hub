@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { ShieldCheck, UserRound } from "lucide-react";
 import { UserProfileCard } from "@/components/settings/UserProfileCard";
 import { AppearanceCard } from "@/components/settings/AppearanceCard";
+import { KeyboardShortcutsCard } from "@/components/settings/KeyboardShortcutsCard";
 import { TelegramCard } from "@/components/settings/TelegramCard";
 import { LlmConfigCard } from "@/components/settings/LlmConfigCard";
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
@@ -27,6 +28,8 @@ export default function SettingsPage() {
       <UserProfileCard />
 
       <AppearanceCard />
+
+      <KeyboardShortcutsCard />
 
       <TelegramCard />
 

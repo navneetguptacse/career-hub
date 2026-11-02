@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { CheckCircle2, AlertCircle, Eye, EyeOff, Bot } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { LlmConfigSkeleton } from "@/components/ui/Skeleton";
 import { PROVIDER_OPTIONS, type ProviderType } from "./LlmPresets";
 import { LlmProviderGrid } from "./LlmProviderGrid";
 
@@ -18,6 +20,7 @@ export const LlmConfigCard: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
     type: "success" | "error" | "info";
@@ -51,8 +54,10 @@ export const LlmConfigCard: React.FC = () => {
     const meta = PROVIDER_OPTIONS.find((p) => p.id === newProvider);
     if (meta) {
       setModel(meta.defaultModel);
-      if (newProvider === "CUSTOM" && !endpoint) {
-        setEndpoint("https://api.groq.com/openai/v1");
+      if (newProvider === "CUSTOM") {
+        if (!endpoint) setEndpoint("https://api.groq.com/openai/v1");
+      } else if (newProvider === "DEEPSEEK") {
+        setEndpoint("https://api.deepseek.com");
       }
     }
   };
@@ -134,11 +139,9 @@ export const LlmConfigCard: React.FC = () => {
     }
   };
 
-  const handleResetDefaults = async () => {
-    if (!confirm("Reset to default system provider (Gemini)?")) return;
+  const handleConfirmReset = async () => {
     setIsSaving(true);
     setStatusMessage(null);
-
     try {
       const res = await fetch("/api/user/llm", { method: "DELETE" });
       if (res.ok) {
@@ -152,6 +155,7 @@ export const LlmConfigCard: React.FC = () => {
           type: "info",
           text: "Reset to default system Gemini provider.",
         });
+        setShowResetModal(false);
       }
     } finally {
       setIsSaving(false);
@@ -160,13 +164,7 @@ export const LlmConfigCard: React.FC = () => {
 
   const currentOption = PROVIDER_OPTIONS.find((p) => p.id === provider);
 
-  if (isLoading) {
-    return (
-      <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs animate-pulse text-xs text-[#94A3B8]">
-        Loading AI provider settings...
-      </div>
-    );
-  }
+  if (isLoading) return <LlmConfigSkeleton />;
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-5">
@@ -303,7 +301,7 @@ export const LlmConfigCard: React.FC = () => {
             type="button"
             variant="outline"
             size="sm"
-            onClick={handleResetDefaults}
+            onClick={() => setShowResetModal(true)}
             disabled={isSaving || isTesting}
             title="Reset to system defaults"
           >
@@ -323,6 +321,16 @@ export const LlmConfigCard: React.FC = () => {
           </Button>
         </div>
       </form>
+
+      <ConfirmModal
+        isOpen={showResetModal}
+        onClose={() => setShowResetModal(false)}
+        onConfirm={handleConfirmReset}
+        title="Reset AI Provider Settings"
+        description="Are you sure you want to reset your AI provider configuration to system defaults (Google Gemini)? Any custom API key and endpoint will be removed."
+        confirmText="Reset Settings"
+        isConfirming={isSaving}
+      />
     </div>
   );
 };

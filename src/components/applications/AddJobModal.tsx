@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Link2, PencilSparkles } from "lucide-react";
+import useSWR from "swr";
+import { CheckCircle2, FileText, Link2, PencilSparkles } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
-import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import {
+  AddJobManualForm,
+  type JobFormData,
+} from "@/components/applications/AddJobManualForm";
 import { refreshAllApplications } from "@/lib/hooks/useApplications";
 import { capitalizeCompanyName } from "@/lib/scraper";
+import { cn } from "@/lib/utils";
 
 interface AddJobModalProps {
   isOpen: boolean;
@@ -14,33 +19,72 @@ interface AddJobModalProps {
   onSuccess: () => void;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const INITIAL_FORM_DATA: JobFormData = {
+  companyName: "",
+  jobTitle: "",
+  location: "",
+  locationType: "ONSITE",
+  employmentType: "FULL_TIME",
+  currency: "USD",
+  jobUrl: "",
+  jobDescription: "",
+  appliedDate: "",
+  status: "WISHLIST",
+  notes: "",
+};
+
+function isValidJobUrl(input: string): boolean {
+  const trimmed = input.trim();
+  if (!trimmed) return false;
+  let testUrl = trimmed;
+  if (!/^https?:\/\//i.test(testUrl)) {
+    testUrl = `https://${testUrl}`;
+  }
+  try {
+    const parsed = new URL(testUrl);
+    return Boolean(
+      parsed.hostname &&
+      parsed.hostname.includes(".") &&
+      parsed.hostname.length > 3
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const AddJobModal: React.FC<AddJobModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
 }) => {
+  const [activeTab, setActiveTab] = useState<"link" | "manual">("link");
   const [scrapeUrl, setScrapeUrl] = useState("");
   const [isScraping, setIsScraping] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState<JobFormData>(INITIAL_FORM_DATA);
 
-  const [formData, setFormData] = useState({
-    companyName: "",
-    jobTitle: "",
-    location: "",
-    locationType: "ONSITE",
-    employmentType: "FULL_TIME",
-    currency: "USD",
-    jobUrl: "",
-    jobDescription: "",
-    appliedDate: "",
-    status: "WISHLIST",
-    notes: "",
-  });
+  const { data: llmConfig } = useSWR<{ hasKey?: boolean }>(
+    isOpen ? "/api/user/llm" : null,
+    fetcher
+  );
+  const isProviderConfigured = Boolean(llmConfig?.hasKey);
+
+  const handleClose = () => {
+    setError(null);
+    setSuccessMessage(null);
+    onClose();
+  };
 
   const handleScrape = async () => {
-    const rawUrl = scrapeUrl.trim();
+    let rawUrl = scrapeUrl.trim();
     if (!rawUrl) return;
+    if (!/^https?:\/\//i.test(rawUrl)) {
+      rawUrl = `https://${rawUrl}`;
+    }
 
     setIsScraping(true);
     setError(null);
@@ -70,6 +114,11 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
         currency: data.data.currency || prev.currency || "USD",
         appliedDate: data.data.postedDate || prev.appliedDate || "",
       }));
+
+      setSuccessMessage(
+        "Job details extracted! Please review and save your application."
+      );
+      setActiveTab("manual");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error scraping link");
     } finally {
@@ -107,21 +156,10 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
 
       refreshAllApplications();
       onSuccess();
-      onClose();
-      setFormData({
-        companyName: "",
-        jobTitle: "",
-        location: "",
-        locationType: "ONSITE",
-        employmentType: "FULL_TIME",
-        currency: "USD",
-        jobUrl: "",
-        jobDescription: "",
-        appliedDate: "",
-        status: "WISHLIST",
-        notes: "",
-      });
+      handleClose();
+      setFormData(INITIAL_FORM_DATA);
       setScrapeUrl("");
+      setActiveTab("link");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error saving application");
     } finally {
@@ -132,49 +170,45 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title="Add Application"
       description="Track a new role manually or auto-fill details from any job posting URL."
     >
       <div className="space-y-4">
-        <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
-          <label className="text-xs font-medium text-[#94A3B8] flex items-center gap-1.5">
-            <Link2 className="w-3.5 h-3.5 text-[#3178C6]" />
-            Import Link
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="url"
-              placeholder="https://linkedin.com/jobs/view/..."
-              value={scrapeUrl}
-              onChange={(e) => {
-                setScrapeUrl(e.target.value);
-                setFormData((prev) => ({ ...prev, jobUrl: e.target.value }));
-              }}
-              className="flex-1 h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
-            />
-            <Button
-              type="button"
-              variant="secondary"
-              size="icon-md"
-              onClick={handleScrape}
-              isLoading={isScraping}
-              disabled={isScraping || !scrapeUrl.trim()}
-              title="Auto-fill details from URL"
-              className="shrink-0"
-            >
-              <PencilSparkles className="w-4 h-4 text-[#3178C6]" />
-            </Button>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-[#64748B] pt-0.5">
-            <span>Powered by AI extraction</span>
-            <a
-              href="/settings"
-              className="text-[#5499EB] hover:underline transition-colors"
-            >
-              Configure Provider &rarr;
-            </a>
-          </div>
+        <div className="flex border-b border-[#202937]">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("link");
+              setError(null);
+            }}
+            className={cn(
+              "flex items-center gap-2 py-2 px-3 text-xs font-medium border-b-2 transition-colors cursor-pointer",
+              activeTab === "link"
+                ? "border-[#3178C6] text-[#5499EB]"
+                : "border-transparent text-[#94A3B8] hover:text-[#F1F5F9]"
+            )}
+          >
+            <Link2 className="w-3.5 h-3.5" />
+            <span>Import via Link</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("manual");
+              setError(null);
+            }}
+            className={cn(
+              "flex items-center gap-2 py-2 px-3 text-xs font-medium border-b-2 transition-colors cursor-pointer",
+              activeTab === "manual"
+                ? "border-[#3178C6] text-[#5499EB]"
+                : "border-transparent text-[#94A3B8] hover:text-[#F1F5F9]"
+            )}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Manual Entry</span>
+          </button>
         </div>
 
         {error && (
@@ -183,112 +217,93 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Input
-              label="Company Name *"
-              required
-              value={formData.companyName}
-              onChange={(e) =>
-                setFormData({ ...formData, companyName: e.target.value })
-              }
-              placeholder="e.g. Stripe"
-            />
-            <Input
-              label="Job Title *"
-              required
-              value={formData.jobTitle}
-              onChange={(e) =>
-                setFormData({ ...formData, jobTitle: e.target.value })
-              }
-              placeholder="e.g. Senior Software Engineer"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Input
-              label="Location"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-              placeholder="e.g. San Francisco, CA"
-            />
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#94A3B8]">
-                Workplace
-              </label>
-              <select
-                value={formData.locationType}
-                onChange={(e) =>
-                  setFormData({ ...formData, locationType: e.target.value })
-                }
-                className="w-full h-9 pl-3 pr-8 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
-              >
-                <option value="REMOTE">Remote</option>
-                <option value="HYBRID">Hybrid</option>
-                <option value="ONSITE">On-site</option>
-              </select>
+        {successMessage && (
+          <div className="p-2.5 text-xs text-[#34D399] bg-[#10B981]/15 border border-[#10B981]/30 rounded-xs flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+              <span>{successMessage}</span>
             </div>
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#94A3B8]">
-                Status
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
-                }
-                className="w-full h-9 pl-3 pr-8 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs focus:outline-none focus:border-[#3178C6] cursor-pointer"
-              >
-                <option value="WISHLIST">Wishlist</option>
-                <option value="APPLIED">Applied</option>
-                <option value="SCREENING">Screening</option>
-                <option value="INTERVIEW">Interview</option>
-                <option value="OFFER">Offer</option>
-              </select>
-            </div>
-          </div>
-
-          <Input
-            label="Job Posting URL"
-            type="url"
-            value={formData.jobUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, jobUrl: e.target.value })
-            }
-            placeholder="https://www.google.com/about/careers/..."
-          />
-
-          <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-[#94A3B8]">
-              Personal Notes & Follow-ups
-            </label>
-            <textarea
-              rows={3}
-              value={formData.notes}
-              onChange={(e) =>
-                setFormData({ ...formData, notes: e.target.value })
-              }
-              placeholder="Referral contacts, interview prep notes, questions..."
-              className="w-full p-2.5 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#202937]">
-            <Button type="button" variant="ghost" size="md" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              isLoading={isSubmitting}
+            <button
+              type="button"
+              onClick={() => setSuccessMessage(null)}
+              className="text-[11px] underline opacity-80 hover:opacity-100"
             >
-              Save
-            </Button>
+              Dismiss
+            </button>
           </div>
-        </form>
+        )}
+
+        {activeTab === "link" ? (
+          <div className="space-y-4">
+            <div className="p-4 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-[#F1F5F9]">
+                  Job Posting URL
+                </label>
+                <p className="text-[11px] text-[#94A3B8]">
+                  Paste any job link (LinkedIn, Indeed, company careers). We
+                  will scrape and structure the details.
+                </p>
+              </div>
+
+              <input
+                type="url"
+                placeholder="https://linkedin.com/jobs/view/..."
+                value={scrapeUrl}
+                onChange={(e) => {
+                  setScrapeUrl(e.target.value);
+                  setFormData((prev) => ({ ...prev, jobUrl: e.target.value }));
+                }}
+                className="w-full h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
+              />
+
+              {isValidJobUrl(scrapeUrl) && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={handleScrape}
+                  isLoading={isScraping}
+                  className="w-full gap-2 shadow-xs cursor-pointer"
+                >
+                  <PencilSparkles className="w-4 h-4" />
+                  <span>Extract & Auto-fill Details</span>
+                </Button>
+              )}
+
+              <div className="flex items-center justify-between text-[11px] text-[#64748B] pt-1 border-t border-[#202937]/50">
+                <span>Powered by AI extraction</span>
+                {!isProviderConfigured && (
+                  <a
+                    href="/settings"
+                    className="text-[#5499EB] hover:underline transition-colors"
+                  >
+                    Configure Provider &rarr;
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-[#202937]">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <AddJobManualForm
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={handleSubmit}
+            onCancel={handleClose}
+            isSubmitting={isSubmitting}
+          />
+        )}
       </div>
     </Modal>
   );

@@ -14,6 +14,7 @@ import {
   Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { TelegramBotFatherTip } from "./TelegramBotFatherTip";
 import { TelegramCommandsTable } from "./TelegramCommandsTable";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
@@ -129,7 +130,11 @@ export const TelegramGuideCard: React.FC = () => {
               Send this exact command to the bot in a direct message or group to
               link your account:{" "}
               <span className="font-mono text-[10px] font-semibold text-[#5499EB]">
-                {pairingCommandText}
+                {isLoadingToken ? (
+                  <Skeleton className="h-3 w-28 inline-block align-middle" />
+                ) : (
+                  pairingCommandText
+                )}
               </span>
             </p>
           </div>

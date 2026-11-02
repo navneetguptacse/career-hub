@@ -70,14 +70,14 @@ export const Sidebar: React.FC = () => {
   ];
 
   const content = (
-    <div className="flex flex-col justify-between h-full p-3 overflow-hidden select-none">
+    <div className="flex flex-col justify-between h-full p-3 md:pt-6 md:px-4 md:pb-4 overflow-hidden select-none">
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={toggleSidebar}
-              title="Collapse Sidebar"
+              title="Collapse Sidebar ([ or ⌘ + B)"
               aria-label="Collapse sidebar"
               className="hidden md:flex items-center justify-center h-8 w-8 text-[#94A3B8] hover:text-[#5499EB] bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs cursor-pointer shrink-0"
             >
@@ -141,9 +141,9 @@ export const Sidebar: React.FC = () => {
         <button
           type="button"
           onClick={toggleSidebar}
-          title="Expand Sidebar"
+          title="Expand Sidebar ([ or ⌘ + B)"
           aria-label="Expand sidebar"
-          className="hidden md:flex absolute top-3 left-3 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+          className="hidden md:flex absolute top-6 left-4 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

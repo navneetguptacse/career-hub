@@ -10,6 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { JobApplicationItem } from "@/components/applications/JobCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function AnalyticsPage() {
   const [applications, setApplications] = useState<JobApplicationItem[]>([]);
@@ -93,7 +94,11 @@ export default function AnalyticsPage() {
             Interview Conversion Rate
           </span>
           <div className="text-2xl font-bold font-mono text-[#5499EB]">
-            {isLoading ? "..." : `${interviewRate}%`}
+            {isLoading ? (
+              <Skeleton className="h-7 w-16 my-0.5" />
+            ) : (
+              `${interviewRate}%`
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">
             From submitted to interview stage
@@ -106,7 +111,11 @@ export default function AnalyticsPage() {
             Offer Conversion Rate
           </span>
           <div className="text-2xl font-bold font-mono text-[#34D399]">
-            {isLoading ? "..." : `${offerRate}%`}
+            {isLoading ? (
+              <Skeleton className="h-7 w-16 my-0.5" />
+            ) : (
+              `${offerRate}%`
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">
             Final placements / total applications
@@ -119,7 +128,7 @@ export default function AnalyticsPage() {
             Active Pipeline Roles
           </span>
           <div className="text-2xl font-bold font-mono text-[#FACC15]">
-            {isLoading ? "..." : activeCount}
+            {isLoading ? <Skeleton className="h-7 w-14 my-0.5" /> : activeCount}
           </div>
           <p className="text-[11px] text-[#64748B]">
             In-flight applications currently open

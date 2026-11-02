@@ -1,5 +1,5 @@
 export interface UserLlmConfig {
-  provider?: "GEMINI" | "OPENAI" | "ANTHROPIC" | "CUSTOM";
+  provider?: "GEMINI" | "OPENAI" | "ANTHROPIC" | "DEEPSEEK" | "CUSTOM";
   apiKey?: string | null;
   endpoint?: string | null;
   model?: string | null;
@@ -106,6 +106,43 @@ export async function executeLlmCall(
       if (res.ok) {
         const data = await res.json();
         return data?.content?.[0]?.text || null;
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (provider === "DEEPSEEK") {
+    const key = userConfig?.apiKey || process.env.DEEPSEEK_API_KEY;
+    if (!key) return null;
+    const model =
+      userConfig?.model || process.env.DEEPSEEK_MODEL || "deepseek-v4-flash";
+    const endpoint = (
+      userConfig?.endpoint ||
+      process.env.DEEPSEEK_BASE_URL ||
+      "https://api.deepseek.com"
+    ).replace(/\/+$/, "");
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    try {
+      const res = await fetch(`${endpoint}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+          temperature: 0.1,
+        }),
+        signal: controller.signal,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data?.choices?.[0]?.message?.content || null;
       }
     } finally {
       clearTimeout(timeoutId);

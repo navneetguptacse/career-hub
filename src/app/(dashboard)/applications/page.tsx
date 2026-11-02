@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Kanban, Table as TableIcon, Search, Filter } from "lucide-react";
 import { KanbanBoard } from "@/components/applications/KanbanBoard";
 import { ApplicationTable } from "@/components/applications/ApplicationTable";
+import { ApplicationsSkeleton } from "@/components/applications/ApplicationsSkeleton";
 import { JobApplicationItem } from "@/components/applications/JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -14,6 +15,13 @@ export default function ApplicationsPage() {
   const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+
+  useEffect(() => {
+    const handleSetKanban = () => setViewMode("kanban");
+    window.addEventListener("careerhub:view-kanban", handleSetKanban);
+    return () =>
+      window.removeEventListener("careerhub:view-kanban", handleSetKanban);
+  }, []);
 
   const [jobToDelete, setJobToDelete] = useState<JobApplicationItem | null>(
     null
@@ -86,7 +94,7 @@ export default function ApplicationsPage() {
           <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs h-8">
             <button
               onClick={() => setViewMode("kanban")}
-              title="Kanban"
+              title="Kanban (K)"
               className={`h-7 px-2 inline-flex items-center justify-center rounded-xs transition-colors ${
                 viewMode === "kanban"
                   ? "bg-[#3178C6] text-white"
@@ -111,9 +119,7 @@ export default function ApplicationsPage() {
       </div>
 
       {isLoading ? (
-        <div className="p-16 text-center text-xs text-[#94A3B8]">
-          Loading pipeline applications...
-        </div>
+        <ApplicationsSkeleton viewMode={viewMode} />
       ) : viewMode === "kanban" ? (
         <KanbanBoard
           applications={applications}

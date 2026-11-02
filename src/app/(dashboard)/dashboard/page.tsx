@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { formatDate } from "@/lib/utils";
 import { useApplications } from "@/lib/hooks/useApplications";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
@@ -56,7 +57,12 @@ export default function DashboardPage() {
 
         <div className="flex items-center gap-2">
           <Link href="/applications">
-            <Button variant="secondary" size="sm" className="gap-1.5">
+            <Button
+              variant="secondary"
+              size="sm"
+              title="Kanban (K)"
+              className="gap-1.5"
+            >
               <SquareKanban className="w-3.5 h-3.5" />
               <span>Kanban</span>
             </Button>
@@ -71,7 +77,11 @@ export default function DashboardPage() {
             <SquareKanban className="w-4 h-4 text-[#3178C6]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[#F1F5F9]">
-            {isLoading ? "..." : metrics.total}
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 my-0.5" />
+            ) : (
+              metrics.total
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">Across all active stages</p>
         </div>
@@ -82,7 +92,11 @@ export default function DashboardPage() {
             <Flame className="w-4 h-4 text-[#EAB308]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[#FACC15]">
-            {isLoading ? "..." : metrics.interview}
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 my-0.5" />
+            ) : (
+              metrics.interview
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">Active interview loops</p>
         </div>
@@ -93,7 +107,11 @@ export default function DashboardPage() {
             <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[#34D399]">
-            {isLoading ? "..." : metrics.offers}
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 my-0.5" />
+            ) : (
+              metrics.offers
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">Successful placements</p>
         </div>
@@ -104,7 +122,11 @@ export default function DashboardPage() {
             <Clock className="w-4 h-4 text-[#818CF8]" />
           </div>
           <div className="text-2xl font-bold font-mono text-[#818CF8]">
-            {isLoading ? "..." : metrics.wishlist}
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 my-0.5" />
+            ) : (
+              metrics.wishlist
+            )}
           </div>
           <p className="text-[11px] text-[#64748B]">Ready for submission</p>
         </div>
@@ -161,7 +183,25 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {applications.length === 0 ? (
+        {isLoading ? (
+          <div className="border border-[#202937] rounded-xs bg-[#12171F] divide-y divide-[#202937]">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="p-3.5 flex items-center justify-between">
+                <div className="space-y-1.5 flex-1">
+                  <Skeleton className="h-4 w-32" />
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-3 w-44" />
+                    <Skeleton className="h-3.5 w-14 rounded-xs" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-5 w-16 rounded-xs" />
+                  <Skeleton className="h-3 w-16 hidden sm:inline-block" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : applications.length === 0 ? (
           <div className="p-8 text-center border border-[#202937] bg-[#12171F] rounded-xs text-xs text-[#94A3B8]">
             No job applications tracked yet. Click &quot;Add&quot; in the
             navigation bar to get started!

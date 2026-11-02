@@ -14,6 +14,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   isConfirming?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -25,6 +26,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   confirmText = "Delete Application",
   cancelText = "Cancel",
   isConfirming = false,
+  icon,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} className="max-w-md">
@@ -57,7 +59,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             isLoading={isConfirming}
             className="gap-1.5"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            {icon ?? <Trash2 className="w-3.5 h-3.5" />}
             <span>{confirmText}</span>
           </Button>
         </div>
