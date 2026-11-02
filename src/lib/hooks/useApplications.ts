@@ -10,6 +10,12 @@ interface UseApplicationsOptions {
 
 const fetcher = async (url: string): Promise<JobApplicationItem[]> => {
   const res = await fetch(url);
+  if (res.status === 401) {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("careerhub:unauthorized"));
+    }
+    throw new Error("Unauthorized");
+  }
   if (!res.ok) {
     throw new Error("Failed to fetch applications");
   }

@@ -89,9 +89,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      if ((!token.role || !token.emailVerified || !token.id) && token.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email },
+      const userId = (token.id as string) || (token.sub as string);
+      const userEmail = token.email as string | undefined;
+
+      if (userId || userEmail) {
+        const dbUser = await prisma.user.findFirst({
+          where: {
+            OR: [
+              ...(userId ? [{ id: userId }] : []),
+              ...(userEmail ? [{ email: userEmail }] : []),
+            ],
+          },
           select: {
             id: true,
             role: true,
@@ -99,12 +107,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             emailVerified: true,
           },
         });
-        if (dbUser) {
-          token.id = dbUser.id;
-          token.role = dbUser.role;
-          token.telegramConnected = Boolean(dbUser.telegramChatId);
-          token.emailVerified = dbUser.emailVerified;
+
+        if (!dbUser) {
+          return null;
         }
+
+        token.id = dbUser.id;
+        token.role = dbUser.role;
+        token.telegramConnected = Boolean(dbUser.telegramChatId);
+        token.emailVerified = dbUser.emailVerified;
       }
 
       return token;

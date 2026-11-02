@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { AlertTriangle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 
 export const DangerZoneCard: React.FC = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmInput, setConfirmInput] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,12 +38,14 @@ export const DangerZoneCard: React.FC = () => {
         method: "DELETE",
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         throw new Error(data.error || "Failed to delete account");
       }
 
-      await signOut({ callbackUrl: "/login?deleted=true" });
+      await signOut({ redirect: false });
+      router.push("/login?deleted=true");
+      router.refresh();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to delete account."

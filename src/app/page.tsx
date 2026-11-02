@@ -11,6 +11,7 @@ import {
 import { auth } from "@/lib/auth";
 import { Badge } from "@/components/ui/Badge";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 
 export default async function HomePage() {
   const session = await auth();
@@ -30,6 +31,7 @@ export default async function HomePage() {
 
         <div className="flex items-center gap-2 sm:gap-2.5">
           <ThemeToggle size="sm" />
+          <PwaInstallButton size="sm" compact />
 
           {isLoggedIn ? (
             <div className="flex items-center gap-2">

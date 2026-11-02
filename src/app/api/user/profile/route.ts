@@ -116,13 +116,52 @@ export async function PATCH(req: Request) {
 
 export async function DELETE() {
   const session = await auth();
-  if (!session?.user?.id) {
+  if (!session?.user?.id && !session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    await prisma.user.delete({
-      where: { id: session.user.id },
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          ...(session.user?.id ? [{ id: session.user.id }] : []),
+          ...(session.user?.email ? [{ email: session.user.email }] : []),
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json(
+        { error: "User account not found or already deleted." },
+        { status: 404 }
+      );
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.applicationActivity.deleteMany({
+        where: {
+          OR: [
+            { userId: existingUser.id },
+            { application: { userId: existingUser.id } },
+          ],
+        },
+      });
+
+      await tx.jobApplication.deleteMany({
+        where: { userId: existingUser.id },
+      });
+
+      await tx.account.deleteMany({
+        where: { userId: existingUser.id },
+      });
+      await tx.session.deleteMany({
+        where: { userId: existingUser.id },
+      });
+
+      await tx.user.delete({
+        where: { id: existingUser.id },
+      });
     });
 
     return NextResponse.json({
@@ -131,9 +170,8 @@ export async function DELETE() {
     });
   } catch (error) {
     console.error("Failed to delete user account:", error);
-    return NextResponse.json(
-      { error: "Failed to delete account" },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error ? error.message : "Failed to delete account";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

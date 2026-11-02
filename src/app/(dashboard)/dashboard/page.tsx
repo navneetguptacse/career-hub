@@ -155,16 +155,20 @@ export default function DashboardPage() {
 
         {isTelegramPaired ? (
           <Link href="/settings" title="Telegram Bot Configured & Active">
-            <div className="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-xs text-xs font-medium bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] hover:bg-[#10B981]/25 transition-colors shrink-0">
+            <div className="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-xs text-xs font-medium bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] hover:bg-[#10B981]/25 transition-colors shrink-0 whitespace-nowrap">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Configured</span>
             </div>
           </Link>
         ) : (
-          <Link href="/settings">
-            <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
-              <span>Configure Telegram</span>
-              <Link2 className="w-3.5 h-3.5" />
+          <Link href="/settings" className="shrink-0 max-w-full">
+            <Button
+              variant="primary"
+              size="sm"
+              className="shrink-0 gap-1.5 whitespace-nowrap max-w-full"
+            >
+              <span className="truncate">Configure Telegram</span>
+              <Link2 className="w-3.5 h-3.5 shrink-0" />
             </Button>
           </Link>
         )}

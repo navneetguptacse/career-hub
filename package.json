@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "npm@11.19.1",
   "scripts": {
-    "predev": "node scripts/ensure-tsconfig.js",
+    "predev": "node scripts/ensure-tsconfig.js && node scripts/generate-pwa-icons.js",
     "dev": "next dev",
-    "prebuild": "node scripts/ensure-tsconfig.js",
+    "prebuild": "node scripts/ensure-tsconfig.js && node scripts/generate-pwa-icons.js",
     "build": "prisma generate && next build",
     "generate": "prisma generate",
     "start": "next start",

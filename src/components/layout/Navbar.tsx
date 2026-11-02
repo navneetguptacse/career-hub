@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
@@ -84,6 +85,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
 
         <ThemeToggle size="sm" />
+
+        <PwaInstallButton size="sm" compact />
 
         <button
           type="button"

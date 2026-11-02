@@ -24,7 +24,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] disabled:opacity-50 disabled:pointer-events-none rounded-xs select-none shrink-0";
+      "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] disabled:opacity-50 disabled:pointer-events-none rounded-xs select-none shrink-0 whitespace-nowrap max-w-full min-w-0 [&>svg]:shrink-0";
 
     const variantStyles = {
       primary:
@@ -55,6 +55,27 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const isIconOnly =
       size === "icon-sm" || size === "icon-md" || hasOnlySingleElement;
+
+    const renderContent = () => {
+      if (isIconOnly && isLoading) return null;
+
+      return React.Children.map(children, (child) => {
+        if (typeof child === "string" || typeof child === "number") {
+          return <span className="truncate">{child}</span>;
+        }
+        if (
+          React.isValidElement<{ className?: string }>(child) &&
+          typeof child.type === "string" &&
+          child.type === "span" &&
+          !child.props?.className?.includes("shrink-0")
+        ) {
+          return React.cloneElement(child, {
+            className: cn(child.props.className, "truncate"),
+          });
+        }
+        return child;
+      });
+    };
 
     return (
       <button
@@ -97,7 +118,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           icon && <span className="inline-flex shrink-0">{icon}</span>
         )}
-        {(!isIconOnly || !isLoading) && children}
+        {renderContent()}
       </button>
     );
   }

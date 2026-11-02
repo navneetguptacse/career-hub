@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { AddJobModal } from "@/components/applications/AddJobModal";
@@ -23,6 +25,24 @@ function DashboardLayoutContent({
   onOpenShortcuts: () => void;
 }) {
   const { isCollapsed } = useSidebar();
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+
+    const handleUnauthorized = () => {
+      router.replace("/login");
+    };
+
+    window.addEventListener("careerhub:unauthorized", handleUnauthorized);
+    return () => {
+      window.removeEventListener("careerhub:unauthorized", handleUnauthorized);
+    };
+  }, [status, router]);
+
   useKeyboardShortcuts();
 
   return (

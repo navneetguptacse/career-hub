@@ -126,10 +126,6 @@ export const TelegramCard: React.FC = () => {
               <span className="text-xs font-medium text-[#94A3B8]">
                 Secure Pairing Command
               </span>
-              <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
-                <span className="w-1.5 h-1.5 rounded-xs bg-[#3178C6] animate-pulse" />
-                <span>Auto-detecting link...</span>
-              </div>
             </div>
 
             <div className="flex items-center gap-2">
