@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -16,6 +16,9 @@ export interface PlatformInfo {
   isAndroid: boolean;
   isInAppBrowser: boolean;
   isMobileOrTablet: boolean;
+  isTablet: boolean;
+  isMobile: boolean;
+  isDesktop: boolean;
 }
 
 const DISMISS_KEY = "careerhub_pwa_dismissed_at";
@@ -31,17 +34,43 @@ function subscribePrompt(callback: () => void) {
   };
 }
 
-function getPromptSnapshot() {
+function getPromptSnapshot(): BeforeInstallPromptEvent | null {
   return globalDeferredPrompt;
 }
 
-function getPromptServerSnapshot() {
+function getPromptServerSnapshot(): null {
   return null;
 }
 
 function setGlobalPrompt(prompt: BeforeInstallPromptEvent | null) {
   globalDeferredPrompt = prompt;
   promptListeners.forEach((listener) => listener());
+}
+
+// Global modal visibility store so clicking install anywhere opens the guide
+let globalGuideOpen = false;
+const guideListeners = new Set<() => void>();
+
+function subscribeGuide(callback: () => void) {
+  guideListeners.add(callback);
+  return () => {
+    guideListeners.delete(callback);
+  };
+}
+
+function getGuideSnapshot(): boolean {
+  return globalGuideOpen;
+}
+
+function getGuideServerSnapshot(): boolean {
+  return false;
+}
+
+export function setGlobalPwaGuide(open: boolean) {
+  if (globalGuideOpen !== open) {
+    globalGuideOpen = open;
+    guideListeners.forEach((listener) => listener());
+  }
 }
 
 if (typeof window !== "undefined") {
@@ -52,18 +81,21 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("appinstalled", () => {
     setGlobalPrompt(null);
-    dismissListeners.forEach((l) => l());
+    setGlobalPwaGuide(false);
+    dismissListeners.forEach((listener) => listener());
   });
 }
 
 function subscribeStandalone(callback: () => void) {
   if (typeof window === "undefined") return () => {};
-  const mql = window.matchMedia("(display-mode: standalone)");
+  const mqlStandalone = window.matchMedia("(display-mode: standalone)");
   const handler = () => callback();
-  mql.addEventListener("change", handler);
+
+  mqlStandalone.addEventListener("change", handler);
   window.addEventListener("appinstalled", handler);
+
   return () => {
-    mql.removeEventListener("change", handler);
+    mqlStandalone.removeEventListener("change", handler);
     window.removeEventListener("appinstalled", handler);
   };
 }
@@ -102,43 +134,80 @@ const SERVER_PLATFORM: PlatformInfo = Object.freeze({
   isAndroid: false,
   isInAppBrowser: false,
   isMobileOrTablet: false,
+  isTablet: false,
+  isMobile: false,
+  isDesktop: true,
 });
 
 let cachedPlatform: PlatformInfo | null = null;
+let lastWidth = 0;
+let lastUa = "";
+
+function subscribePlatform(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("resize", callback);
+  window.addEventListener("orientationchange", callback);
+  return () => {
+    window.removeEventListener("resize", callback);
+    window.removeEventListener("orientationchange", callback);
+  };
+}
 
 function getPlatformSnapshot(): PlatformInfo {
   if (typeof window === "undefined") return SERVER_PLATFORM;
-  if (!cachedPlatform) {
-    const ua = window.navigator.userAgent || "";
-    const isIos =
-      /iPad|iPhone|iPod/.test(ua) ||
-      (window.navigator.platform === "MacIntel" &&
-        window.navigator.maxTouchPoints > 1);
+  const ua = window.navigator.userAgent || "";
+  const width = window.innerWidth;
 
-    const isAndroid = /Android/i.test(ua);
-    const isInAppBrowser =
-      /Telegram|FBAN|FBAV|Instagram|Line|Twitter|MicroMessenger/i.test(ua);
-
-    const isMobileOrTablet =
-      isIos ||
-      isAndroid ||
-      /Mobi|Tablet|iPad|iPhone|Android/i.test(ua) ||
-      (window.navigator.platform === "MacIntel" &&
-        window.navigator.maxTouchPoints > 1);
-
-    cachedPlatform = Object.freeze({
-      isIos,
-      isAndroid,
-      isInAppBrowser,
-      isMobileOrTablet,
-    });
+  if (cachedPlatform && lastWidth === width && lastUa === ua) {
+    return cachedPlatform;
   }
 
-  return cachedPlatform;
-}
+  lastWidth = width;
+  lastUa = ua;
 
-function getServerPlatformSnapshot(): PlatformInfo {
-  return SERVER_PLATFORM;
+  const isIos =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (window.navigator.platform === "MacIntel" &&
+      window.navigator.maxTouchPoints > 1);
+
+  const isAndroid = /Android/i.test(ua);
+
+  const isInAppBrowser =
+    /Telegram|FBAN|FBAV|Instagram|Line|Twitter|MicroMessenger/i.test(ua);
+
+  const isTablet =
+    /iPad/i.test(ua) ||
+    (/Android/i.test(ua) && !/Mobile/i.test(ua)) ||
+    (window.navigator.platform === "MacIntel" &&
+      window.navigator.maxTouchPoints > 1) ||
+    /Tablet|PlayBook|Silk/i.test(ua);
+
+  const isMobile =
+    (/iPhone|iPod/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua))) &&
+    !isTablet;
+
+  const isSmallScreen =
+    width <= 1024 ||
+    (typeof window.matchMedia === "function" &&
+      (window.matchMedia("(max-width: 1024px)").matches ||
+        window.matchMedia("(pointer: coarse)").matches));
+
+  const isMobileOrTablet =
+    isIos || isAndroid || isTablet || isMobile || Boolean(isSmallScreen);
+
+  const isDesktop = !isMobileOrTablet;
+
+  cachedPlatform = Object.freeze({
+    isIos,
+    isAndroid,
+    isInAppBrowser,
+    isMobileOrTablet,
+    isTablet,
+    isMobile,
+    isDesktop,
+  });
+
+  return cachedPlatform;
 }
 
 export function usePwaInstall() {
@@ -161,16 +230,24 @@ export function usePwaInstall() {
   );
 
   const platform = useSyncExternalStore(
-    subscribeStandalone,
+    subscribePlatform,
     getPlatformSnapshot,
-    getServerPlatformSnapshot
+    () => SERVER_PLATFORM
   );
 
-  const [showGuide, setShowGuide] = useState(false);
+  const showGuide = useSyncExternalStore(
+    subscribeGuide,
+    getGuideSnapshot,
+    getGuideServerSnapshot
+  );
+
+  const setShowGuide = useCallback((open: boolean) => {
+    setGlobalPwaGuide(open);
+  }, []);
 
   const install = useCallback(async (): Promise<boolean> => {
     if (platform.isInAppBrowser) {
-      setShowGuide(true);
+      setGlobalPwaGuide(true);
       return false;
     }
 
@@ -185,29 +262,25 @@ export function usePwaInstall() {
         return false;
       } catch (error) {
         console.warn("Failed to execute PWA install prompt:", error);
+        setGlobalPrompt(null);
+        setGlobalPwaGuide(true);
+        return false;
       }
     }
 
-    if (platform.isMobileOrTablet || platform.isIos) {
-      setShowGuide(true);
-      return false;
-    }
-
+    // Fallback for iOS, iPadOS, Android tablets/phones (before prompt), or desktop
+    setGlobalPwaGuide(true);
     return false;
-  }, [deferredPrompt, platform]);
+  }, [deferredPrompt, platform.isInAppBrowser]);
 
   const dismissBanner = useCallback(() => {
     try {
       localStorage.setItem(DISMISS_KEY, Date.now().toString());
     } catch {}
-    dismissListeners.forEach((l) => l());
+    dismissListeners.forEach((listener) => listener());
   }, []);
 
-  const isInstallable =
-    !isInstalled &&
-    (Boolean(deferredPrompt) ||
-      platform.isMobileOrTablet ||
-      platform.isInAppBrowser);
+  const isInstallable = !isInstalled;
 
   return {
     isInstallable,

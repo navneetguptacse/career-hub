@@ -26,10 +26,17 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({
     return null;
   }
 
-  const handleInstall = async () => {
+  const handleInstall = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isInstalling) return;
+
     setIsInstalling(true);
-    await install();
-    setIsInstalling(false);
+    try {
+      await install();
+    } finally {
+      setIsInstalling(false);
+    }
   };
 
   return (
@@ -41,8 +48,10 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({
       icon={<Download className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />}
       onClick={handleInstall}
       title="Install CareerHub Web App"
+      aria-label="Install CareerHub Web App"
       className={cn(
-        "gap-1.5 text-xs border-[#202937] hover:border-[#3178C6] shadow-xs",
+        "gap-1.5 text-xs border-[#202937] hover:border-[#3178C6] shadow-xs cursor-pointer h-8 shrink-0",
+        compact && "w-8 p-0 sm:w-auto sm:px-3",
         className
       )}
     >

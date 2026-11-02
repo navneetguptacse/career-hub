@@ -55,8 +55,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <PanelLeft className="w-4 h-4" />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-2 group">
-          <div className="w-7 h-7 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-sm shadow-xs transition-colors group-hover:bg-[#235A97]">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 group shrink-0 h-8"
+        >
+          <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs transition-colors group-hover:bg-[#235A97] shrink-0 border border-transparent">
             CH
           </div>
           <span className="font-semibold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
@@ -65,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </Link>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-2.5">
+      <div className="flex items-center gap-2 sm:gap-2.5 h-8">
         {telegramConnected ? (
           <Link
             href="/settings"

@@ -9,6 +9,7 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  Download,
   Layers2,
   LayoutPanelLeft,
   Send,
@@ -18,12 +19,14 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/SidebarProvider";
+import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { isCollapsed, isMobileOpen, closeMobileSidebar, toggleSidebar } =
     useSidebar();
+  const { isInstalled, install } = usePwaInstall();
   const isAdmin = session?.user?.role === "ADMIN";
 
   const navigation = [
@@ -121,6 +124,20 @@ export const Sidebar: React.FC = () => {
           </p>
         </div>
 
+        {!isInstalled && (
+          <button
+            type="button"
+            onClick={() => {
+              closeMobileSidebar();
+              install();
+            }}
+            className="md:hidden w-full flex items-center justify-center gap-2 h-8 px-3 text-xs font-medium text-[#5499EB] bg-[#3178C6]/15 hover:bg-[#3178C6]/25 border border-[#3178C6]/40 rounded-xs transition-colors shadow-xs cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5 text-[#3178C6]" />
+            <span>Install CareerHub App</span>
+          </button>
+        )}
+
         <button
           type="button"
           onClick={toggleSidebar}
@@ -172,8 +189,8 @@ export const Sidebar: React.FC = () => {
         )}
       >
         <div className="h-14 border-b border-[#202937] px-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-sm">
+          <div className="flex items-center gap-2 h-8">
+            <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shrink-0 border border-transparent">
               CH
             </div>
             <span className="font-semibold text-sm text-[#F1F5F9]">

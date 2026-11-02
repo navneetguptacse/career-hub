@@ -10,16 +10,8 @@ if (!fs.existsSync(tsconfigPath)) {
   } catch {}
 }
 
-const isVercel = Boolean(process.env.VERCEL || process.env.NEXT_DEPLOYMENT_ID);
-
 const nextConfig: NextConfig = {
-  ...(isVercel
-    ? {}
-    : {
-        experimental: {
-          turbopackPluginRuntimeStrategy: "forceWorkerThreads",
-        },
-      }),
+  serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
 export default nextConfig;

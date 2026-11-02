@@ -27,8 +27,14 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         aria-label="Toggle theme"
         disabled
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none border-[#202937] bg-[#12171F] opacity-70 cursor-default",
-          size === "sm" ? "h-8 px-2.5" : "h-9 px-3",
+          "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none border-[#202937] bg-[#12171F] opacity-70 cursor-default shrink-0",
+          size === "sm"
+            ? showLabel
+              ? "h-8 px-2.5"
+              : "h-8 w-8 p-0"
+            : showLabel
+              ? "h-9 px-3"
+              : "h-9 w-9 p-0",
           className
         )}
       >
@@ -52,8 +58,14 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
       aria-label="Toggle theme"
       className={cn(
-        "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6]",
-        size === "sm" ? "h-8 px-2.5" : "h-9 px-3",
+        "inline-flex items-center justify-center font-medium transition-colors rounded-xs border text-xs gap-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#3178C6] shrink-0",
+        size === "sm"
+          ? showLabel
+            ? "h-8 px-2.5"
+            : "h-8 w-8 p-0"
+          : showLabel
+            ? "h-9 px-3"
+            : "h-9 w-9 p-0",
         isDark
           ? "border-[#202937] bg-[#12171F] text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#18202C] hover:border-[#3178C6]/50"
           : "border-slate-300 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 hover:border-[#3178C6]",

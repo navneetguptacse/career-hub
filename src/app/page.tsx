@@ -19,55 +19,55 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#0A0D12] text-[#F1F5F9] flex flex-col selection:bg-[#3178C6] selection:text-white">
-      <header className="h-14 border-b border-[#202937] bg-[#12171F]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs">
+      <header className="h-14 border-b border-[#202937] bg-[#12171F]/90 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between sticky top-0 z-40 select-none">
+        <Link href="/" className="flex items-center gap-2 group shrink-0 h-8">
+          <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs transition-colors group-hover:bg-[#235A97] shrink-0 border border-transparent">
             CH
           </div>
-          <span className="font-bold text-sm tracking-tight text-[#F1F5F9]">
+          <span className="font-bold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
             CareerHub
           </span>
-        </div>
+        </Link>
 
-        <div className="flex items-center gap-2 sm:gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 h-8">
           <ThemeToggle size="sm" />
           <PwaInstallButton size="sm" compact />
 
           {isLoggedIn ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 h-8">
               <Link
                 href="/settings"
                 title="Account & Profile Settings"
-                className="h-8 px-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-[#F1F5F9] bg-[#12171F] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shrink-0"
+                className="h-8 px-2 sm:px-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-[#F1F5F9] bg-[#12171F] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shrink-0 whitespace-nowrap"
               >
                 <User className="w-3.5 h-3.5 text-[#3178C6]" />
-                <span className="max-w-32.5 truncate hidden sm:inline">
-                  {session?.user?.name || session?.user?.email}
+                <span className="max-w-28 truncate hidden sm:inline font-mono">
+                  {session?.user?.name || session?.user?.email?.split("@")[0]}
                 </span>
               </Link>
               <Link
                 href="/dashboard"
-                className="h-8 px-3.5 inline-flex items-center justify-center text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs transition-colors shadow-xs gap-1.5 shrink-0"
+                className="h-8 px-2.5 sm:px-3.5 inline-flex items-center justify-center text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white border border-[#3178C6] rounded-xs transition-colors shadow-xs gap-1.5 shrink-0 whitespace-nowrap"
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Dashboard</span>
+                <span className="hidden sm:inline">Dashboard</span>
                 <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 h-8">
               <Link
                 href="/login"
-                className="h-8 px-3 inline-flex items-center justify-center text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] bg-[#12171F] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors"
+                className="h-8 px-2.5 sm:px-3 inline-flex items-center justify-center text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] bg-[#12171F] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6]/50 rounded-xs transition-colors shrink-0 whitespace-nowrap"
               >
                 Sign In
               </Link>
               <Link
                 href="/register"
-                className="h-8 px-3.5 inline-flex items-center justify-center text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white rounded-xs transition-colors shadow-xs gap-1.5"
+                className="h-8 px-2.5 sm:px-3.5 inline-flex items-center justify-center text-xs font-medium bg-[#3178C6] hover:bg-[#235A97] text-white border border-[#3178C6] rounded-xs transition-colors shadow-xs gap-1 sm:gap-1.5 shrink-0 whitespace-nowrap"
               >
                 <span>Get Started</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5 shrink-0" />
               </Link>
             </div>
           )}

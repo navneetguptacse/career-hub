@@ -1,8 +1,7 @@
 // CareerHub PWA Service Worker
-const CACHE_NAME = "careerhub-pwa-v1";
+const CACHE_NAME = "careerhub-pwa-v2";
 const STATIC_ASSETS = [
   "/",
-  "/dashboard",
   "/favicon.ico",
   "/icons/icon.svg",
   "/icons/icon-192x192.png",

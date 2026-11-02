@@ -6,6 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "CareerHub",
     description:
       "Track, organize, and automate job applications with Kanban boards, Telegram ingestion, and career analytics.",
+    id: "/",
     start_url: "/dashboard",
     display: "standalone",
     background_color: "#0A0D12",
