@@ -322,15 +322,7 @@ export const UserProfileCard: React.FC = () => {
             isLoading={isSaving}
             className="gap-2 shadow-xs"
           >
-            {isSuccess ? (
-              <>
-                <span>Saved</span>
-              </>
-            ) : (
-              <>
-                <span>Save</span>
-              </>
-            )}
+            {isSuccess ? <span>Saved</span> : <span>Save</span>}
           </Button>
         </div>
       </form>

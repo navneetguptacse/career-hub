@@ -41,7 +41,6 @@ export default function DashboardPage() {
         <UnverifiedEmailBanner />
       </Suspense>
 
-      {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-[#12171F] border border-[#202937] rounded-xs">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-[#F1F5F9]">
@@ -65,7 +64,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <div className="flex items-center justify-between text-xs text-[#94A3B8]">
@@ -112,7 +110,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Telegram Automation Banner */}
       <div className="p-4 bg-[#12171F] border border-[#3178C6]/40 rounded-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 bg-[#3178C6]/20 border border-[#3178C6]/40 flex items-center justify-center rounded-xs text-[#5499EB] shrink-0 mt-0.5">
@@ -151,10 +148,9 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Recent Applications Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-[#94A3B8]">
+          <h2 className="text-[12px] font-semibold uppercase tracking-wider text-[#94A3B8]">
             Recent Applications
           </h2>
           <Link

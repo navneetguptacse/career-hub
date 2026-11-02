@@ -123,7 +123,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 )}
               </td>
 
-              {/* Dedicated Link Column */}
               <td className="px-4 py-3.5">
                 {app.jobUrl ? (
                   <a

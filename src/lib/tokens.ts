@@ -2,8 +2,8 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
-const PASSWORD_RESET_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
+const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
+const PASSWORD_RESET_EXPIRY_MS = 60 * 60 * 1000;
 
 export async function generateVerificationToken(
   email: string
@@ -12,7 +12,6 @@ export async function generateVerificationToken(
   const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
 
-  // Remove any pre-existing verification tokens for this email
   await prisma.verificationToken.deleteMany({
     where: { identifier: normalizedEmail },
   });
@@ -84,7 +83,6 @@ export async function generatePasswordResetToken(
   const expires = new Date(Date.now() + PASSWORD_RESET_EXPIRY_MS);
   const identifier = `reset:${normalizedEmail}`;
 
-  // Delete prior reset tokens for this email
   await prisma.verificationToken.deleteMany({
     where: { identifier },
   });

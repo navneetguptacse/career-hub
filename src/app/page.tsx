@@ -1,12 +1,11 @@
-import React from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  Bot,
   Kanban,
   LayoutDashboard,
   Lock,
   Send,
-  Sparkles,
   User,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
@@ -19,7 +18,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#0A0D12] text-[#F1F5F9] flex flex-col selection:bg-[#3178C6] selection:text-white">
-      {/* Navigation Header */}
       <header className="h-14 border-b border-[#202937] bg-[#12171F]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs">
@@ -74,10 +72,9 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center px-4 pt-16 pb-12 text-center max-w-5xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#3178C6]/15 border border-[#3178C6]/40 text-[#5499EB] text-xs font-medium rounded-xs">
-          <Sparkles className="w-3.5 h-3.5 text-[#3178C6]" />
+          <Bot className="w-3.5 h-3.5 text-[#3178C6]" />
           <span>Automated Career Pipeline & Tracking</span>
         </div>
 
@@ -94,7 +91,6 @@ export default async function HomePage() {
           automatically, and manage your interviews in one organized workspace.
         </p>
 
-        {/* Dynamic CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
           {isLoggedIn ? (
             <>
@@ -133,10 +129,8 @@ export default async function HomePage() {
           )}
         </div>
 
-        {/* Live Pipeline Preview Window */}
         <div className="w-full pt-8 text-left max-w-4xl">
           <div className="border border-[#202937] bg-[#12171F] rounded-xs overflow-hidden shadow-xl">
-            {/* Window Topbar */}
             <div className="h-9 px-4 bg-[#0E131A] border-b border-[#202937] flex items-center justify-between text-xs text-[#64748B]">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-xs bg-[#EF4444]" />
@@ -146,9 +140,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Preview Columns (clean background in both light and dark mode) */}
             <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3 bg-[#0A0D12]">
-              {/* Card 1 */}
               <div className="p-3.5 bg-[#12171F] border border-[#202937] rounded-xs space-y-2.5 shadow-xs">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -165,7 +157,6 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* Card 2 */}
               <div className="p-3.5 bg-[#12171F] border border-[#202937] rounded-xs space-y-2.5 shadow-xs">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -182,7 +173,6 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* Card 3 */}
               <div className="p-3.5 bg-[#12171F] border border-[#202937] rounded-xs space-y-2.5 shadow-xs">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -203,7 +193,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* What It Does & How It Helps You */}
       <section className="border-t border-[#202937] bg-[#0E131A] py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-2">
@@ -217,10 +206,9 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Feature 1 */}
             <div className="p-5 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 transition-colors rounded-xs space-y-3">
               <div className="w-8 h-8 bg-[#3178C6]/15 border border-[#3178C6]/30 rounded-xs flex items-center justify-center text-[#5499EB]">
-                <Sparkles className="w-4 h-4" />
+                <Bot className="w-4 h-4" />
               </div>
               <h3 className="text-sm font-semibold text-[#F1F5F9]">
                 Instant Link Parsing
@@ -232,7 +220,6 @@ export default async function HomePage() {
               </p>
             </div>
 
-            {/* Feature 2 */}
             <div className="p-5 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 transition-colors rounded-xs space-y-3">
               <div className="w-8 h-8 bg-[#5499EB]/15 border border-[#5499EB]/30 rounded-xs flex items-center justify-center text-[#5499EB]">
                 <Send className="w-4 h-4" />
@@ -247,7 +234,6 @@ export default async function HomePage() {
               </p>
             </div>
 
-            {/* Feature 3 */}
             <div className="p-5 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 transition-colors rounded-xs space-y-3">
               <div className="w-8 h-8 bg-[#10B981]/15 border border-[#10B981]/30 rounded-xs flex items-center justify-center text-[#34D399]">
                 <Kanban className="w-4 h-4" />
@@ -262,7 +248,6 @@ export default async function HomePage() {
               </p>
             </div>
 
-            {/* Feature 4 */}
             <div className="p-5 bg-[#12171F] border border-[#202937] hover:border-[#3178C6]/50 transition-colors rounded-xs space-y-3">
               <div className="w-8 h-8 bg-[#EAB308]/15 border border-[#EAB308]/30 rounded-xs flex items-center justify-center text-[#FACC15]">
                 <Lock className="w-4 h-4" />
@@ -280,7 +265,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-[#202937] py-6 px-4 sm:px-6 bg-[#0A0D12] text-xs text-[#64748B] flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
           <div className="w-5 h-5 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-[10px]">

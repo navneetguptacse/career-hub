@@ -29,7 +29,6 @@ export const AppearanceCard: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {/* Theme Mode Selector */}
         <div className="space-y-2">
           <label className="block text-xs font-medium text-[#94A3B8] tracking-wide">
             Interface Theme
@@ -65,7 +64,6 @@ export const AppearanceCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Monospace Typography Callout */}
         <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-1.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#F1F5F9]">
             <Terminal className="w-3.5 h-3.5 text-[#3178C6]" />

@@ -84,7 +84,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 : "border-[#202937]"
             }`}
           >
-            {/* Column Header - strictly aligned horizontal row */}
             <div className="flex items-center justify-between p-3 border-b border-[#202937] bg-[#12171F]">
               <div className="flex items-center gap-2 min-w-0">
                 <Badge status={col.id} size="sm" />
@@ -97,7 +96,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
               </span>
             </div>
 
-            {/* Column Cards Dropzone */}
             <div
               className={`flex-1 p-2.5 space-y-2.5 overflow-y-auto min-h-60 transition-colors ${
                 isTarget ? "bg-[#3178C6]/10" : "bg-[#3178C6]/3"

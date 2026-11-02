@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, AlertCircle, Eye, EyeOff, Bot } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PROVIDER_OPTIONS, type ProviderType } from "./LlmPresets";
@@ -170,11 +170,10 @@ export const LlmConfigCard: React.FC = () => {
 
   return (
     <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-5">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4 border-b border-[#202937] pb-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-[#3178C6]/20 border border-[#3178C6]/40 rounded-xs flex items-center justify-center text-[#5499EB] shrink-0">
-            <Sparkles className="w-4 h-4" />
+            <Bot className="w-4 h-4" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-[#F1F5F9]">
@@ -188,14 +187,12 @@ export const LlmConfigCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Provider Selector Grid */}
       <LlmProviderGrid
         selectedProvider={provider}
         onSelectProvider={handleProviderSelect}
       />
 
       <form onSubmit={handleSave} className="space-y-4">
-        {/* API Key */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
@@ -236,7 +233,6 @@ export const LlmConfigCard: React.FC = () => {
           </p>
         </div>
 
-        {/* Model Selection */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
             <span>Language Model</span>
@@ -270,7 +266,6 @@ export const LlmConfigCard: React.FC = () => {
           )}
         </div>
 
-        {/* Custom Endpoint */}
         {provider === "CUSTOM" && (
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5">
@@ -284,7 +279,6 @@ export const LlmConfigCard: React.FC = () => {
           </div>
         )}
 
-        {/* Status Message */}
         {statusMessage && (
           <div
             className={`p-3 text-xs border rounded-xs flex items-center gap-2 ${
@@ -304,7 +298,6 @@ export const LlmConfigCard: React.FC = () => {
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#202937]">
           <Button
             type="button"

@@ -86,7 +86,6 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
-      {/* Summary conversion metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-4 bg-[#12171F] border border-[#202937] rounded-xs space-y-1">
           <span className="text-xs text-[#94A3B8] flex items-center gap-1.5">
@@ -128,9 +127,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Breakdown sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Status Pipeline Funnel */}
         <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-4">
           <div className="flex items-center justify-between border-b border-[#202937] pb-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2">
@@ -163,9 +160,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Ingestion & Workplace Distribution */}
         <div className="space-y-4">
-          {/* Ingestion Source */}
           <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2 border-b border-[#202937] pb-3">
               <Send className="w-4 h-4 text-[#3178C6]" />
@@ -193,7 +188,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Workplace Distribution */}
           <div className="p-5 bg-[#12171F] border border-[#202937] rounded-xs space-y-3">
             <h3 className="text-sm font-semibold text-[#F1F5F9] flex items-center gap-2 border-b border-[#202937] pb-3">
               <PieChart className="w-4 h-4 text-[#10B981]" />

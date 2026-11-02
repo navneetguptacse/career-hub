@@ -97,7 +97,6 @@ function LoginForm() {
         </div>
       )}
 
-      {/* OAuth Providers */}
       <div className="space-y-2">
         <Button
           type="button"
@@ -127,7 +126,6 @@ function LoginForm() {
         </span>
       </div>
 
-      {/* Email + Password Form */}
       <form onSubmit={handleCredentialsSubmit} className="space-y-3">
         <Input
           id="email"

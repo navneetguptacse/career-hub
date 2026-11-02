@@ -19,7 +19,8 @@ export default auth((req) => {
     nextUrl.pathname.startsWith("/dashboard") ||
     nextUrl.pathname.startsWith("/applications") ||
     nextUrl.pathname.startsWith("/analytics") ||
-    nextUrl.pathname.startsWith("/settings");
+    nextUrl.pathname.startsWith("/settings") ||
+    nextUrl.pathname.startsWith("/usage");
 
   const isAdminRoute = nextUrl.pathname.startsWith("/admin");
 
@@ -54,6 +55,7 @@ export const config = {
     "/applications/:path*",
     "/analytics/:path*",
     "/settings/:path*",
+    "/usage/:path*",
     "/admin/:path*",
     "/login",
     "/register",

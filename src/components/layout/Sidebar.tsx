@@ -137,7 +137,6 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
-      {/* Show button docked at the exact position when sidebar is hidden */}
       {isCollapsed && (
         <button
           type="button"
@@ -150,7 +149,6 @@ export const Sidebar: React.FC = () => {
         </button>
       )}
 
-      {/* Desktop Sidebar (toggleable) */}
       <aside
         className={cn(
           "h-full border-r border-[#202937] bg-[#0A0D12] shrink-0 transition-all duration-200 hidden md:block overflow-hidden",
@@ -160,7 +158,6 @@ export const Sidebar: React.FC = () => {
         {!isCollapsed && content}
       </aside>
 
-      {/* Mobile Drawer Backdrop */}
       {isMobileOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-xs transition-opacity"
@@ -168,7 +165,6 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Mobile Drawer Panel */}
       <aside
         className={cn(
           "fixed top-0 bottom-0 left-0 w-64 bg-[#0A0D12] border-r border-[#202937] z-50 md:hidden transition-transform duration-200 flex flex-col",

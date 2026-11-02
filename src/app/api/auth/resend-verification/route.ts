@@ -15,9 +15,7 @@ export async function POST(req: Request) {
         if (body?.email && typeof body.email === "string") {
           email = body.email.trim().toLowerCase();
         }
-      } catch {
-        // Request had no parseable JSON body
-      }
+      } catch {}
     }
 
     if (!email) {

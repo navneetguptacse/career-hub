@@ -137,7 +137,6 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
       description="Track a new role manually or auto-fill details from any job posting URL."
     >
       <div className="space-y-4">
-        {/* Scraper bar */}
         <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2">
           <label className="text-xs font-medium text-[#94A3B8] flex items-center gap-1.5">
             <Link2 className="w-3.5 h-3.5 text-[#3178C6]" />

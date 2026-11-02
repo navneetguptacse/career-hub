@@ -21,7 +21,6 @@ export const TelegramBotFatherTip: React.FC = () => {
       </p>
 
       <div className="space-y-2">
-        {/* Step 1 */}
         <div className="flex items-start gap-2.5 text-xs text-[#94A3B8]">
           <span className="w-5 h-5 rounded-xs bg-[#EAB308]/20 border border-[#EAB308]/40 text-[#FACC15] flex items-center justify-center font-mono text-[11px] font-bold shrink-0">
             1
@@ -33,7 +32,6 @@ export const TelegramBotFatherTip: React.FC = () => {
           </span>
         </div>
 
-        {/* Step 2 with icon step progression */}
         <div className="flex items-start gap-2.5 text-xs text-[#94A3B8]">
           <span className="w-5 h-5 rounded-xs bg-[#EAB308]/20 border border-[#EAB308]/40 text-[#FACC15] flex items-center justify-center font-mono text-[11px] font-bold shrink-0">
             2
@@ -52,7 +50,6 @@ export const TelegramBotFatherTip: React.FC = () => {
           </div>
         </div>
 
-        {/* Step 3 */}
         <div className="flex items-start gap-2.5 text-xs text-[#94A3B8]">
           <span className="w-5 h-5 rounded-xs bg-[#EAB308]/20 border border-[#EAB308]/40 text-[#FACC15] flex items-center justify-center font-mono text-[11px] font-bold shrink-0">
             3

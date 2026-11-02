@@ -44,9 +44,7 @@ export default function ApplicationsPage() {
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto">
-      {/* Action and Control Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#12171F] border border-[#202937] rounded-xs">
-        {/* Search */}
         <div className="flex-1 flex items-center gap-2 max-w-md">
           <div className="relative w-full">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
@@ -60,7 +58,6 @@ export default function ApplicationsPage() {
           </div>
         </div>
 
-        {/* Filters and View Mode */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
             <div
@@ -86,7 +83,6 @@ export default function ApplicationsPage() {
 
           <div className="h-4 w-px bg-[#202937]" />
 
-          {/* Toggle View */}
           <div className="flex items-center bg-[#0A0D12] p-0.5 border border-[#202937] rounded-xs h-8">
             <button
               onClick={() => setViewMode("kanban")}
@@ -114,7 +110,6 @@ export default function ApplicationsPage() {
         </div>
       </div>
 
-      {/* Main View Area */}
       {isLoading ? (
         <div className="p-16 text-center text-xs text-[#94A3B8]">
           Loading pipeline applications...
@@ -135,7 +130,6 @@ export default function ApplicationsPage() {
         />
       )}
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={!!jobToDelete}
         onClose={() => setJobToDelete(null)}
@@ -150,7 +144,6 @@ export default function ApplicationsPage() {
         isConfirming={isDeleting}
       />
 
-      {/* Edit Job Modal */}
       <EditJobModal
         job={jobToEdit}
         isOpen={!!jobToEdit}
