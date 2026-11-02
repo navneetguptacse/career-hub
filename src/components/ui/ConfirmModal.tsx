@@ -57,9 +57,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             size="sm"
             onClick={onConfirm}
             isLoading={isConfirming}
+            icon={icon ?? <Trash2 className="w-3.5 h-3.5" />}
             className="gap-1.5"
           >
-            {icon ?? <Trash2 className="w-3.5 h-3.5" />}
             <span>{confirmText}</span>
           </Button>
         </div>

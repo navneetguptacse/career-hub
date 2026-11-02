@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { jobApplicationSchema } from "@/lib/validations";
+import { jobApplicationSchema, normalizeJobUrl } from "@/lib/validations";
 import { capitalizeCompanyName } from "@/lib/scraper";
 
 export async function GET(req: Request) {
@@ -64,6 +64,37 @@ export async function POST(req: Request) {
     }
 
     const data = parsed.data;
+
+    if (data.jobUrl) {
+      const normalizedIncoming = normalizeJobUrl(data.jobUrl);
+      if (normalizedIncoming) {
+        const existingApps = await prisma.jobApplication.findMany({
+          where: {
+            userId: session.user.id,
+            jobUrl: { not: null },
+          },
+          select: {
+            id: true,
+            jobUrl: true,
+            companyName: true,
+            jobTitle: true,
+          },
+        });
+
+        const duplicate = existingApps.find(
+          (app) => normalizeJobUrl(app.jobUrl) === normalizedIncoming
+        );
+
+        if (duplicate) {
+          return NextResponse.json(
+            {
+              error: `An application for "${duplicate.companyName} — ${duplicate.jobTitle}" with this link already exists in your pipeline.`,
+            },
+            { status: 409 }
+          );
+        }
+      }
+    }
 
     const application = await prisma.jobApplication.create({
       data: {

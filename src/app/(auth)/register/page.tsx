@@ -142,7 +142,7 @@ export default function RegisterPage() {
             isLoading={isLoading}
           >
             <span>Create Account</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            {!isLoading && <ArrowRight className="w-3.5 h-3.5" />}
           </Button>
         </form>
 

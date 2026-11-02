@@ -5,6 +5,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: "primary" | "secondary" | "outline" | "danger" | "ghost";
   size?: "sm" | "md" | "lg" | "icon-sm" | "icon-md";
   isLoading?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -15,6 +16,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "primary",
       size = "md",
       isLoading = false,
+      icon,
       disabled,
       type = "button",
       ...props
@@ -43,7 +45,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "icon-md": "h-9 w-9 p-0 text-xs",
     };
 
-    const isIconOnly = size === "icon-sm" || size === "icon-md";
+    const childrenArray = React.Children.toArray(children);
+    const hasOnlySingleElement =
+      !icon &&
+      childrenArray.length === 1 &&
+      React.isValidElement(childrenArray[0]) &&
+      typeof (childrenArray[0].props as { children?: unknown })?.children !==
+        "string";
+
+    const isIconOnly =
+      size === "icon-sm" || size === "icon-md" || hasOnlySingleElement;
 
     return (
       <button
@@ -58,7 +69,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {isLoading && (
+        {isLoading ? (
           <svg
             aria-hidden="true"
             className={cn(
@@ -83,6 +94,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               d="M4 12a8 8 0 018-8v8z"
             />
           </svg>
+        ) : (
+          icon && <span className="inline-flex shrink-0">{icon}</span>
         )}
         {(!isIconOnly || !isLoading) && children}
       </button>

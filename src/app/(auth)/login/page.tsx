@@ -167,7 +167,7 @@ function LoginForm() {
           isLoading={isLoading}
         >
           <span>Sign In</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          {!isLoading && <ArrowRight className="w-3.5 h-3.5" />}
         </Button>
       </form>
 

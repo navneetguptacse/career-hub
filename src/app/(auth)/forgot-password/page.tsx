@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
               isLoading={isLoading}
             >
               <span>Send Reset Link</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              {!isLoading && <ArrowRight className="w-3.5 h-3.5" />}
             </Button>
           </form>
         )}

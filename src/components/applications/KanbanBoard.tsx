@@ -26,8 +26,20 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const [isDragging, setIsDragging] = React.useState(false);
   const [dragOverColId, setDragOverColId] =
     React.useState<ApplicationStatusType | null>(null);
+
+  React.useEffect(() => {
+    const handleWindowDragEnd = () => {
+      setIsDragging(false);
+      setDragOverColId(null);
+    };
+    window.addEventListener("dragend", handleWindowDragEnd);
+    return () => {
+      window.removeEventListener("dragend", handleWindowDragEnd);
+    };
+  }, []);
 
   const getJobsByStatus = (status: ApplicationStatusType) =>
     applications.filter((app) => app.status === status);
@@ -47,7 +59,8 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     e: React.DragEvent<HTMLDivElement>,
     status: ApplicationStatusType
   ) => {
-    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+    const related = e.relatedTarget as Node | null;
+    if (related && !e.currentTarget.contains(related)) {
       if (dragOverColId === status) {
         setDragOverColId(null);
       }
@@ -64,10 +77,18 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
       onStatusChange(jobId, status);
     }
     setDragOverColId(null);
+    setIsDragging(false);
   };
 
   return (
-    <div className="flex gap-3.5 pb-6 overflow-x-auto min-h-[calc(100vh-13rem)] w-full items-start">
+    <div
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={() => {
+        setIsDragging(false);
+        setDragOverColId(null);
+      }}
+      className="flex gap-3.5 pt-1.5 px-1.5 pb-6 overflow-x-auto min-h-[calc(100vh-13rem)] w-full items-start"
+    >
       {COLUMNS.map((col) => {
         const columnJobs = getJobsByStatus(col.id);
         const isTarget = dragOverColId === col.id;
@@ -78,13 +99,19 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             onDragOver={(e) => handleDragOver(e, col.id)}
             onDragLeave={(e) => handleDragLeave(e, col.id)}
             onDrop={(e) => handleDrop(e, col.id)}
-            className={`flex flex-col bg-[#12171F] border rounded-xs w-72 min-w-67.5 max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs transition-colors ${
+            className={`flex flex-col bg-[#12171F] border rounded-xs w-72 min-w-67.5 max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs overflow-hidden transition-colors ${
               isTarget
                 ? "border-[#3178C6] ring-1 ring-[#3178C6]"
-                : "border-[#202937]"
+                : isDragging
+                  ? "border-[#3178C6]/50"
+                  : "border-[#202937]"
             }`}
           >
-            <div className="flex items-center justify-between p-3 border-b border-[#202937] bg-[#12171F]">
+            <div
+              className={`flex items-center justify-between p-3 border-b transition-colors bg-[#12171F] ${
+                isTarget ? "border-[#3178C6]/40" : "border-[#202937]"
+              }`}
+            >
               <div className="flex items-center gap-2 min-w-0">
                 <Badge status={col.id} size="sm" />
                 <span className="text-xs font-semibold text-[#F1F5F9] truncate tracking-tight">
@@ -106,11 +133,15 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                   className={`h-32 flex flex-col items-center justify-center border border-dashed rounded-xs text-xs font-medium select-none transition-colors ${
                     isTarget
                       ? "border-[#3178C6] bg-[#3178C6]/15 text-[#5499EB]"
-                      : "border-[#3178C6]/25 bg-[#3178C6]/5 text-[#3178C6]"
+                      : isDragging
+                        ? "border-[#3178C6]/40 bg-[#3178C6]/8 text-[#5499EB]"
+                        : "border-[#3178C6]/25 bg-[#3178C6]/5 text-[#3178C6]"
                   }`}
                 >
                   <span>
-                    {isTarget ? "Drop to move here" : "No applications"}
+                    {isTarget || isDragging
+                      ? "Drop to move here"
+                      : "No applications"}
                   </span>
                 </div>
               ) : (

@@ -80,7 +80,7 @@ sequenceDiagram
     participant AI as LLM Provider (User Configured)
     participant DB as Neon PostgreSQL
 
-    User->>API: Send Job Posting URL
+    User->>API: Send Posting URL
     API->>DB: Retrieve User Provider & Decrypted Key
     API->>Scraper: Fetch Webpage Content & Metadata
     alt User Has Active LLM Provider

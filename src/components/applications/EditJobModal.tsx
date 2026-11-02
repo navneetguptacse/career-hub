@@ -49,7 +49,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.companyName.trim() || !formData.jobTitle.trim()) {
-      setError("Company Name and Job Title are required");
+      setError("Company and Role are required");
       return;
     }
 
@@ -99,7 +99,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
-          label="Company Name"
+          label="Company"
           placeholder="Microsoft, Google, Stripe..."
           value={formData.companyName}
           onChange={(e) =>
@@ -109,7 +109,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
         />
 
         <Input
-          label="Job Title"
+          label="Role"
           placeholder="Senior Software Engineer..."
           value={formData.jobTitle}
           onChange={(e) =>

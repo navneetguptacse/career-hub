@@ -183,7 +183,7 @@ export const TelegramGuideCard: React.FC = () => {
               </p>
               <p>
                 If they send{" "}
-                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
+                <code className="text-[#0F172A] text-xs dark:text-[#5499EB] font-mono font-semibold">
                   /start
                 </code>{" "}
                 without linking, the bot welcomes them and instructs them to get
@@ -192,7 +192,7 @@ export const TelegramGuideCard: React.FC = () => {
               <div className="p-2.5 bg-[#12171F] border-l-2 border-[#3178C6] border-y border-r rounded-xs text-xs text-[#334155] dark:text-[#CBD5E1]">
                 Welcome to CareerHub Bot! To connect this chat with your
                 account, please send:{" "}
-                <span className="font-mono text-[10px] text-[#1D4ED8] dark:text-[#5499EB] not-italic font-semibold">
+                <span className="font-mono text-xs text-[#0F172A] dark:text-[#5499EB] not-italic font-semibold">
                   /link PAIR-XXXXXX
                 </span>
               </div>
@@ -203,7 +203,7 @@ export const TelegramGuideCard: React.FC = () => {
                   /settings
                 </span>
                 , and send{" "}
-                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
+                <code className="text-[#0F172A] text-xs dark:text-[#5499EB] font-mono font-semibold">
                   /link PAIR-XXXXXX
                 </code>
                 , the bot links specifically to them.
@@ -229,7 +229,7 @@ export const TelegramGuideCard: React.FC = () => {
               </p>
               <p>
                 Sending{" "}
-                <code className="text-[#1D4ED8] text-[10px] dark:text-[#5499EB] font-mono font-semibold">
+                <code className="text-[#0F172A] text-xs dark:text-[#5499EB] font-mono font-semibold">
                   /link PAIR-XXXXXX
                 </code>{" "}
                 in that group connects the group chat to their CareerHub

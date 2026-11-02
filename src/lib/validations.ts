@@ -67,3 +67,64 @@ export const jobApplicationSchema = z.object({
 export const scrapeUrlSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 });
+
+export function isValidJobUrl(input: string): boolean {
+  const trimmed = input.trim();
+  if (!trimmed) return false;
+  try {
+    const parsed = new URL(
+      /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+    );
+    return Boolean(
+      parsed.hostname &&
+      parsed.hostname.includes(".") &&
+      parsed.hostname.length > 3
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function normalizeJobUrl(input?: string | null): string {
+  if (!input) return "";
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+
+  let candidate = trimmed;
+  if (!/^https?:\/\//i.test(candidate)) {
+    candidate = `https://${candidate}`;
+  }
+
+  try {
+    const url = new URL(candidate);
+    let host = url.hostname.toLowerCase();
+    if (host.startsWith("www.")) {
+      host = host.slice(4);
+    }
+
+    let pathname = url.pathname;
+    if (pathname.length > 1 && pathname.endsWith("/")) {
+      pathname = pathname.replace(/\/+$/, "");
+    }
+
+    const cleanParams = new URLSearchParams();
+    url.searchParams.forEach((value, key) => {
+      const lowerKey = key.toLowerCase();
+      if (
+        !lowerKey.startsWith("utm_") &&
+        lowerKey !== "ref" &&
+        lowerKey !== "source" &&
+        lowerKey !== "fbclid" &&
+        lowerKey !== "gclid" &&
+        lowerKey !== "trk"
+      ) {
+        cleanParams.append(key, value);
+      }
+    });
+
+    const queryString = cleanParams.toString();
+    return `https://${host}${pathname}${queryString ? `?${queryString}` : ""}`;
+  } catch {
+    return trimmed;
+  }
+}

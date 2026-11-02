@@ -313,10 +313,16 @@ export const LlmConfigCard: React.FC = () => {
             size="sm"
             onClick={handleTestConnection}
             disabled={isTesting || isSaving}
+            isLoading={isTesting}
           >
             {isTesting ? "Testing Connection..." : "Test Connection"}
           </Button>
-          <Button type="submit" size="sm" disabled={isSaving || isTesting}>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isSaving || isTesting}
+            isLoading={isSaving}
+          >
             {isSaving ? "Saving..." : "Save Provider"}
           </Button>
         </div>

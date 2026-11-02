@@ -10,6 +10,10 @@ if (!fs.existsSync(tsconfigPath)) {
   } catch {}
 }
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  experimental: {
+    turbopackPluginRuntimeStrategy: "forceWorkerThreads",
+  },
+};
 
 export default nextConfig;

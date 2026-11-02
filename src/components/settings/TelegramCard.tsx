@@ -113,9 +113,9 @@ export const TelegramCard: React.FC = () => {
             size="md"
             onClick={() => setShowDisconnectModal(true)}
             isLoading={isDisconnecting}
+            icon={<Unlink className="w-3.5 h-3.5" />}
             className="text-[#EF4444] hover:border-[#EF4444] gap-1.5"
           >
-            <Unlink className="w-3.5 h-3.5" />
             <span>Unlink</span>
           </Button>
         </div>
@@ -158,10 +158,10 @@ export const TelegramCard: React.FC = () => {
                 size="md"
                 onClick={handleManualVerify}
                 isLoading={isVerifying}
+                icon={<RefreshCw className="w-3.5 h-3.5 text-[#5499EB]" />}
                 title="Verify connection immediately"
                 className="gap-1.5 shrink-0 border-[#202937] hover:border-[#3178C6]"
               >
-                <RefreshCw className="w-3.5 h-3.5 text-[#5499EB]" />
                 <span className="hidden sm:inline">Verify</span>
               </Button>
             </div>

@@ -166,9 +166,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="danger"
               size="sm"
               isLoading={isLoggingOut}
+              icon={<LogOut className="w-3.5 h-3.5" />}
               onClick={handleLogout}
             >
-              <LogOut className="w-3.5 h-3.5" />
               <span>Sign Out</span>
             </Button>
           </div>

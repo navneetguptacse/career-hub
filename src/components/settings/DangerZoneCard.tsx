@@ -149,10 +149,10 @@ export const DangerZoneCard: React.FC = () => {
               variant="danger"
               size="sm"
               isLoading={isDeleting}
+              icon={<Trash2 className="w-3.5 h-3.5" />}
               disabled={confirmInput.trim() !== "Delete" || isDeleting}
               onClick={handleDeleteAccount}
             >
-              <Trash2 className="w-3.5 h-3.5" />
               <span>Permanently Delete</span>
             </Button>
           </div>

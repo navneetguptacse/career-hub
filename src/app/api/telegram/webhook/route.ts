@@ -10,6 +10,7 @@ import {
   sendTelegramMessage,
   extractUrlFromTelegramMessage,
 } from "@/lib/telegram";
+import { normalizeJobUrl } from "@/lib/validations";
 
 export async function POST(req: Request) {
   try {
@@ -80,6 +81,34 @@ export async function POST(req: Request) {
         "Job link detected, but this chat is not linked to any CareerHub account.\n\nLink your account with:\n`/link <PAIRING_TOKEN>`"
       );
       return NextResponse.json({ ok: true });
+    }
+
+    const normalizedIncoming = normalizeJobUrl(jobUrl);
+    if (normalizedIncoming) {
+      const existingApps = await prisma.jobApplication.findMany({
+        where: {
+          userId: user.id,
+          jobUrl: { not: null },
+        },
+        select: {
+          id: true,
+          jobUrl: true,
+          companyName: true,
+          jobTitle: true,
+        },
+      });
+
+      const duplicate = existingApps.find(
+        (app) => normalizeJobUrl(app.jobUrl) === normalizedIncoming
+      );
+
+      if (duplicate) {
+        await sendTelegramMessage(
+          chatId,
+          `*Already Tracked!*\n\nAn application for *${duplicate.companyName} — ${duplicate.jobTitle}* with this link is already in your CareerHub pipeline.`
+        );
+        return NextResponse.json({ ok: true, duplicateId: duplicate.id });
+      }
     }
 
     let jobTitle = "Job Position";
