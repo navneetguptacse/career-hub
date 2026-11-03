@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Download, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
@@ -41,9 +42,13 @@ export const PwaInstallPrompt: React.FC = () => {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-sm shadow-xs shrink-0">
-                CH
-              </div>
+              <Image
+                src="/icons/icon.svg"
+                alt="CareerHub"
+                width={36}
+                height={36}
+                className="w-9 h-9 rounded-xs shadow-xs shrink-0"
+              />
               <div>
                 <h3 className="text-xs font-semibold text-[#F1F5F9] leading-tight">
                   Install CareerHub

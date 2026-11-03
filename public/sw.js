@@ -1,12 +1,15 @@
 // CareerHub PWA Service Worker
-const CACHE_NAME = "careerhub-pwa-v2";
+const CACHE_NAME = "careerhub-pwa-v3";
 const STATIC_ASSETS = [
   "/",
-  "/favicon.ico",
   "/icons/icon.svg",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png",
-  "/icons/apple-touch-icon.png",
+  "/icons/icon_x64.png",
+  "/icons/icon_x128.png",
+  "/icons/icon_x192.png",
+  "/icons/icon_x256.png",
+  "/icons/icon_x320.png",
+  "/icons/icon_x512.png",
+  "/icons/icon_x1024.png",
 ];
 
 self.addEventListener("install", (event) => {

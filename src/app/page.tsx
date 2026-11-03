@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Bot,
@@ -21,9 +22,14 @@ export default async function HomePage() {
     <div className="min-h-screen bg-[#0A0D12] text-[#F1F5F9] flex flex-col selection:bg-[#3178C6] selection:text-white">
       <header className="h-14 border-b border-[#202937] bg-[#12171F]/90 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between sticky top-0 z-40 select-none">
         <Link href="/" className="flex items-center gap-2 group shrink-0 h-8">
-          <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs transition-colors group-hover:bg-[#235A97] shrink-0 border border-transparent">
-            CH
-          </div>
+          <Image
+            src="/icons/icon.svg"
+            alt="CareerHub"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-xs shadow-xs shrink-0 transition-opacity group-hover:opacity-90"
+            priority
+          />
           <span className="font-bold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
             CareerHub
           </span>
@@ -269,9 +275,13 @@ export default async function HomePage() {
 
       <footer className="border-t border-[#202937] py-6 px-4 sm:px-6 bg-[#0A0D12] text-xs text-[#64748B] flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-[10px]">
-            CH
-          </div>
+          <Image
+            src="/icons/icon.svg"
+            alt="CareerHub"
+            width={20}
+            height={20}
+            className="w-5 h-5 rounded-xs shrink-0"
+          />
           <p>&copy; 2026 CareerHub. All rights reserved.</p>
         </div>
 

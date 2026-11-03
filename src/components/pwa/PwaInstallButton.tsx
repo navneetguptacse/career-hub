@@ -58,7 +58,7 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({
       {compact ? (
         <span className="hidden sm:inline">Install</span>
       ) : (
-        <span>Install App</span>
+        <span>Install</span>
       )}
     </Button>
   );
