@@ -57,7 +57,7 @@ export const PwaSettingsCard: React.FC = () => {
             onClick={handleInstall}
             className="shrink-0 cursor-pointer"
           >
-            <span>{platform.isIos ? "Add to Home Screen" : "Install App"}</span>
+            <span>{platform.isIos ? "Add to Home Screen" : "Install"}</span>
           </Button>
         ) : null}
       </div>

@@ -186,7 +186,7 @@ export const PwaGuideModal: React.FC<PwaGuideModalProps> = ({
               <div className="space-y-1">
                 <p className="text-xs font-medium text-[#F1F5F9] flex items-center gap-1.5 flex-wrap">
                   <span>
-                    Select <strong>Install app</strong> /{" "}
+                    Select <strong>Install</strong> /{" "}
                     <strong>Add to Home</strong>
                   </span>
                 </p>

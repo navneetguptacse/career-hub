@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import {
   Keyboard,
@@ -59,9 +60,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           href="/dashboard"
           className="flex items-center gap-2 group shrink-0 h-8"
         >
-          <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shadow-xs transition-colors group-hover:bg-[#235A97] shrink-0 border border-transparent">
-            CH
-          </div>
+          <Image
+            src="/icons/icon.svg"
+            alt="CareerHub"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-xs shadow-xs shrink-0 transition-opacity group-hover:opacity-90"
+            priority
+          />
           <span className="font-semibold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
             CareerHub
           </span>

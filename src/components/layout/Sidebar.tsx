@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -190,9 +191,13 @@ export const Sidebar: React.FC = () => {
       >
         <div className="h-14 border-b border-[#202937] px-4 flex items-center justify-between">
           <div className="flex items-center gap-2 h-8">
-            <div className="w-8 h-8 bg-[#3178C6] flex items-center justify-center rounded-xs text-white font-mono font-bold text-xs shrink-0 border border-transparent">
-              CH
-            </div>
+            <Image
+              src="/icons/icon.svg"
+              alt="CareerHub"
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-xs shadow-xs shrink-0"
+            />
             <span className="font-semibold text-sm text-[#F1F5F9]">
               CareerHub
             </span>

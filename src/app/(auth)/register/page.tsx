@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
@@ -58,8 +59,15 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#0A0D12] flex items-center justify-center p-4">
       <div className="w-full max-w-sm p-6 bg-[#12171F] border border-[#202937] rounded-xs shadow-2xl space-y-5">
         <div className="text-center space-y-1.5">
-          <div className="inline-flex items-center justify-center w-9 h-9 bg-[#3178C6] text-white font-mono font-bold text-sm rounded-xs mb-1">
-            CH
+          <div className="inline-flex items-center justify-center mb-1">
+            <Image
+              src="/icons/icon.svg"
+              alt="CareerHub"
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-xs shadow-xs"
+              priority
+            />
           </div>
           <h1 className="text-lg font-semibold tracking-tight text-[#F1F5F9]">
             Create CareerHub Account
