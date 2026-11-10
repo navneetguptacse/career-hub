@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import {
-  Keyboard,
   PanelLeft,
   Plus,
   Send,
@@ -20,13 +19,9 @@ import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 interface NavbarProps {
   onOpenAddModal: () => void;
-  onOpenShortcuts?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onOpenAddModal,
-  onOpenShortcuts,
-}) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
   const { data: session } = useSession();
   const { toggleMobileSidebar } = useSidebar();
   const { isPaired } = useTelegramStatus();
@@ -86,19 +81,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         <ThemeToggle size="sm" />
 
         <PwaInstallButton size="sm" compact />
-
-        <button
-          type="button"
-          onClick={
-            onOpenShortcuts ||
-            (() => window.dispatchEvent(new Event("careerhub:open-shortcuts")))
-          }
-          title="Keyboard Shortcuts (?)"
-          aria-label="Keyboard shortcuts"
-          className="hidden lg:inline-flex h-8 w-8 items-center justify-center text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] border border-[#202937] hover:border-[#3178C6] rounded-xs transition-colors shadow-xs"
-        >
-          <Keyboard className="w-3.5 h-3.5" />
-        </button>
 
         <Button
           onClick={onOpenAddModal}
