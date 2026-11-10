@@ -91,7 +91,7 @@ export const TelegramGuideCard: React.FC = () => {
             </h3>
             <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
               Anyone in the world can search for{" "}
-              <code className="text-[#5499EB] font-mono font-semibold bg-[#12171F] px-1.5 py-0.5 border border-[#202937] rounded-xs">
+              <code className="text-[#5499EB] font-mono font-semibold">
                 {botHandle}
               </code>{" "}
               or open{" "}
@@ -135,7 +135,7 @@ export const TelegramGuideCard: React.FC = () => {
             <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
               Send this exact command to the bot in a direct message or group to
               link your account:{" "}
-              <span className="font-mono text-[10px] font-semibold text-[#5499EB]">
+              <span className="font-mono text-xs font-semibold text-[#5499EB]">
                 {isLoadingToken ? (
                   <Skeleton className="h-3 w-28 inline-block align-middle" />
                 ) : (
@@ -195,7 +195,7 @@ export const TelegramGuideCard: React.FC = () => {
                 without linking, the bot welcomes them and instructs them to get
                 a code from Career Hub:
               </p>
-              <div className="p-2.5 bg-[#12171F] border-l-2 border-[#3178C6] border-y border-r rounded-xs text-xs text-[#334155] dark:text-[#CBD5E1]">
+              <div className="p-2.5 bg-[#18202C] border border-[#3178C6]/40 rounded-xs text-xs text-[#334155] dark:text-[#CBD5E1]">
                 Welcome to Career Hub Bot! To connect this chat with your
                 account, please send:{" "}
                 <span className="font-mono text-xs text-[#0F172A] dark:text-[#5499EB] not-italic font-semibold">
