@@ -8,13 +8,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# CareerHub — System Architecture & Engineering Reference (AGENTS.md)
+# Career Hub — System Architecture & Engineering Reference (AGENTS.md)
 
 [![Architecture: Next.js 16 Proxy](https://img.shields.io/badge/Architecture-Next.js_16_Proxy-3178C6?style=flat-square)](src/proxy.ts)
 [![Database: Prisma 7](https://img.shields.io/badge/Database-Prisma_7_|_Neon-2D3748?style=flat-square)](prisma/schema.prisma)
 [![Security: AES--256--GCM](https://img.shields.io/badge/Security-AES--256--GCM-10B981?style=flat-square)](src/lib/encryption.ts)
 
-This document is the permanent architectural reference, design specification, and engineering standard for CareerHub. All code modifications, API additions, and UI updates must adhere to the rules outlined here.
+This document is the permanent architectural reference, design specification, and engineering standard for Career Hub. All code modifications, API additions, and UI updates must adhere to the rules outlined here.
 
 ---
 
@@ -39,7 +39,7 @@ This document is the permanent architectural reference, design specification, an
 
 ## 2. High-Level Architecture Overview
 
-CareerHub is a full-stack Next.js application that centralizes, parses, and manages career opportunities through web interactions, direct URL scraping, and Telegram bot webhooks.
+Career Hub is a full-stack Next.js application that centralizes, parses, and manages career opportunities through web interactions, direct URL scraping, and Telegram bot webhooks.
 
 ```mermaid
 graph TD

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * CareerHub Telegram Webhook Diagnostic & Sync Utility
+ * Career Hub Telegram Webhook Diagnostic & Sync Utility
  * Usage:
  *   npm run telegram:sync
  *   npm run telegram:sync https://career-hub-bot.vercel.app

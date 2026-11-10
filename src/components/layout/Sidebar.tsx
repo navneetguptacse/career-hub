@@ -8,13 +8,13 @@ import { signOut, useSession } from "next-auth/react";
 import {
   BarChart3,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
   Download,
+  HelpCircle,
   Layers2,
   LayoutPanelLeft,
   LogOut,
-  Send,
+  PanelLeftClose,
+  PanelRightClose,
   Settings,
   ShieldAlert,
   X,
@@ -24,6 +24,7 @@ import { Modal } from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -31,10 +32,14 @@ export const Sidebar: React.FC = () => {
   const { isCollapsed, isMobileOpen, closeMobileSidebar, toggleSidebar } =
     useSidebar();
   const { isInstalled, install } = usePwaInstall();
+  const { isPaired } = useTelegramStatus();
+  const isTelegramPaired =
+    isPaired || Boolean(session?.user?.telegramConnected);
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showWebhookInfo, setShowWebhookInfo] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -87,21 +92,19 @@ export const Sidebar: React.FC = () => {
   const content = (
     <div className="flex flex-col justify-between h-full p-3 md:pt-6 md:px-5 md:pb-4 overflow-hidden select-none">
       <div className="space-y-1">
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              title="Collapse Sidebar"
-              aria-label="Collapse sidebar"
-              className="hidden md:flex items-center justify-center h-8 w-8 text-[#94A3B8] hover:text-[#5499EB] bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs cursor-pointer shrink-0"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
-              Pipeline
-            </span>
-          </div>
+        <div className="flex items-center gap-2.5 px-3 py-2">
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            title="Collapse Sidebar"
+            aria-label="Collapse sidebar"
+            className="hidden md:inline-flex items-center justify-center -m-1.5 p-1.5 text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] rounded-xs transition-colors cursor-pointer shrink-0"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] leading-4">
+            Pipeline
+          </span>
         </div>
 
         {navigation.map((item) => {
@@ -126,14 +129,40 @@ export const Sidebar: React.FC = () => {
       </div>
 
       <div className="space-y-2">
-        <div className="p-3 border border-[#202937] bg-[#12171F] rounded-xs space-y-1.5">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-[#F1F5F9]">
-            <Send className="w-3.5 h-3.5 text-[#3178C6]" />
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowWebhookInfo((prev) => !prev)}
+            onMouseEnter={() => setShowWebhookInfo(true)}
+            onMouseLeave={() => setShowWebhookInfo(false)}
+            onBlur={() => setShowWebhookInfo(false)}
+            aria-expanded={showWebhookInfo}
+            className="flex items-center gap-2.5 px-3 py-2 w-full text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#12171F] rounded-xs transition-colors cursor-pointer text-left"
+          >
+            <HelpCircle className="w-4 h-4 shrink-0" />
             <span>Telegram Webhook</span>
-          </div>
-          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-            Drop job links into your paired chat to auto-add cards.
-          </p>
+          </button>
+
+          {showWebhookInfo && (
+            <div
+              role="tooltip"
+              className="absolute left-0 right-0 bottom-full mb-1.5 p-2.5 bg-[#12171F] border border-[#202937] rounded-xs shadow-lg text-[11px] leading-relaxed z-20 space-y-1"
+            >
+              <div
+                className={cn(
+                  "font-medium",
+                  isTelegramPaired ? "text-[#34D399]" : "text-[#F1F5F9]"
+                )}
+              >
+                {isTelegramPaired ? "Webhook attached" : "Webhook not attached"}
+              </div>
+              <p className="text-[#94A3B8]">
+                {isTelegramPaired
+                  ? "Drop job links in your paired chat to auto-add cards."
+                  : "Pair your Telegram chat in Settings to auto-ingest links."}
+              </p>
+            </div>
+          )}
         </div>
 
         {!isInstalled && (
@@ -146,7 +175,7 @@ export const Sidebar: React.FC = () => {
             className="md:hidden w-full flex items-center justify-center gap-2 h-8 px-3 text-xs font-medium text-[#5499EB] bg-[#3178C6]/15 hover:bg-[#3178C6]/25 border border-[#3178C6]/40 rounded-xs transition-colors shadow-xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-[#3178C6]" />
-            <span>Install CareerHub App</span>
+            <span>Install Application</span>
           </button>
         )}
 
@@ -175,9 +204,9 @@ export const Sidebar: React.FC = () => {
           onClick={toggleSidebar}
           title="Expand Sidebar"
           aria-label="Expand sidebar"
-          className="hidden md:flex absolute top-6 left-5 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+          className="hidden md:flex absolute top-6 left-5 z-20 h-8 w-8 hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors cursor-pointer"
         >
-          <ChevronRight className="w-4 h-4" />
+          <PanelRightClose className="w-4 h-4" />
         </button>
       )}
 
@@ -207,13 +236,13 @@ export const Sidebar: React.FC = () => {
           <div className="flex items-center gap-2 h-8">
             <Image
               src="/icons/icon.svg"
-              alt="CareerHub"
+              alt="Career Hub"
               width={32}
               height={32}
               className="w-8 h-8 rounded-xs shadow-xs shrink-0"
             />
             <span className="font-semibold text-sm text-[#F1F5F9]">
-              CareerHub
+              Career Hub
             </span>
           </div>
           <button
@@ -235,7 +264,7 @@ export const Sidebar: React.FC = () => {
       >
         <div className="space-y-4">
           <p className="text-xs text-[#94A3B8] leading-relaxed">
-            You will be signed out of CareerHub on this browser. You can log
+            You will be signed out of Career Hub on this browser. You can log
             back in at any time with your credentials.
           </p>
 

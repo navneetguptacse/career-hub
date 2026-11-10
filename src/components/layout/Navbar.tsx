@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import {
   Keyboard,
   PanelLeft,
@@ -52,14 +52,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Image
             src="/icons/icon.svg"
-            alt="CareerHub"
+            alt="Career Hub"
             width={32}
             height={32}
             className="w-8 h-8 rounded-xs shadow-xs shrink-0 transition-opacity group-hover:opacity-90"
             priority
           />
           <span className="font-semibold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
-            CareerHub
+            Career Hub
           </span>
         </Link>
       </div>

@@ -89,7 +89,7 @@ function ResetPasswordForm() {
           Set new password
         </h1>
         <p className="text-xs text-[#94A3B8]">
-          Choose a strong password to protect your CareerHub account.
+          Choose a strong password to protect your Career Hub account.
         </p>
       </div>
 
