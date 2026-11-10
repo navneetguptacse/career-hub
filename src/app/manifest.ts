@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CareerHub — Job Application Tracker",
-    short_name: "CareerHub",
+    name: "Career Hub — Job Application Tracker",
+    short_name: "Career Hub",
     description:
       "Track, organize, and automate job applications with Kanban boards, Telegram ingestion, and career analytics.",
     id: "/",

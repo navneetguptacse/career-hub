@@ -29,14 +29,14 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "CareerHub — Job Application Tracker",
+  title: "Career Hub — Job Application Tracker",
   description:
     "Track, organize, and automate job applications with Kanban boards, Telegram bot ingestion, and real-time career analytics.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "CareerHub",
+    title: "Career Hub",
   },
   icons: {
     icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],

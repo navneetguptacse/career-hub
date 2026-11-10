@@ -62,7 +62,7 @@ export default function RegisterPage() {
           <div className="inline-flex items-center justify-center mb-1">
             <Image
               src="/icons/icon.svg"
-              alt="CareerHub"
+              alt="Career Hub"
               width={36}
               height={36}
               className="w-9 h-9 rounded-xs shadow-xs"
@@ -70,7 +70,7 @@ export default function RegisterPage() {
             />
           </div>
           <h1 className="text-lg font-semibold tracking-tight text-[#F1F5F9]">
-            Create CareerHub Account
+            Create Career Hub Account
           </h1>
           <p className="text-xs text-[#94A3B8]">
             Automate job tracking and ingest opportunities straight from

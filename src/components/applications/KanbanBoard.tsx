@@ -87,7 +87,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
         setIsDragging(false);
         setDragOverColId(null);
       }}
-      className="flex gap-3.5 pt-1.5 px-1.5 pb-6 overflow-x-auto min-h-[calc(100vh-13rem)] w-full items-start"
+      className="flex gap-3.5 pt-1.5 pb-6 overflow-x-auto min-h-[calc(100vh-13rem)] w-full items-start"
     >
       {COLUMNS.map((col) => {
         const columnJobs = getJobsByStatus(col.id);
@@ -101,7 +101,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             onDrop={(e) => handleDrop(e, col.id)}
             className={`flex flex-col bg-[#12171F] border rounded-xs w-72 min-w-67.5 max-w-[320px] flex-1 shrink-0 self-stretch shadow-xs overflow-hidden transition-colors ${
               isTarget
-                ? "border-[#3178C6] ring-1 ring-[#3178C6]"
+                ? "border-[#3178C6] ring-1 ring-inset ring-[#3178C6]"
                 : isDragging
                   ? "border-[#3178C6]/50"
                   : "border-[#202937]"

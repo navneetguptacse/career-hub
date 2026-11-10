@@ -54,8 +54,8 @@ export const PwaGuideModal: React.FC<PwaGuideModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Install CareerHub App"
-      description="Add CareerHub to your device for instant dock launch, offline support, and fullscreen workflow."
+      title="Install Application"
+      description="Add Career Hub to your device for instant dock launch, offline support, and fullscreen workflow."
       className="max-w-md"
     >
       <div className="space-y-4">
@@ -228,7 +228,7 @@ export const PwaGuideModal: React.FC<PwaGuideModalProps> = ({
                 </p>
                 <p className="text-[11px] text-[#94A3B8] leading-relaxed">
                   In Safari on macOS (Sonoma+), choose File &gt; Add to Dock. In
-                  other browsers, click Menu &gt; Install CareerHub.
+                  other browsers, click Menu &gt; Install Career Hub.
                 </p>
               </div>
             </div>

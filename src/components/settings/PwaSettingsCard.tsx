@@ -31,7 +31,7 @@ export const PwaSettingsCard: React.FC = () => {
               <span>Progressive Web App</span>
             </h2>
             <p className="text-xs text-[#94A3B8] mt-0.5">
-              Install CareerHub as a native desktop or mobile application.
+              Install Career Hub as a native desktop or mobile application.
             </p>
           </div>
         </div>

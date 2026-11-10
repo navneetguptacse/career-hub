@@ -8,12 +8,12 @@ import { signOut, useSession } from "next-auth/react";
 import {
   BarChart3,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
   Download,
   Layers2,
   LayoutPanelLeft,
   LogOut,
+  PanelLeftClose,
+  PanelRightClose,
   Send,
   Settings,
   ShieldAlert,
@@ -87,21 +87,19 @@ export const Sidebar: React.FC = () => {
   const content = (
     <div className="flex flex-col justify-between h-full p-3 md:pt-6 md:px-5 md:pb-4 overflow-hidden select-none">
       <div className="space-y-1">
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              title="Collapse Sidebar"
-              aria-label="Collapse sidebar"
-              className="hidden md:flex items-center justify-center h-8 w-8 text-[#94A3B8] hover:text-[#5499EB] bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs transition-colors shadow-xs cursor-pointer shrink-0"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
-              Pipeline
-            </span>
-          </div>
+        <div className="flex items-center gap-2.5 px-3 py-2">
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            title="Collapse Sidebar"
+            aria-label="Collapse sidebar"
+            className="hidden md:inline-flex items-center justify-center -m-1.5 p-1.5 text-[#94A3B8] hover:text-[#5499EB] hover:bg-[#18202C] rounded-xs transition-colors cursor-pointer shrink-0"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] leading-4">
+            Pipeline
+          </span>
         </div>
 
         {navigation.map((item) => {
@@ -146,7 +144,7 @@ export const Sidebar: React.FC = () => {
             className="md:hidden w-full flex items-center justify-center gap-2 h-8 px-3 text-xs font-medium text-[#5499EB] bg-[#3178C6]/15 hover:bg-[#3178C6]/25 border border-[#3178C6]/40 rounded-xs transition-colors shadow-xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-[#3178C6]" />
-            <span>Install CareerHub App</span>
+            <span>Install Application</span>
           </button>
         )}
 
@@ -175,9 +173,9 @@ export const Sidebar: React.FC = () => {
           onClick={toggleSidebar}
           title="Expand Sidebar"
           aria-label="Expand sidebar"
-          className="hidden md:flex absolute top-6 left-5 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+          className="hidden md:flex absolute top-6 left-5 z-20 h-8 w-8 hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors cursor-pointer"
         >
-          <ChevronRight className="w-4 h-4" />
+          <PanelRightClose className="w-4 h-4" />
         </button>
       )}
 
@@ -207,13 +205,13 @@ export const Sidebar: React.FC = () => {
           <div className="flex items-center gap-2 h-8">
             <Image
               src="/icons/icon.svg"
-              alt="CareerHub"
+              alt="Career Hub"
               width={32}
               height={32}
               className="w-8 h-8 rounded-xs shadow-xs shrink-0"
             />
             <span className="font-semibold text-sm text-[#F1F5F9]">
-              CareerHub
+              Career Hub
             </span>
           </div>
           <button
@@ -235,7 +233,7 @@ export const Sidebar: React.FC = () => {
       >
         <div className="space-y-4">
           <p className="text-xs text-[#94A3B8] leading-relaxed">
-            You will be signed out of CareerHub on this browser. You can log
+            You will be signed out of Career Hub on this browser. You can log
             back in at any time with your credentials.
           </p>
 

@@ -1,4 +1,4 @@
-// CareerHub PWA Service Worker
+// Career Hub PWA Service Worker
 const CACHE_NAME = "careerhub-pwa-v3";
 const STATIC_ASSETS = [
   "/",

@@ -67,7 +67,7 @@ function LoginForm() {
         <div className="inline-flex items-center justify-center mb-1">
           <Image
             src="/icons/icon.svg"
-            alt="CareerHub"
+            alt="Career Hub"
             width={36}
             height={36}
             className="w-9 h-9 rounded-xs shadow-xs"
@@ -75,7 +75,7 @@ function LoginForm() {
           />
         </div>
         <h1 className="text-lg font-semibold tracking-tight text-[#F1F5F9]">
-          Sign in to CareerHub
+          Sign in to Career Hub
         </h1>
         <p className="text-xs text-[#94A3B8]">
           Track applications, sync Telegram links, and accelerate your career.

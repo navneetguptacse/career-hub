@@ -187,10 +187,10 @@ export const TelegramGuideCard: React.FC = () => {
                   /start
                 </code>{" "}
                 without linking, the bot welcomes them and instructs them to get
-                a code from CareerHub:
+                a code from Career Hub:
               </p>
               <div className="p-2.5 bg-[#12171F] border-l-2 border-[#3178C6] border-y border-r rounded-xs text-xs text-[#334155] dark:text-[#CBD5E1]">
-                Welcome to CareerHub Bot! To connect this chat with your
+                Welcome to Career Hub Bot! To connect this chat with your
                 account, please send:{" "}
                 <span className="font-mono text-xs text-[#0F172A] dark:text-[#5499EB] not-italic font-semibold">
                   /link PAIR-XXXXXX
@@ -232,7 +232,7 @@ export const TelegramGuideCard: React.FC = () => {
                 <code className="text-[#0F172A] text-xs dark:text-[#5499EB] font-mono font-semibold">
                   /link PAIR-XXXXXX
                 </code>{" "}
-                in that group connects the group chat to their CareerHub
+                in that group connects the group chat to their Career Hub
                 pipeline.
               </p>
               <p>
@@ -260,7 +260,7 @@ export const TelegramGuideCard: React.FC = () => {
               <p className="text-[#94A3B8]">
                 An unlinked stranger cannot pollute your database: if someone
                 who hasn&apos;t paired sends a link, the bot ignores it and
-                prompts them to link their CareerHub account first.
+                prompts them to link their Career Hub account first.
               </p>
             </div>
 

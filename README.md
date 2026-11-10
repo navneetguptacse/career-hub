@@ -1,4 +1,4 @@
-# CareerHub
+# Career Hub
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.4.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -8,7 +8,7 @@
 [![Auth.js](https://img.shields.io/badge/Auth.js-v5_Beta-black?style=flat-square&logo=auth0&logoColor=white)](https://authjs.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3178C6?style=flat-square)](LICENSE)
 
-CareerHub is a full-stack career pipeline and job application tracker designed with a dark slate, precision engineering aesthetic. It automates job tracking through interactive web boards, direct link scraping, and Telegram chat bot webhooks powered by configurable LLM extraction.
+Career Hub is a full-stack career pipeline and job application tracker designed with a dark slate, precision engineering aesthetic. It automates job tracking through interactive web boards, direct link scraping, and Telegram chat bot webhooks powered by configurable LLM extraction.
 
 ---
 
@@ -160,7 +160,7 @@ TELEGRAM_WEBHOOK_SECRET=""
 
 # Resend
 RESEND_API_KEY=""
-RESEND_FROM_EMAIL="CareerHub <auth@yourdomain.com>"
+RESEND_FROM_EMAIL="Career Hub <auth@yourdomain.com>"
 ```
 
 ### Installation

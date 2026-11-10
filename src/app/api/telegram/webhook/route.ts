@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       if (!pairToken) {
         await sendTelegramMessage(
           chatId,
-          "Welcome to *CareerHub Bot*!\n\nTo connect this chat with your account, please send:\n`/link PAIR-XXXXXX`\n\nYou can find your pairing code in CareerHub Settings."
+          "Welcome to *Career Hub Bot*!\n\nTo connect this chat with your account, please send:\n`/link PAIR-XXXXXX`\n\nYou can find your pairing code in Career Hub Settings."
         );
         return NextResponse.json({ ok: true });
       }
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       if (!user) {
         await sendTelegramMessage(
           chatId,
-          "Invalid or expired pairing token. Please check your token in CareerHub Settings."
+          "Invalid or expired pairing token. Please check your token in Career Hub Settings."
         );
         return NextResponse.json({ ok: true });
       }
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
       await sendTelegramMessage(
         chatId,
-        `CareerHub account connected!\n\nUser: *${user.name || user.email}*\n\nYou can now post job URLs into this chat/group, and they will automatically appear on your Kanban board.`
+        `Career Hub account connected!\n\nUser: *${user.name || user.email}*\n\nYou can now post job URLs into this chat/group, and they will automatically appear on your Kanban board.`
       );
       return NextResponse.json({ ok: true });
     }
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     if (!user) {
       await sendTelegramMessage(
         chatId,
-        "Job link detected, but this chat is not linked to any CareerHub account.\n\nLink your account with:\n`/link <PAIRING_TOKEN>`"
+        "Job link detected, but this chat is not linked to any Career Hub account.\n\nLink your account with:\n`/link <PAIRING_TOKEN>`"
       );
       return NextResponse.json({ ok: true });
     }
@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       if (duplicate) {
         await sendTelegramMessage(
           chatId,
-          `*Already Tracked!*\n\nAn application for *${duplicate.companyName} — ${duplicate.jobTitle}* with this link is already in your CareerHub pipeline.`
+          `*Already Tracked!*\n\nAn application for *${duplicate.companyName} — ${duplicate.jobTitle}* with this link is already in your Career Hub pipeline.`
         );
         return NextResponse.json({ ok: true, duplicateId: duplicate.id });
       }
@@ -181,7 +181,7 @@ export async function POST(req: Request) {
 
     await sendTelegramMessage(
       chatId,
-      `*Job Application Saved!*\n\n*Company:* ${app.companyName}\n*Role:* ${app.jobTitle}\n*Status:* Wishlist\n\nView on your dashboard: [Open CareerHub](${process.env.NEXTAUTH_URL || "http://localhost:3000"}/applications)`
+      `*Job Application Saved!*\n\n*Company:* ${app.companyName}\n*Role:* ${app.jobTitle}\n*Status:* Wishlist\n\nView on your dashboard: [Open Career Hub](${process.env.NEXTAUTH_URL || "http://localhost:3000"}/applications)`
     );
 
     return NextResponse.json({ ok: true, savedId: app.id });

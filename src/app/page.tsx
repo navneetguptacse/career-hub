@@ -24,14 +24,14 @@ export default async function HomePage() {
         <Link href="/" className="flex items-center gap-2 group shrink-0 h-8">
           <Image
             src="/icons/icon.svg"
-            alt="CareerHub"
+            alt="Career Hub"
             width={32}
             height={32}
             className="w-8 h-8 rounded-xs shadow-xs shrink-0 transition-opacity group-hover:opacity-90"
             priority
           />
           <span className="font-bold text-sm tracking-tight text-[#F1F5F9] hidden sm:inline-block">
-            CareerHub
+            Career Hub
           </span>
         </Link>
 
@@ -277,12 +277,12 @@ export default async function HomePage() {
         <div className="flex items-center gap-2.5">
           <Image
             src="/icons/icon.svg"
-            alt="CareerHub"
+            alt="Career Hub"
             width={20}
             height={20}
             className="w-5 h-5 rounded-xs shrink-0"
           />
-          <p>&copy; 2026 CareerHub. All rights reserved.</p>
+          <p>&copy; 2026 Career Hub. All rights reserved.</p>
         </div>
 
         <div className="flex items-center gap-4 text-[#94A3B8] text-xs">

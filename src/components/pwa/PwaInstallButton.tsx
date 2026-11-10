@@ -47,8 +47,8 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({
       isLoading={isInstalling}
       icon={<Download className="w-3.5 h-3.5 text-[#3178C6] shrink-0" />}
       onClick={handleInstall}
-      title="Install CareerHub Web App"
-      aria-label="Install CareerHub Web App"
+      title="Install Career Hub Web App"
+      aria-label="Install Career Hub Web App"
       className={cn(
         "gap-1.5 text-xs border-[#202937] hover:border-[#3178C6] shadow-xs cursor-pointer h-8 shrink-0",
         compact && "w-8 p-0 sm:w-auto sm:px-3",

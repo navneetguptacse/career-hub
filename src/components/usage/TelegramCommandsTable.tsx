@@ -20,7 +20,7 @@ const COMMANDS: CommandItem[] = [
     command: "/link PAIR-XXXXXX",
     context: "DM/GROUP",
     description:
-      "Connects this Telegram chat or group to your CareerHub pipeline.",
+      "Connects this Telegram chat or group to your Career Hub pipeline.",
   },
   {
     command: "/status",
@@ -32,7 +32,7 @@ const COMMANDS: CommandItem[] = [
     command: "/unlink",
     context: "DM/GROUP",
     description:
-      "Disconnects this Telegram chat or group from your CareerHub account.",
+      "Disconnects this Telegram chat or group from your Career Hub account.",
   },
   {
     command: "/help",
