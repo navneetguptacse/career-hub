@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   BarChart3,
   BookOpen,
@@ -13,11 +13,14 @@ import {
   Download,
   Layers2,
   LayoutPanelLeft,
+  LogOut,
   Send,
   Settings,
   ShieldAlert,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Modal } from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
@@ -29,6 +32,14 @@ export const Sidebar: React.FC = () => {
     useSidebar();
   const { isInstalled, install } = usePwaInstall();
   const isAdmin = session?.user?.role === "ADMIN";
+
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await signOut({ callbackUrl: "/login" });
+  };
 
   const navigation = [
     {
@@ -74,7 +85,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   const content = (
-    <div className="flex flex-col justify-between h-full p-3 md:pt-6 md:px-4 md:pb-4 overflow-hidden select-none">
+    <div className="flex flex-col justify-between h-full p-3 md:pt-6 md:px-5 md:pb-4 overflow-hidden select-none">
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
@@ -130,7 +141,7 @@ export const Sidebar: React.FC = () => {
             type="button"
             onClick={() => {
               closeMobileSidebar();
-              install();
+              void install();
             }}
             className="md:hidden w-full flex items-center justify-center gap-2 h-8 px-3 text-xs font-medium text-[#5499EB] bg-[#3178C6]/15 hover:bg-[#3178C6]/25 border border-[#3178C6]/40 rounded-xs transition-colors shadow-xs cursor-pointer"
           >
@@ -141,13 +152,16 @@ export const Sidebar: React.FC = () => {
 
         <button
           type="button"
-          onClick={toggleSidebar}
-          title="Hide Sidebar"
-          aria-label="Hide sidebar"
-          className="hidden md:flex w-full items-center justify-center gap-1.5 h-8 text-xs font-medium text-[#64748B] hover:text-[#94A3B8] hover:bg-[#12171F] rounded-xs border border-[#202937] transition-colors"
+          onClick={() => {
+            closeMobileSidebar();
+            setShowLogoutConfirm(true);
+          }}
+          title="Sign out"
+          aria-label="Sign out"
+          className="flex w-full items-center justify-center gap-1.5 h-8 text-xs font-medium text-[#64748B] hover:text-[#EF4444] hover:bg-[#12171F] hover:border-[#EF4444]/40 rounded-xs border border-[#202937] transition-colors cursor-pointer"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          <span>Hide</span>
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Logout</span>
         </button>
       </div>
     </div>
@@ -161,7 +175,7 @@ export const Sidebar: React.FC = () => {
           onClick={toggleSidebar}
           title="Expand Sidebar"
           aria-label="Expand sidebar"
-          className="hidden md:flex absolute top-6 left-4 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
+          className="hidden md:flex absolute top-6 left-5 z-20 h-8 w-8 bg-[#12171F] border border-[#202937] hover:border-[#3178C6] hover:bg-[#18202C] rounded-xs items-center justify-center text-[#94A3B8] hover:text-[#5499EB] transition-colors shadow-xs cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -211,6 +225,43 @@ export const Sidebar: React.FC = () => {
         </div>
         <div className="flex-1 overflow-y-auto">{content}</div>
       </aside>
+
+      <Modal
+        isOpen={showLogoutConfirm}
+        onClose={() => !isLoggingOut && setShowLogoutConfirm(false)}
+        title="Confirm Sign Out"
+        description="Are you sure you want to end your current session?"
+        className="max-w-md"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-[#94A3B8] leading-relaxed">
+            You will be signed out of CareerHub on this browser. You can log
+            back in at any time with your credentials.
+          </p>
+
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#202937]">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              disabled={isLoggingOut}
+              onClick={() => setShowLogoutConfirm(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              size="sm"
+              isLoading={isLoggingOut}
+              icon={<LogOut className="w-3.5 h-3.5" />}
+              onClick={handleLogout}
+            >
+              <span>Sign Out</span>
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

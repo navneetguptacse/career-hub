@@ -39,9 +39,7 @@ export const metadata: Metadata = {
     title: "CareerHub",
   },
   icons: {
-    icon: [
-      { url: "/icons/icon.svg", type: "image/svg+xml" },
-    ],
+    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
     apple: [
       {
         url: "/icons/icon_x192.png",
@@ -67,9 +65,9 @@ const themeScript = `(function() {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html
       lang="en"

@@ -1,47 +1,9 @@
-import nodemailer from "nodemailer";
+const RESEND_API_URL = "https://api.resend.com/emails";
 
 function getBaseUrl(): string {
   if (process.env.NEXTAUTH_URL) return process.env.NEXTAUTH_URL;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "http://localhost:3000";
-}
-
-function getTransporter() {
-  const user =
-    process.env.SMTP_USERNAME ||
-    process.env.SMTP_USER ||
-    process.env.GMAIL_USER;
-  const pass =
-    process.env.SMTP_PASSWORD ||
-    process.env.SMTP_PASS ||
-    process.env.GMAIL_APP_PASSWORD;
-
-  if (!user || !pass) return null;
-
-  const host =
-    process.env.SMTP_HOST ||
-    (process.env.GMAIL_USER ? "smtp.gmail.com" : "smtp.gmail.com");
-  const port = Number(process.env.SMTP_PORT) || 465;
-
-  const secure =
-    process.env.SMTP_SECURE !== undefined
-      ? process.env.SMTP_SECURE === "true"
-      : port === 465;
-
-  const sanitizedPass =
-    host.includes("gmail.com") && process.env.GMAIL_APP_PASSWORD
-      ? pass.replace(/\s+/g, "")
-      : pass;
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    auth: {
-      user,
-      pass: sanitizedPass,
-    },
-  });
 }
 
 function renderEmailTemplate(options: {
@@ -190,33 +152,51 @@ async function dispatchEmail(
   subject: string,
   html: string
 ): Promise<SendEmailResult> {
-  const transporter = getTransporter();
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const rawFrom =
+    process.env.RESEND_FROM_EMAIL?.trim() ||
+    process.env.EMAIL_FROM?.trim() ||
+    "";
+  const fromAddress = rawFrom.replace(/^["']|["']$/g, "").trim();
 
-  if (!transporter) {
+  if (!apiKey || !fromAddress) {
     return {
       success: false,
       error:
-        "Email delivery is not configured. Please set SMTP_USER and SMTP_PASS (or GMAIL_USER and GMAIL_APP_PASSWORD) in your environment variables.",
+        "Email delivery is not configured. Please set RESEND_API_KEY and RESEND_FROM_EMAIL in your environment variables.",
     };
   }
 
-  const rawName = process.env.SMTP_FROM_NAME || "Career Hub";
-  const fromName = rawName.replace(/^["']|["']$/g, "").trim();
-  const fromEmailAddr =
-    process.env.SMTP_FROM_EMAIL ||
-    process.env.SMTP_USERNAME ||
-    process.env.SMTP_USER ||
-    process.env.GMAIL_USER;
-  const fromAddress =
-    process.env.EMAIL_FROM || `${fromName} <${fromEmailAddr}>`;
-
   try {
-    await transporter.sendMail({
-      from: fromAddress,
-      to,
-      subject,
-      html,
+    const response = await fetch(RESEND_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [to],
+        subject,
+        html,
+      }),
     });
+
+    if (!response.ok) {
+      let errorMessage = `Resend API error (${response.status})`;
+      try {
+        const errorBody = (await response.json()) as {
+          message?: string;
+          error?: string;
+        };
+        errorMessage = errorBody.message || errorBody.error || errorMessage;
+      } catch {
+        // Ignore JSON parse errors on non-JSON error responses
+      }
+      console.error("Email dispatch failure:", errorMessage);
+      return { success: false, error: errorMessage };
+    }
+
     return {
       success: true,
       message: "A verification email sent to your inbox.",
@@ -226,7 +206,7 @@ async function dispatchEmail(
     const message =
       err instanceof Error
         ? err.message
-        : "Failed to dispatch email via mail service.";
+        : "Failed to dispatch email via Resend.";
     return { success: false, error: message };
   }
 }

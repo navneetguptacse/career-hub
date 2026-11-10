@@ -56,7 +56,7 @@ function DashboardLayoutContent({
         <main
           className={cn(
             "flex-1 h-full overflow-y-auto p-4 md:p-6 bg-[#0A0D12] transition-all duration-200 min-w-0",
-            isCollapsed && "md:pl-16"
+            isCollapsed && "md:pl-18"
           )}
         >
           {children}

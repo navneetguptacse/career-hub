@@ -158,13 +158,9 @@ TELEGRAM_BOT_TOKEN=""
 TELEGRAM_BOT_USERNAME=""
 TELEGRAM_WEBHOOK_SECRET=""
 
-# Mail / SMTP
-SMTP_HOST="smtp.yourdomain.com"
-SMTP_PORT="465"
-SMTP_SECURE="true"
-SMTP_USER="noreply@yourdomain.com"
-SMTP_PASS="your-smtp-password"
-EMAIL_FROM="CareerHub <noreply@yourdomain.com>"
+# Resend
+RESEND_API_KEY=""
+RESEND_FROM_EMAIL="CareerHub <auth@yourdomain.com>"
 ```
 
 ### Installation

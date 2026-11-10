@@ -154,14 +154,21 @@ export default function DashboardPage() {
         </div>
 
         {isTelegramPaired ? (
-          <Link href="/settings" title="Telegram Bot Configured & Active">
+          <Link
+            href="/settings"
+            title="Telegram Bot Configured & Active"
+            className="self-end sm:self-center shrink-0"
+          >
             <div className="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-xs text-xs font-medium bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] hover:bg-[#10B981]/25 transition-colors shrink-0 whitespace-nowrap">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Configured</span>
             </div>
           </Link>
         ) : (
-          <Link href="/settings" className="shrink-0 max-w-full">
+          <Link
+            href="/settings"
+            className="self-end sm:self-center shrink-0 max-w-full"
+          >
             <Button
               variant="primary"
               size="sm"
@@ -215,23 +222,22 @@ export default function DashboardPage() {
             {recentApps.map((app) => (
               <div
                 key={app.id}
-                className="p-3.5 flex items-center justify-between hover:bg-[#18202C] transition-colors"
+                className="p-3.5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 hover:bg-[#18202C] transition-colors"
               >
-                <div>
-                  <div className="font-semibold text-sm text-[#F1F5F9]">
-                    {app.companyName}
-                  </div>
-                  <div className="text-xs text-[#94A3B8] mt-0.5 flex items-center gap-2">
-                    <span>{app.jobTitle}</span>
-                    <Badge status={app.locationType} size="sm" />
-                  </div>
+                <div className="font-semibold text-sm text-[#F1F5F9] truncate">
+                  {app.companyName}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 justify-self-end sm:row-span-2">
                   <Badge status={app.status} size="sm" />
                   <span className="text-xs font-mono text-[#64748B] hidden sm:inline">
                     {formatDate(app.appliedDate || app.createdAt)}
                   </span>
+                </div>
+
+                <div className="col-span-2 sm:col-span-1 text-xs text-[#94A3B8] flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span>{app.jobTitle}</span>
+                  <Badge status={app.locationType} size="sm" />
                 </div>
               </div>
             ))}

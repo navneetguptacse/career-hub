@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import {
   Keyboard,
-  LogOut,
   PanelLeft,
   Plus,
   Send,
@@ -14,7 +13,6 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Modal } from "@/components/ui/Modal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 import { useSidebar } from "@/components/providers/SidebarProvider";
@@ -34,14 +32,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { isPaired } = useTelegramStatus();
   const user = session?.user;
   const telegramConnected = isPaired || Boolean(user?.telegramConnected);
-
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    await signOut({ callbackUrl: "/login" });
-  };
 
   return (
     <header className="h-14 border-b border-[#202937] bg-[#12171F] px-3 md:px-5 flex items-center justify-between sticky top-0 z-30 select-none">
@@ -138,54 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           )}
         </Link>
-
-        <button
-          type="button"
-          onClick={() => setShowLogoutConfirm(true)}
-          title="Sign out"
-          aria-label="Sign out"
-          className="h-8 w-8 inline-flex items-center justify-center text-[#94A3B8] hover:text-[#EF4444] hover:bg-[#18202C] border border-[#202937] rounded-xs transition-colors"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-        </button>
       </div>
-
-      <Modal
-        isOpen={showLogoutConfirm}
-        onClose={() => !isLoggingOut && setShowLogoutConfirm(false)}
-        title="Confirm Sign Out"
-        description="Are you sure you want to end your current session?"
-        className="max-w-md"
-      >
-        <div className="space-y-4">
-          <p className="text-xs text-[#94A3B8] leading-relaxed">
-            You will be signed out of CareerHub on this browser. You can log
-            back in at any time with your credentials.
-          </p>
-
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#202937]">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              disabled={isLoggingOut}
-              onClick={() => setShowLogoutConfirm(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="danger"
-              size="sm"
-              isLoading={isLoggingOut}
-              icon={<LogOut className="w-3.5 h-3.5" />}
-              onClick={handleLogout}
-            >
-              <span>Sign Out</span>
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </header>
   );
 };
