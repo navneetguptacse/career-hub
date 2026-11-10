@@ -18,12 +18,10 @@ import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 function DashboardLayoutContent({
   children,
   onOpenAddModal,
-  onOpenShortcuts,
-}: {
+}: Readonly<{
   children: React.ReactNode;
   onOpenAddModal: () => void;
-  onOpenShortcuts: () => void;
-}) {
+}>) {
   const { isCollapsed } = useSidebar();
   const { status } = useSession();
   const router = useRouter();
@@ -47,10 +45,7 @@ function DashboardLayoutContent({
 
   return (
     <div className="h-screen max-h-screen overflow-hidden bg-[#0A0D12] text-[#F1F5F9] flex flex-col">
-      <Navbar
-        onOpenAddModal={onOpenAddModal}
-        onOpenShortcuts={onOpenShortcuts}
-      />
+      <Navbar onOpenAddModal={onOpenAddModal} />
       <div className="flex-1 flex overflow-hidden relative min-h-0">
         <Sidebar />
         <main
@@ -68,9 +63,9 @@ function DashboardLayoutContent({
 
 export default function DashboardLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
@@ -91,16 +86,13 @@ export default function DashboardLayout({
   }, []);
 
   const handleApplicationAdded = () => {
-    refreshAllApplications();
+    void refreshAllApplications();
     window.dispatchEvent(new Event("careerhub:refresh"));
   };
 
   return (
     <SidebarProvider>
-      <DashboardLayoutContent
-        onOpenAddModal={() => setIsAddModalOpen(true)}
-        onOpenShortcuts={() => setIsShortcutsOpen(true)}
-      >
+      <DashboardLayoutContent onOpenAddModal={() => setIsAddModalOpen(true)}>
         {children}
       </DashboardLayoutContent>
 
