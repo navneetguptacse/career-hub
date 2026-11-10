@@ -6,7 +6,7 @@ function getBaseUrl(): string {
     (process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
-  return url.replace(/\/+?$/, "");
+  return url.replace(/\/+$/, "");
 }
 
 function renderEmailTemplate(options: {

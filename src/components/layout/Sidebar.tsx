@@ -9,12 +9,12 @@ import {
   BarChart3,
   BookOpen,
   Download,
+  HelpCircle,
   Layers2,
   LayoutPanelLeft,
   LogOut,
   PanelLeftClose,
   PanelRightClose,
-  Send,
   Settings,
   ShieldAlert,
   X,
@@ -24,6 +24,7 @@ import { Modal } from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { usePwaInstall } from "@/lib/hooks/usePwaInstall";
+import { useTelegramStatus } from "@/lib/hooks/useTelegramStatus";
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -31,10 +32,14 @@ export const Sidebar: React.FC = () => {
   const { isCollapsed, isMobileOpen, closeMobileSidebar, toggleSidebar } =
     useSidebar();
   const { isInstalled, install } = usePwaInstall();
+  const { isPaired } = useTelegramStatus();
+  const isTelegramPaired =
+    isPaired || Boolean(session?.user?.telegramConnected);
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showWebhookInfo, setShowWebhookInfo] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -124,14 +129,40 @@ export const Sidebar: React.FC = () => {
       </div>
 
       <div className="space-y-2">
-        <div className="p-3 border border-[#202937] bg-[#12171F] rounded-xs space-y-1.5">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-[#F1F5F9]">
-            <Send className="w-3.5 h-3.5 text-[#3178C6]" />
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowWebhookInfo((prev) => !prev)}
+            onMouseEnter={() => setShowWebhookInfo(true)}
+            onMouseLeave={() => setShowWebhookInfo(false)}
+            onBlur={() => setShowWebhookInfo(false)}
+            aria-expanded={showWebhookInfo}
+            className="flex items-center gap-2.5 px-3 py-2 w-full text-xs font-medium text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#12171F] rounded-xs transition-colors cursor-pointer text-left"
+          >
+            <HelpCircle className="w-4 h-4 shrink-0" />
             <span>Telegram Webhook</span>
-          </div>
-          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-            Drop job links into your paired chat to auto-add cards.
-          </p>
+          </button>
+
+          {showWebhookInfo && (
+            <div
+              role="tooltip"
+              className="absolute left-0 right-0 bottom-full mb-1.5 p-2.5 bg-[#12171F] border border-[#202937] rounded-xs shadow-lg text-[11px] leading-relaxed z-20 space-y-1"
+            >
+              <div
+                className={cn(
+                  "font-medium",
+                  isTelegramPaired ? "text-[#34D399]" : "text-[#F1F5F9]"
+                )}
+              >
+                {isTelegramPaired ? "Webhook attached" : "Webhook not attached"}
+              </div>
+              <p className="text-[#94A3B8]">
+                {isTelegramPaired
+                  ? "Drop job links in your paired chat to auto-add cards."
+                  : "Pair your Telegram chat in Settings to auto-ingest links."}
+              </p>
+            </div>
+          )}
         </div>
 
         {!isInstalled && (
