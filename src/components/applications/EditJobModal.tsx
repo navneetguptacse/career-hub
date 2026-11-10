@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { AutoTextarea } from "@/components/ui/AutoTextarea";
 import { JobApplicationItem } from "./JobCard";
 import { ApplicationStatusType } from "@/components/ui/Badge";
 import { capitalizeCompanyName } from "@/lib/scraper";
+import { LinkedInPitchGenerator } from "./LinkedInPitchGenerator";
 
 interface EditJobModalProps {
   job: JobApplicationItem | null;
@@ -220,16 +222,30 @@ const EditJobForm: React.FC<EditJobFormProps> = ({
         <label className="block text-xs font-medium text-[#94A3B8] mb-1">
           Notes
         </label>
-        <textarea
+        <AutoTextarea
           rows={2}
           placeholder="Recruiter contact, referral status, prep thoughts..."
           value={formData.notes}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, notes: e.target.value }))
           }
-          className="w-full bg-[#0A0D12] border border-[#202937] rounded-xs p-2.5 text-xs text-[#F1F5F9] placeholder-[#64748B] focus:outline-none focus:border-[#3178C6] resize-none"
+          className="w-full bg-[#0A0D12] border border-[#202937] rounded-xs p-2.5 text-xs text-[#F1F5F9] placeholder-[#64748B] focus:outline-none focus:border-[#3178C6] leading-relaxed"
         />
       </div>
+
+      <LinkedInPitchGenerator
+        companyName={formData.companyName}
+        jobTitle={formData.jobTitle}
+        jobDescription={formData.jobDescription}
+        jobUrl={formData.jobUrl}
+        notes={formData.notes}
+        onAppendToNotes={(entry) =>
+          setFormData((prev) => ({
+            ...prev,
+            notes: prev.notes ? `${prev.notes}\n\n${entry}` : entry,
+          }))
+        }
+      />
 
       <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#202937]">
         <Button

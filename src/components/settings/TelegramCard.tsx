@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import {
   Check,
   CircleCheck,
-  Copy,
+  Clipboard,
   RefreshCw,
   Send,
   Unlink,
@@ -33,6 +33,13 @@ export const TelegramCard: React.FC = () => {
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+
+  const rawBotUsername =
+    telegramStatus?.botUsername?.trim() || "careerhubofficial_bot";
+  const botHandle = rawBotUsername.startsWith("@")
+    ? rawBotUsername
+    : `@${rawBotUsername}`;
+  const botUrl = `https://t.me/${botHandle.slice(1)}`;
 
   const handleCopyToken = async () => {
     if (!telegramStatus?.pairToken) return;
@@ -146,7 +153,7 @@ export const TelegramCard: React.FC = () => {
                 {isCopied ? (
                   <Check className="w-3 h-3 text-[#10B981]" strokeWidth={2.5} />
                 ) : (
-                  <Copy className="w-3 h-3" strokeWidth={2.5} />
+                  <Clipboard className="w-3 h-3" strokeWidth={2.5} />
                 )}
                 <span>{isCopied ? "Copied" : "Copy"}</span>
               </Button>
@@ -169,7 +176,18 @@ export const TelegramCard: React.FC = () => {
               Setup Instructions
             </span>
             <ol className="list-decimal list-inside space-y-1 text-[#94A3B8] pl-1">
-              <li>Open your Telegram bot client or add your bot to a group.</li>
+              <li>
+                Open{" "}
+                <a
+                  href={botUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[#5499EB] hover:underline"
+                >
+                  {botHandle}
+                </a>{" "}
+                on Telegram or add the bot to a group.
+              </li>
               <li>Send the pairing command copied above.</li>
               <li>
                 Connection will automatically reflect above once confirmed by

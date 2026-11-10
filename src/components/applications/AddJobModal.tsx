@@ -2,19 +2,15 @@
 
 import React, { useState } from "react";
 import useSWR from "swr";
-import {
-  CheckCircle2,
-  IterationCcw,
-  Link2,
-  PencilSparkles,
-  X,
-} from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { AutoTextarea } from "@/components/ui/AutoTextarea";
 import { refreshAllApplications } from "@/lib/hooks/useApplications";
 import { capitalizeCompanyName } from "@/lib/scraper";
-import { isValidJobUrl } from "@/lib/validations";
+import { JobLinkImportBox } from "./JobLinkImportBox";
+import { LinkedInPitchGenerator } from "./LinkedInPitchGenerator";
 
 interface AddJobModalProps {
   isOpen: boolean;
@@ -49,6 +45,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [pitchResetKey, setPitchResetKey] = useState(0);
 
   const { data: llmConfig } = useSWR<{ hasKey?: boolean }>(
     isOpen ? "/api/user/llm" : null,
@@ -139,6 +136,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
       handleClose();
       setFormData(INITIAL_FORM_DATA);
       setScrapeUrl("");
+      setPitchResetKey((prev) => prev + 1);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error saving application");
     } finally {
@@ -154,54 +152,16 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
       description="Track a new role manually or auto-fill details from any job posting URL."
     >
       <div className="space-y-4">
-        <div className="p-3 bg-[#0A0D12] border border-[#202937] rounded-xs space-y-2.5">
-          <label className="text-xs font-medium text-[#94A3B8] flex items-center gap-1.5">
-            <Link2 className="w-3.5 h-3.5 text-[#3178C6]" />
-            Import via Link
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="url"
-              placeholder="https://linkedin.com/jobs/view/..."
-              value={scrapeUrl}
-              onChange={(e) => {
-                setScrapeUrl(e.target.value);
-                setFormData((prev) => ({ ...prev, jobUrl: e.target.value }));
-              }}
-              className="flex-1 h-9 px-3 text-xs bg-[#12171F] border border-[#202937] rounded-xs text-[#F1F5F9] placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
-            />
-            {isValidJobUrl(scrapeUrl) && (
-              <Button
-                type="button"
-                variant="primary"
-                size="icon-md"
-                onClick={handleScrape}
-                isLoading={isScraping}
-                title="Auto-Fill Details"
-                className="h-9 w-9 shrink-0 cursor-pointer"
-              >
-                <PencilSparkles className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-[#64748B] pt-0.5">
-            <span>Powered by AI extraction</span>
-            {isProviderConfigured ? (
-              <span className="text-[#10B981] flex items-center gap-1 font-medium">
-                <CheckCircle2 className="w-3 h-3" />
-                Configured
-              </span>
-            ) : (
-              <a
-                href="/settings"
-                className="inline-flex items-center gap-1 text-[#5499EB] no-underline transition-colors"
-              >
-                Configure Provider
-                <IterationCcw className="w-3 h-3 shrink-0" />
-              </a>
-            )}
-          </div>
-        </div>
+        <JobLinkImportBox
+          scrapeUrl={scrapeUrl}
+          isScraping={isScraping}
+          isProviderConfigured={isProviderConfigured}
+          onUrlChange={(url) => {
+            setScrapeUrl(url);
+            setFormData((prev) => ({ ...prev, jobUrl: url }));
+          }}
+          onScrape={handleScrape}
+        />
 
         {error && (
           <div className="p-2.5 text-xs text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xs">
@@ -306,16 +266,31 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({
             <label className="block text-xs font-medium text-[#94A3B8]">
               Notes
             </label>
-            <textarea
+            <AutoTextarea
               rows={3}
               value={formData.notes}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
               placeholder="Referral contacts, interview prep notes, questions..."
-              className="w-full p-2.5 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6]"
+              className="w-full p-2.5 text-xs bg-[#0A0D12] text-[#F1F5F9] border border-[#202937] rounded-xs placeholder:text-xs placeholder:text-[#64748B] focus:outline-none focus:border-[#3178C6] leading-relaxed"
             />
           </div>
+
+          <LinkedInPitchGenerator
+            key={pitchResetKey}
+            companyName={formData.companyName}
+            jobTitle={formData.jobTitle}
+            jobDescription={formData.jobDescription}
+            jobUrl={formData.jobUrl}
+            notes={formData.notes}
+            onAppendToNotes={(entry) =>
+              setFormData((prev) => ({
+                ...prev,
+                notes: prev.notes ? `${prev.notes}\n\n${entry}` : entry,
+              }))
+            }
+          />
 
           <div className="flex justify-end gap-2 pt-3 border-t border-[#202937]">
             <Button
