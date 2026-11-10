@@ -179,9 +179,16 @@ export async function POST(req: Request) {
       },
     });
 
+    const appBaseUrl = (
+      process.env.NEXTAUTH_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://career-hub-bot.vercel.app")
+    ).replace(/\/+$/, "");
+
     await sendTelegramMessage(
       chatId,
-      `*Job Application Saved!*\n\n*Company:* ${app.companyName}\n*Role:* ${app.jobTitle}\n*Status:* Wishlist\n\nView on your dashboard: [Open Career Hub](${process.env.NEXTAUTH_URL || "http://localhost:3000"}/applications)`
+      `*Job Application Saved!*\n\n*Company:* ${app.companyName}\n*Role:* ${app.jobTitle}\n*Status:* Wishlist\n\nView on your dashboard: [Open Career Hub](${appBaseUrl}/applications)`
     );
 
     return NextResponse.json({ ok: true, savedId: app.id });

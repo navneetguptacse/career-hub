@@ -68,6 +68,53 @@ export const scrapeUrlSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 });
 
+export const PITCH_TONES = [
+  "Formal",
+  "Friendly",
+  "Confident",
+  "Concise",
+  "Referral",
+] as const;
+
+export type PitchTone = (typeof PITCH_TONES)[number];
+
+export const linkedinPitchSchema = z
+  .object({
+    mode: z.enum(["generate", "refine"]).default("generate"),
+    companyName: z.string().max(100).optional().default(""),
+    jobTitle: z.string().max(100).optional().default(""),
+    recipientName: z.string().max(100).optional().default(""),
+    tone: z.enum(PITCH_TONES).default("Formal"),
+    draftPitch: z.string().max(3000).optional().default(""),
+    jobDescription: z.string().max(4000).optional().nullable(),
+    jobUrl: z.string().max(500).optional().nullable(),
+    notes: z.string().max(1000).optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.mode === "generate") {
+      if (!data.companyName.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Company name is required to generate a pitch",
+          path: ["companyName"],
+        });
+      }
+      if (!data.jobTitle.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Job title is required to generate a pitch",
+          path: ["jobTitle"],
+        });
+      }
+    } else if (!data.draftPitch.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please enter a pitch draft to refine",
+        path: ["draftPitch"],
+      });
+    }
+  });
+
 export function isValidJobUrl(input: string): boolean {
   const trimmed = input.trim();
   if (!trimmed) return false;

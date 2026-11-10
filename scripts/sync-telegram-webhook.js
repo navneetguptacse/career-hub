@@ -41,9 +41,16 @@ if (!token) {
   process.exit(1);
 }
 
+const PROD_FALLBACK_URL = "https://career-hub-bot.vercel.app";
 const cliArgUrl = process.argv[2];
+const envUrl = process.env.NEXTAUTH_URL || "";
+const isLocalEnvUrl = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(
+  envUrl
+);
 const fallbackUrl =
-  process.env.NEXTAUTH_URL || "https://career-hub-bot.vercel.app";
+  envUrl && !isLocalEnvUrl && envUrl.startsWith("https://")
+    ? envUrl
+    : PROD_FALLBACK_URL;
 let baseDomain = cliArgUrl || fallbackUrl;
 
 if (!baseDomain.startsWith("http://") && !baseDomain.startsWith("https://")) {
@@ -51,6 +58,13 @@ if (!baseDomain.startsWith("http://") && !baseDomain.startsWith("https://")) {
 }
 
 const targetUrl = `${baseDomain.replace(/\/+$/, "")}/api/telegram/webhook`;
+
+if (!targetUrl.startsWith("https://")) {
+  console.error(
+    `Error: Telegram requires an HTTPS webhook URL (received "${targetUrl}"). Pass a public HTTPS domain or tunnel URL.`
+  );
+  process.exit(1);
+}
 
 async function main() {
   console.log("Checking current Telegram webhook status...");
@@ -89,4 +103,4 @@ async function main() {
   }
 }
 
-main();
+void main();

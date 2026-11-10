@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
+const PROD_WEBHOOK_ORIGIN = "https://career-hub-bot.vercel.app";
+
 function getExpectedWebhookUrl(req: Request): string {
   const host =
     req.headers.get("x-forwarded-host") ||
     req.headers.get("host") ||
     "localhost:3000";
   const proto = req.headers.get("x-forwarded-proto") || "https";
-  const baseUrl = process.env.NEXTAUTH_URL || `${proto}://${host}`;
+  const requestOrigin = `${proto}://${host}`;
+  const isLocalHost =
+    host.startsWith("localhost") || host.startsWith("127.0.0.1");
+  const envUrl = process.env.NEXTAUTH_URL || "";
+  const isHttpsEnv =
+    envUrl.startsWith("https://") &&
+    !/^https:\/\/(localhost|127\.0\.0\.1)/i.test(envUrl);
+  const baseUrl = isLocalHost
+    ? isHttpsEnv
+      ? envUrl
+      : PROD_WEBHOOK_ORIGIN
+    : isHttpsEnv
+      ? envUrl
+      : requestOrigin;
   const cleanBase = baseUrl.replace(/\/+$/, "");
   return `${cleanBase}/api/telegram/webhook`;
 }

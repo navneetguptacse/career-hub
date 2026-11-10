@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Send,
-  Copy,
   Check,
   ExternalLink,
   ShieldCheck,
@@ -12,6 +11,7 @@ import {
   Terminal,
   Globe,
   Lock,
+  Clipboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -24,6 +24,12 @@ export const TelegramGuideCard: React.FC = () => {
     autoPollWhenUnpaired: true,
   });
   const pairToken = status?.pairToken ?? null;
+  const rawBotUsername = status?.botUsername?.trim() || "careerhubofficial_bot";
+  const botHandle = rawBotUsername.startsWith("@")
+    ? rawBotUsername
+    : `@${rawBotUsername}`;
+  const botSlug = botHandle.slice(1);
+  const botUrl = `https://t.me/${botSlug}`;
   const [isCopied, setIsCopied] = useState(false);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
 
@@ -39,7 +45,7 @@ export const TelegramGuideCard: React.FC = () => {
   };
 
   const handleCopyLink = async () => {
-    await navigator.clipboard.writeText("https://t.me/careerhub_tracker_bot");
+    await navigator.clipboard.writeText(botUrl);
     setIsCopiedLink(true);
     setTimeout(() => setIsCopiedLink(false), 2000);
   };
@@ -64,7 +70,7 @@ export const TelegramGuideCard: React.FC = () => {
 
         <div className="flex items-center gap-2 shrink-0">
           <a
-            href="https://t.me/careerhub_tracker_bot"
+            href={botUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-white bg-[#3178C6] hover:bg-[#235A97] rounded-xs transition-colors shadow-xs"
@@ -86,16 +92,16 @@ export const TelegramGuideCard: React.FC = () => {
             <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
               Anyone in the world can search for{" "}
               <code className="text-[#5499EB] font-mono font-semibold bg-[#12171F] px-1.5 py-0.5 border border-[#202937] rounded-xs">
-                @careerhub_tracker_bot
+                {botHandle}
               </code>{" "}
               or open{" "}
               <a
-                href="https://t.me/careerhub_tracker_bot"
+                href={botUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#5499EB] hover:underline font-mono inline-flex items-center gap-1 font-medium"
               >
-                t.me/careerhub_tracker_bot
+                {`t.me/${botSlug}`}
                 <ExternalLink className="w-3 h-3" />
               </a>
               .
@@ -112,7 +118,7 @@ export const TelegramGuideCard: React.FC = () => {
             {isCopiedLink ? (
               <Check className="w-3 h-3 text-white" />
             ) : (
-              <Copy className="w-3 h-3" strokeWidth={2.4} />
+              <Clipboard className="w-3 h-3" strokeWidth={2.4} />
             )}
             <span>{isCopiedLink ? "Copied" : "Copy"}</span>
           </Button>
@@ -151,7 +157,7 @@ export const TelegramGuideCard: React.FC = () => {
               {isCopied ? (
                 <Check className="w-3 h-3 text-white" />
               ) : (
-                <Copy className="w-3 h-3" strokeWidth={2.4} />
+                <Clipboard className="w-3 h-3" strokeWidth={2.4} />
               )}
               <span>{isCopied ? "Copied" : "Copy"}</span>
             </Button>
@@ -177,7 +183,7 @@ export const TelegramGuideCard: React.FC = () => {
               <p>
                 Any person can start a direct chat with{" "}
                 <strong className="text-[#0F172A] dark:text-[#F1F5F9] font-mono">
-                  @careerhub_tracker_bot
+                  {botHandle}
                 </strong>
                 .
               </p>
@@ -223,7 +229,7 @@ export const TelegramGuideCard: React.FC = () => {
               <p>
                 Any user can add{" "}
                 <strong className="text-[#0F172A] dark:text-[#F1F5F9] font-mono">
-                  @careerhub_tracker_bot
+                  {botHandle}
                 </strong>{" "}
                 to their own private or public job search group.
               </p>
@@ -279,7 +285,7 @@ export const TelegramGuideCard: React.FC = () => {
         </div>
       </div>
 
-      <TelegramBotFatherTip />
+      <TelegramBotFatherTip botUsername={botHandle} />
 
       <TelegramCommandsTable />
     </div>
