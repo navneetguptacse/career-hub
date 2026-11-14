@@ -76,6 +76,7 @@ The pipeline is structured using modular Groovy utility steps under the standard
 ```text
 career-hub/
 ├── vars/
+│   ├── checkSkip.groovy      # Skip CI commit inspection: call(pattern)
 │   ├── dockerBuild.groovy    # Generic Docker build: call(imageName, tag, context)
 │   ├── dockerLogin.groovy    # Generic Docker login: call(user, pass, registry)
 │   ├── dockerPush.groovy     # Generic Docker push: call(imageName, tag)
@@ -100,22 +101,26 @@ pipeline {
         CONTAINER_NAME = 'career-hub-app'
         APP_PORT       = '3000:3000'
         CLEAN_ENV_FILE = '/tmp/career-hub.clean.env'
+        SKIP_BUILD     = 'false'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout & Skip Check') {
             steps {
                 checkout scm
+                checkSkip()
             }
         }
 
         stage('Build Docker Image') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 dockerBuild(IMAGE_NAME, IMAGE_TAG)
             }
         }
 
         stage('Push to Docker Hub') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerHub',
@@ -129,6 +134,7 @@ pipeline {
         }
 
         stage('Deploy Container') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
                     prepareEnv(SECRET_ENV, CLEAN_ENV_FILE)
@@ -140,7 +146,11 @@ pipeline {
 
     post {
         always {
-            dockerPrune()
+            script {
+                if (env.SKIP_BUILD != 'true') {
+                    dockerPrune()
+                }
+            }
         }
     }
 }

@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Check for skip tokens in commit message
+COMMIT_MSG=$(git log -1 --pretty=%B 2>/dev/null || true)
+if echo "${COMMIT_MSG}" | grep -qiE '\[(skip ci|ci skip|skip jenkins|no ci)\]'; then
+  echo "Commit message contains skip token: ${COMMIT_MSG}"
+  echo "Skipping build, push, and deploy for this commit."
+  exit 0
+fi
+
 IMAGE_NAME="navneetguptacse/career-hub"
 IMAGE_TAG="${BUILD_NUMBER:-latest}"
 

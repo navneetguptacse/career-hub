@@ -16,15 +16,7 @@ pipeline {
         stage('Checkout & Skip Check') {
             steps {
                 checkout scm
-                script {
-                    def commitMsg = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
-                    if (commitMsg =~ /(?i)\[(skip ci|ci skip|skip jenkins|no ci)\]/) {
-                        echo "Commit message contains skip token: ${commitMsg}"
-                        echo "Skipping Build, Push, and Deploy stages."
-                        env.SKIP_BUILD = 'true'
-                        currentBuild.description = "Skipped: ${commitMsg}"
-                    }
-                }
+                checkSkip()
             }
         }
 
