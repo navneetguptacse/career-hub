@@ -9,22 +9,34 @@ pipeline {
         CONTAINER_NAME = 'career-hub-app'
         APP_PORT       = '3000:3000'
         CLEAN_ENV_FILE = '/tmp/career-hub.clean.env'
+        SKIP_BUILD     = 'false'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout & Skip Check') {
             steps {
                 checkout scm
+                script {
+                    def commitMsg = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+                    if (commitMsg =~ /(?i)\[(skip ci|ci skip|skip jenkins|no ci)\]/) {
+                        echo "Commit message contains skip token: ${commitMsg}"
+                        echo "Skipping Build, Push, and Deploy stages."
+                        env.SKIP_BUILD = 'true'
+                        currentBuild.description = "Skipped: ${commitMsg}"
+                    }
+                }
             }
         }
 
         stage('Build Docker Image') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 dockerBuild(IMAGE_NAME, IMAGE_TAG)
             }
         }
 
         stage('Push to Docker Hub') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerHub',
@@ -38,6 +50,7 @@ pipeline {
         }
 
         stage('Deploy Container') {
+            when { expression { env.SKIP_BUILD != 'true' } }
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
                     prepareEnv(SECRET_ENV, CLEAN_ENV_FILE)
@@ -49,7 +62,11 @@ pipeline {
 
     post {
         always {
-            dockerPrune()
+            script {
+                if (env.SKIP_BUILD != 'true') {
+                    dockerPrune()
+                }
+            }
         }
     }
 }
