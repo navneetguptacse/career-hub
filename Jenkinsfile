@@ -30,9 +30,8 @@ pipeline {
                 )]) {
                     script {
                         load("${WORKSPACE}/vars/dockerLogin.groovy").call()
+                        load("${WORKSPACE}/vars/dockerPush.groovy").call(IMAGE_NAME, IMAGE_TAG)
                     }
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker push ${IMAGE_NAME}:latest"
                 }
             }
         }

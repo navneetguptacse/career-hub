@@ -33,5 +33,6 @@ README.md
 AGENTS.md
 DOCKER.md
 Jenkinsfile*
+vars
+scripts/jenkins-freestyle.sh
 .dockerignore
-

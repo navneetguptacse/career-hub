@@ -76,9 +76,10 @@ The pipeline is structured using modular Groovy utility steps under the standard
 ```text
 career-hub/
 ├── vars/
-│   ├── dockerBuild.groovy    # Multi-stage image build
+│   ├── dockerBuild.groovy    # Multi-stage image build with BuildKit
 │   ├── dockerLogin.groovy    # Pre-auth session check and safe login
-│   ├── prepareEnv.groovy     # Strips surrounding quotes from .env
+│   ├── dockerPush.groovy     # Pushes versioned and latest tags
+│   ├── prepareEnv.groovy     # Strips quotes from .env and sets chmod 600
 │   ├── deployApp.groovy      # Replaces running container with host trust
 │   └── dockerPrune.groovy    # Prunes dangling layers
 ├── Jenkinsfile               # Declarative pipeline targeting career-hub-pipeline
@@ -120,9 +121,8 @@ pipeline {
                 )]) {
                     script {
                         load("${WORKSPACE}/vars/dockerLogin.groovy").call()
+                        load("${WORKSPACE}/vars/dockerPush.groovy").call(IMAGE_NAME, IMAGE_TAG)
                     }
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker push ${IMAGE_NAME}:latest"
                 }
             }
         }
