@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/Badge";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   let session = null;
   try {

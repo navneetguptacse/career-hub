@@ -16,6 +16,9 @@ if [ -n "${DOCKER_USER:-}" ] && [ -n "${DOCKER_PASS:-}" ]; then
 fi
 
 if [ -n "${SECRET_ENV:-}" ] && [ -f "${SECRET_ENV}" ]; then
+  CLEAN_ENV="/tmp/career-hub.clean.env"
+  sed -E 's/=(["'\''"])(.*)\1$/=\2/' "${SECRET_ENV}" > "${CLEAN_ENV}" || cp "${SECRET_ENV}" "${CLEAN_ENV}"
+
   docker stop career-hub-app >/dev/null 2>&1 || true
   docker rm career-hub-app >/dev/null 2>&1 || true
   docker run -d \
@@ -24,7 +27,7 @@ if [ -n "${SECRET_ENV:-}" ] && [ -f "${SECRET_ENV}" ]; then
     -p 3000:3000 \
     -e AUTH_TRUST_HOST=true \
     -e HOSTNAME="0.0.0.0" \
-    --env-file "${SECRET_ENV}" \
+    --env-file "${CLEAN_ENV}" \
     "${IMAGE_NAME}:latest"
 fi
 

@@ -1,5 +1,29 @@
 import type { NextAuthConfig } from "next-auth";
 
+if (process.env.NEXTAUTH_URL) {
+  const cleaned = process.env.NEXTAUTH_URL.replace(/^["']|["']$/g, "").trim();
+  if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) {
+    process.env.NEXTAUTH_URL = cleaned;
+  } else {
+    delete process.env.NEXTAUTH_URL;
+  }
+}
+
+if (process.env.AUTH_URL) {
+  const cleaned = process.env.AUTH_URL.replace(/^["']|["']$/g, "").trim();
+  if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) {
+    process.env.AUTH_URL = cleaned;
+  } else {
+    delete process.env.AUTH_URL;
+  }
+}
+
+for (const key of ["DATABASE_URL", "AUTH_SECRET"] as const) {
+  if (process.env[key]) {
+    process.env[key] = process.env[key]!.replace(/^["']|["']$/g, "").trim();
+  }
+}
+
 export const authConfig: NextAuthConfig = {
   trustHost: true,
   secret:
