@@ -4,6 +4,11 @@ set -euo pipefail
 IMAGE_NAME="navneetguptacse/career-hub"
 IMAGE_TAG="${BUILD_NUMBER:-latest}"
 
+# Resilient credential variable resolution across various Jenkins binding styles
+DOCKER_USER="${DOCKER_USER:-${DOCKER_HUB_USR:-${DOCKER_CREDS_USR:-}}}"
+DOCKER_PASS="${DOCKER_PASS:-${DOCKER_HUB_PSW:-${DOCKER_CREDS_PSW:-}}}"
+SECRET_ENV="${SECRET_ENV:-${ENV_FILE:-}}"
+
 export DOCKER_BUILDKIT=1
 
 echo "Building production Docker image: ${IMAGE_NAME}:${IMAGE_TAG}..."
