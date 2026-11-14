@@ -89,6 +89,8 @@ career-hub/
 ### Pipeline Overview ([`Jenkinsfile`](Jenkinsfile))
 
 ```groovy
+@Library('Shared') _
+
 pipeline {
     agent { label 'career-hub-pipeline' }
 
@@ -109,9 +111,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    load("${WORKSPACE}/vars/dockerBuild.groovy").call(IMAGE_NAME, IMAGE_TAG)
-                }
+                dockerBuild(IMAGE_NAME, IMAGE_TAG)
             }
         }
 
@@ -122,10 +122,8 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    script {
-                        load("${WORKSPACE}/vars/dockerLogin.groovy").call(DOCKER_USER, DOCKER_PASS)
-                        load("${WORKSPACE}/vars/dockerPush.groovy").call(IMAGE_NAME, IMAGE_TAG)
-                    }
+                    dockerLogin(DOCKER_USER, DOCKER_PASS)
+                    dockerPush(IMAGE_NAME, IMAGE_TAG)
                 }
             }
         }
@@ -133,10 +131,8 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
-                    script {
-                        load("${WORKSPACE}/vars/prepareEnv.groovy").call(SECRET_ENV, CLEAN_ENV_FILE)
-                        load("${WORKSPACE}/vars/deployApp.groovy").call(IMAGE_NAME, CONTAINER_NAME, APP_PORT, CLEAN_ENV_FILE)
-                    }
+                    prepareEnv(SECRET_ENV, CLEAN_ENV_FILE)
+                    deployApp(IMAGE_NAME, CONTAINER_NAME, APP_PORT, CLEAN_ENV_FILE, '-e AUTH_TRUST_HOST=true -e HOSTNAME=0.0.0.0')
                 }
             }
         }
@@ -144,9 +140,7 @@ pipeline {
 
     post {
         always {
-            script {
-                load("${WORKSPACE}/vars/dockerPrune.groovy").call()
-            }
+            dockerPrune()
         }
     }
 }
