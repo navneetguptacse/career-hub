@@ -15,7 +15,12 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 
 export default async function HomePage() {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch (error) {
+    console.error("Failed to retrieve auth session on homepage:", error);
+  }
   const isLoggedIn = Boolean(session?.user);
 
   return (

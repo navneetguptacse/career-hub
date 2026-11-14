@@ -5,48 +5,53 @@ import { authConfig } from "@/lib/auth.config";
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const userRole = req.auth?.user?.role;
+  try {
+    const { nextUrl } = req;
+    const isLoggedIn = !!req.auth;
+    const userRole = req.auth?.user?.role;
 
-  const isAuthRoute =
-    nextUrl.pathname.startsWith("/login") ||
-    nextUrl.pathname.startsWith("/register") ||
-    nextUrl.pathname.startsWith("/forgot-password") ||
-    nextUrl.pathname.startsWith("/reset-password");
+    const isAuthRoute =
+      nextUrl.pathname.startsWith("/login") ||
+      nextUrl.pathname.startsWith("/register") ||
+      nextUrl.pathname.startsWith("/forgot-password") ||
+      nextUrl.pathname.startsWith("/reset-password");
 
-  const isProtectedRoute =
-    nextUrl.pathname.startsWith("/dashboard") ||
-    nextUrl.pathname.startsWith("/applications") ||
-    nextUrl.pathname.startsWith("/analytics") ||
-    nextUrl.pathname.startsWith("/settings") ||
-    nextUrl.pathname.startsWith("/usage");
+    const isProtectedRoute =
+      nextUrl.pathname.startsWith("/dashboard") ||
+      nextUrl.pathname.startsWith("/applications") ||
+      nextUrl.pathname.startsWith("/analytics") ||
+      nextUrl.pathname.startsWith("/settings") ||
+      nextUrl.pathname.startsWith("/usage");
 
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+    const isAdminRoute = nextUrl.pathname.startsWith("/admin");
 
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    if (isAuthRoute) {
+      if (isLoggedIn) {
+        return NextResponse.redirect(new URL("/dashboard", nextUrl));
+      }
+      return NextResponse.next();
     }
+
+    if (isProtectedRoute && !isLoggedIn) {
+      const redirectUrl = new URL("/login", nextUrl);
+      redirectUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    if (isAdminRoute) {
+      if (!isLoggedIn) {
+        return NextResponse.redirect(new URL("/login", nextUrl));
+      }
+      if (userRole !== "ADMIN") {
+        return NextResponse.redirect(new URL("/dashboard", nextUrl));
+      }
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Proxy middleware guard error:", error);
     return NextResponse.next();
   }
-
-  if (isProtectedRoute && !isLoggedIn) {
-    const redirectUrl = new URL("/login", nextUrl);
-    redirectUrl.searchParams.set("callbackUrl", nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  if (isAdminRoute) {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login", nextUrl));
-    }
-    if (userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", nextUrl));
-    }
-  }
-
-  return NextResponse.next();
 });
 
 export const config = {

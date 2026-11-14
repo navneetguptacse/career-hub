@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'career-hub-pipeline'}
 
     environment {
         IMAGE_NAME = 'navneetguptacse/career-hub'
@@ -37,12 +37,14 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
                     sh '''
-                        docker stop career-hub-app || true
-                        docker rm career-hub-app || true
+                        docker stop career-hub-app >/dev/null 2>&1 || true
+                        docker rm career-hub-app >/dev/null 2>&1 || true
                         docker run -d \
                           --name career-hub-app \
                           --restart unless-stopped \
                           -p 3000:3000 \
+                          -e AUTH_TRUST_HOST=true \
+                          -e HOSTNAME="0.0.0.0" \
                           --env-file "$SECRET_ENV" \
                           ${IMAGE_NAME}:latest
                     '''

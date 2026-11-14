@@ -1,6 +1,11 @@
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
+  secret:
+    process.env.AUTH_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "career-hub-auth-secret-fallback-key-32chars",
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
