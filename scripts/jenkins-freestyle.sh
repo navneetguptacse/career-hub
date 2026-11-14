@@ -9,11 +9,23 @@ docker build \
   --tag "${IMAGE_NAME}:latest" \
   .
 
-if [ -n "${DOCKER_USER:-}" ] && [ -n "${DOCKER_PASS:-}" ]; then
-  echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-  docker push "${IMAGE_NAME}:${IMAGE_TAG}"
-  docker push "${IMAGE_NAME}:latest"
+# Check if Docker is already logged in on this node
+IS_LOGGED_IN=false
+if [ -n "${DOCKER_USER:-}" ] && docker info 2>/dev/null | grep -qi "Username: ${DOCKER_USER}"; then
+  IS_LOGGED_IN=true
+elif grep -qi "docker.io" "${HOME}/.docker/config.json" 2>/dev/null; then
+  IS_LOGGED_IN=true
 fi
+
+if [ "${IS_LOGGED_IN}" = true ]; then
+  echo "Already authenticated to Docker Hub on this agent."
+elif [ -n "${DOCKER_USER:-}" ] && [ -n "${DOCKER_PASS:-}" ]; then
+  echo "Authenticating with Docker Hub..."
+  echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+fi
+
+docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+docker push "${IMAGE_NAME}:latest"
 
 if [ -n "${SECRET_ENV:-}" ] && [ -f "${SECRET_ENV}" ]; then
   CLEAN_ENV="/tmp/career-hub.clean.env"
