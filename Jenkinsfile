@@ -2,8 +2,11 @@ pipeline {
     agent { label 'career-hub-pipeline' }
 
     environment {
-        IMAGE_NAME = 'navneetguptacse/career-hub'
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+        IMAGE_NAME     = 'navneetguptacse/career-hub'
+        IMAGE_TAG      = "${env.BUILD_NUMBER}"
+        CONTAINER_NAME = 'career-hub-app'
+        APP_PORT       = '3000:3000'
+        CLEAN_ENV_FILE = '/tmp/career-hub.clean.env'
     }
 
     stages {
@@ -29,7 +32,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        load("${WORKSPACE}/vars/dockerLogin.groovy").call()
+                        load("${WORKSPACE}/vars/dockerLogin.groovy").call(DOCKER_USER, DOCKER_PASS)
                         load("${WORKSPACE}/vars/dockerPush.groovy").call(IMAGE_NAME, IMAGE_TAG)
                     }
                 }
@@ -40,8 +43,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
                     script {
-                        load("${WORKSPACE}/vars/prepareEnv.groovy").call()
-                        load("${WORKSPACE}/vars/deployApp.groovy").call(IMAGE_NAME)
+                        load("${WORKSPACE}/vars/prepareEnv.groovy").call(SECRET_ENV, CLEAN_ENV_FILE)
+                        load("${WORKSPACE}/vars/deployApp.groovy").call(IMAGE_NAME, CONTAINER_NAME, APP_PORT, CLEAN_ENV_FILE)
                     }
                 }
             }

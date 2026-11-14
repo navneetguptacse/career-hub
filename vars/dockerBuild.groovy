@@ -1,12 +1,11 @@
-def call(String imageName, String imageTag = 'latest') {
+def call(String imageName, String imageTag = 'latest', String context = '.') {
     sh """#!/bin/bash
         set -euo pipefail
-        export DOCKER_BUILDKIT=1
-        echo "Building production Docker image: ${imageName}:${imageTag}"
+        echo "Building Docker image: ${imageName}:${imageTag} from context: ${context}"
         docker build \\
             --tag "${imageName}:${imageTag}" \\
             --tag "${imageName}:latest" \\
-            .
+            "${context}"
     """
 }
 

@@ -76,13 +76,13 @@ The pipeline is structured using modular Groovy utility steps under the standard
 ```text
 career-hub/
 ├── vars/
-│   ├── dockerBuild.groovy    # Multi-stage image build with BuildKit
-│   ├── dockerLogin.groovy    # Pre-auth session check and safe login
-│   ├── dockerPush.groovy     # Pushes versioned and latest tags
-│   ├── prepareEnv.groovy     # Strips quotes from .env and sets chmod 600
-│   ├── deployApp.groovy      # Replaces running container with host trust
-│   └── dockerPrune.groovy    # Prunes dangling layers
-├── Jenkinsfile               # Declarative pipeline targeting career-hub-pipeline
+│   ├── dockerBuild.groovy    # Generic Docker build: call(imageName, tag, context)
+│   ├── dockerLogin.groovy    # Generic Docker login: call(user, pass, registry)
+│   ├── dockerPush.groovy     # Generic Docker push: call(imageName, tag)
+│   ├── prepareEnv.groovy     # Generic .env quote stripping: call(srcEnv, targetEnv)
+│   ├── deployApp.groovy      # Generic container deployment: call(image, name, port, envFile)
+│   └── dockerPrune.groovy    # Generic dangling image cleanup: call(filter)
+├── Jenkinsfile               # Declarative pipeline with decoupled project configuration
 └── ...
 ```
 
@@ -93,8 +93,11 @@ pipeline {
     agent { label 'career-hub-pipeline' }
 
     environment {
-        IMAGE_NAME = 'navneetguptacse/career-hub'
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+        IMAGE_NAME     = 'navneetguptacse/career-hub'
+        IMAGE_TAG      = "${env.BUILD_NUMBER}"
+        CONTAINER_NAME = 'career-hub-app'
+        APP_PORT       = '3000:3000'
+        CLEAN_ENV_FILE = '/tmp/career-hub.clean.env'
     }
 
     stages {
@@ -120,7 +123,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        load("${WORKSPACE}/vars/dockerLogin.groovy").call()
+                        load("${WORKSPACE}/vars/dockerLogin.groovy").call(DOCKER_USER, DOCKER_PASS)
                         load("${WORKSPACE}/vars/dockerPush.groovy").call(IMAGE_NAME, IMAGE_TAG)
                     }
                 }
@@ -131,8 +134,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'careerHub', variable: 'SECRET_ENV')]) {
                     script {
-                        load("${WORKSPACE}/vars/prepareEnv.groovy").call()
-                        load("${WORKSPACE}/vars/deployApp.groovy").call(IMAGE_NAME)
+                        load("${WORKSPACE}/vars/prepareEnv.groovy").call(SECRET_ENV, CLEAN_ENV_FILE)
+                        load("${WORKSPACE}/vars/deployApp.groovy").call(IMAGE_NAME, CONTAINER_NAME, APP_PORT, CLEAN_ENV_FILE)
                     }
                 }
             }
@@ -144,6 +147,59 @@ pipeline {
             script {
                 load("${WORKSPACE}/vars/dockerPrune.groovy").call()
             }
+        }
+    }
+}
+```
+
+### 3.1 Using as a Jenkins Global Trusted Pipeline Library
+
+Because all steps under `vars/` are completely generic and parameterized, you can register this repository under **Manage Jenkins > System > Global Pipeline Libraries** (e.g., named `devops-library`).
+
+Any other application pipeline can then use these steps natively:
+
+```groovy
+@Library('devops-library') _
+
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME     = 'myorg/payment-service'
+        IMAGE_TAG      = "${env.BUILD_NUMBER}"
+        CONTAINER_NAME = 'payment-service-app'
+        APP_PORT       = '8080:8080'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                dockerBuild(IMAGE_NAME, IMAGE_TAG)
+            }
+        }
+
+        stage('Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    dockerLogin(DOCKER_USER, DOCKER_PASS)
+                    dockerPush(IMAGE_NAME, IMAGE_TAG)
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([file(credentialsId: 'paymentEnv', variable: 'SECRET_ENV')]) {
+                    prepareEnv(SECRET_ENV, '/tmp/payment.env')
+                    deployApp(IMAGE_NAME, CONTAINER_NAME, APP_PORT, '/tmp/payment.env')
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            dockerPrune()
         }
     }
 }
