@@ -29,7 +29,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        load("${WORKSPACE}/vars/dockerLogin.groovy").call(DOCKER_USER, DOCKER_PASS)
+                        load("${WORKSPACE}/vars/dockerLogin.groovy").call()
                     }
                     sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     sh "docker push ${IMAGE_NAME}:latest"

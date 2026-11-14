@@ -29,7 +29,7 @@ docker push "${IMAGE_NAME}:latest"
 
 if [ -n "${SECRET_ENV:-}" ] && [ -f "${SECRET_ENV}" ]; then
   CLEAN_ENV="/tmp/career-hub.clean.env"
-  sed -E 's/=(["'\''"])(.*)\1$/=\2/' "${SECRET_ENV}" > "${CLEAN_ENV}" || cp "${SECRET_ENV}" "${CLEAN_ENV}"
+  sed -E 's/="([^"]*)"$/=\1/' "${SECRET_ENV}" | sed -E "s/='([^']*)'$/=\1/" > "${CLEAN_ENV}" || cp "${SECRET_ENV}" "${CLEAN_ENV}"
 
   docker stop career-hub-app >/dev/null 2>&1 || true
   docker rm career-hub-app >/dev/null 2>&1 || true
