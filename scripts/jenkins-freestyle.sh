@@ -20,8 +20,10 @@ fi
 if [ "${IS_LOGGED_IN}" = true ]; then
   echo "Already authenticated to Docker Hub on this agent."
 elif [ -n "${DOCKER_USER:-}" ] && [ -n "${DOCKER_PASS:-}" ]; then
-  echo "Authenticating with Docker Hub..."
-  echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+  CLEAN_USER=$(printf '%s' "${DOCKER_USER}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  CLEAN_PASS=$(printf '%s' "${DOCKER_PASS}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  echo "Authenticating with Docker Hub as ${CLEAN_USER}..."
+  printf '%s\n' "${CLEAN_PASS}" | docker login -u "${CLEAN_USER}" --password-stdin
 fi
 
 docker push "${IMAGE_NAME}:${IMAGE_TAG}"
