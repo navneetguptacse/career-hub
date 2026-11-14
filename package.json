@@ -15,6 +15,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "telegram:sync": "node scripts/sync-telegram-webhook.js",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
     "docker:build": "docker build -t career-hub .",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down"
