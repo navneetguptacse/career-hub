@@ -148,12 +148,12 @@ pipeline {
 
 ### 3.1 Using as a Jenkins Global Trusted Pipeline Library
 
-Because all steps under `vars/` are completely generic and parameterized, you can register this repository under **Manage Jenkins > System > Global Pipeline Libraries** (e.g., named `devops-library`).
+Because all steps under `vars/` are completely generic and parameterized, you can register this repository under **Manage Jenkins > System > Global Pipeline Libraries** (named `Shared`).
 
-Any other application pipeline can then use these steps natively:
+Any other application pipeline on your Jenkins instance can then use these steps natively:
 
 ```groovy
-@Library('devops-library') _
+@Library('Shared') _
 
 pipeline {
     agent any
@@ -209,8 +209,52 @@ Before executing `docker login`, the step inspects existing daemon credentials i
 
 ### 4.2 Environment Variable Quote Stripping (`vars/prepareEnv.groovy`)
 
-Docker's `--env-file` flag preserves literal quotation marks (`NEXTAUTH_URL="http://..."` becomes `\"http://...\"`), which causes Node.js URL parsing errors (`ERR_INVALID_URL`). The pipeline automatically cleans surrounding quotes into `/tmp/career-hub.clean.env` before running the container.
+Docker's `--env-file` flag preserves literal quotation marks (`NEXTAUTH_URL="http://..."` becomes `\"http://...\"`), which causes Node.js URL parsing errors (`ERR_INVALID_URL`). The pipeline automatically cleans surrounding quotes into `/tmp/career-hub.clean.env` and applies `chmod 600` before running the container.
 
 ### 4.3 Host Header Trust
 
 The container is launched with `-e AUTH_TRUST_HOST=true` and `-e HOSTNAME="0.0.0.0"` so that public EC2 IP addresses and custom domains are accepted without `UntrustedHost` exceptions.
+
+---
+
+## 5. Skipping Builds via Commit Message (`[skip ci]`)
+
+To prevent documentation, style, or minor commits from triggering unnecessary Docker image builds and deployments:
+
+### Jenkins Controller Configuration (Recommended)
+
+1. Open your job (`career-hub-pipeline` or Freestyle).
+2. Click **Configure**.
+3. Under **Pipeline > SCM (Git)** (or **Source Code Management > Git** for Freestyle):
+   - Under **Additional Behaviours**, click **Add**.
+   - Select **Polling ignores commits with certain messages**.
+   - In the **Excluded Messages** field, enter:
+     ```regex
+     .*\[(skip ci|ci skip|skip jenkins|no ci)\].*
+     ```
+4. Click **Save**.
+
+When you push a commit with `[skip ci]` or `[ci skip]` in the message:
+
+```bash
+git commit -m "docs: update guide [skip ci]"
+```
+
+Jenkins intercepts the webhook, evaluates the regex, and discards the build immediately without waking up the build agent.
+
+---
+
+## 6. Database Operations (Prisma & Neon PostgreSQL)
+
+When working with a clean or newly restored database, use these scripts to manage the schema:
+
+```bash
+# Push schema to database and create/sync all tables
+npm run db:push
+
+# Re-generate Prisma Client types
+npm run db:generate
+
+# Launch Prisma Studio web GUI on http://localhost:5555
+npm run db:studio
+```
