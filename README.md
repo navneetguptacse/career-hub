@@ -205,3 +205,13 @@ RESEND_FROM_EMAIL="Career Hub <auth@yourdomain.com>"
 2. In Project Settings > Environment Variables, add all values from your `.env` configuration.
 3. Configure the build command as `prisma generate && next build`.
 4. Deploy the project. Database migrations can be executed directly using `npx prisma db push` or `npx prisma migrate deploy`.
+
+### Docker & Container Deployment
+
+Career Hub provides a multi-stage Dockerfile and Docker Compose configuration optimized for Next.js standalone output and Prisma 7:
+
+```bash
+docker compose up -d --build
+```
+
+For complete instructions on local execution, Docker Hub publishing, and Jenkins CI/CD setup (both Freestyle and Pipeline jobs), see [DOCKER.md](file:///Users/navneetgupta/Downloads/career-hub/DOCKER.md).
